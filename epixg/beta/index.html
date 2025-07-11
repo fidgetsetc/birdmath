@@ -1,0 +1,584 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EPIXGAMES Home 🎮</title>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-color: #282c34;
+      --primary-color: #4287f5;
+      --secondary-color: #61dafb;
+      --text-color: #ffffff;
+      --card-bg: #3c4048;
+      --button-bg: #61dafb;
+      --button-hover-bg: #21a1f1;
+    }
+
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      font-family: 'Roboto', sans-serif;
+      margin: 0;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+      box-sizing: border-box;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 40px;
+      width: 100%;
+      max-width: 900px;
+    }
+
+    h1 {
+      font-family: 'Press Start 2P', cursive;
+      color: var(--primary-color);
+      font-size: 2.5em;
+      margin-bottom: 10px;
+      text-shadow: 3px 3px #000;
+    }
+
+    p {
+      font-size: 1.1em;
+      color: #bbb;
+      margin-top: 0;
+    }
+
+    h2 {
+      font-family: 'Press Start 2P', cursive;
+      color: var(--secondary-color);
+      font-size: 1.8em;
+      margin-top: 40px;
+      margin-bottom: 30px;
+      text-align: center;
+      text-shadow: 2px 2px #000;
+    }
+
+    .games-container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 30px;
+      max-width: 1200px; /* To prevent games from being too spread out */
+      width: 100%;
+    }
+
+    .game {
+      background-color: var(--card-bg);
+      border-radius: 12px;
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+      padding: 15px;
+      text-align: center;
+      width: 200px;
+      transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+      overflow: hidden; /* Ensures border-radius applies to content */
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between; /* Pushes button to bottom */
+    }
+
+    .game:hover {
+      transform: translateY(-8px) scale(1.02);
+      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.6);
+    }
+
+    .game img {
+      width: 100%;
+      height: 150px; /* Fixed height for consistent look */
+      object-fit: cover; /* Ensures images cover the area without distortion */
+      border-radius: 8px;
+      margin-bottom: 15px;
+      border: 2px solid var(--primary-color);
+    }
+
+    .game dt {
+      font-family: 'Roboto', sans-serif;
+      font-size: 1.1em;
+      font-weight: 700;
+      color: var(--secondary-color);
+      margin-bottom: 10px;
+    }
+
+    .game h2 { /* For "SCRATCH version" */
+      font-family: 'Roboto', sans-serif;
+      font-size: 0.9em;
+      color: #ccc;
+      margin-top: 5px;
+      margin-bottom: 15px;
+      text-shadow: none; /* Override general h2 shadow */
+    }
+
+    .game form {
+      margin-top: auto; /* Pushes form to the bottom */
+    }
+
+    .game input[type="submit"] {
+      background-color: var(--button-bg);
+      color: var(--bg-color);
+      border: none;
+      border-radius: 8px;
+      padding: 10px 20px;
+      font-size: 1em;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background-color 0.3s ease, transform 0.2s ease;
+      width: 100%;
+      box-sizing: border-box; /* Include padding in width */
+    }
+
+    .game input[type="submit"]:hover {
+      background-color: var(--button-hover-bg);
+      transform: translateY(-2px);
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+      h1 {
+        font-size: 2em;
+      }
+      h2 {
+        font-size: 1.5em;
+      }
+      .games-container {
+        gap: 20px;
+      }
+      .game {
+        width: 180px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      h1 {
+        font-size: 1.8em;
+      }
+      h2 {
+        font-size: 1.3em;
+      }
+      .game {
+        width: 100%; /* Full width on smaller screens */
+        max-width: 250px; /* Max width to prevent it from getting too wide if screen is very small */
+      }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>EPIXGAMES Home 🏠✨</h1>
+  <p>We just got a MAJOR upgrade to the site, fam! Get ready for some epic gaming! 🔥</p>
+</header>
+
+<h2>EPIXGAMES Games 🕹️</h2>
+<div class="games-container">
+
+  <div class="game">
+    <img src="https://www.mediafire.com/convkey/0fba/fjsl0ca42p00o9m7g.jpg" alt="1v1.lol">
+    <dl>
+      <dt>1v1.lol</dt>
+      <form action="/play/1v1lol.html">
+        <input type="submit" value="Play Now">
+      </form>
+    </dl>
+  </div>
+
+  <div class="game">
+    <img src="https://www.mediafire.com/convkey/ceef/iy0vghjso78nenc7g.jpg" alt="Angry Birds">
+    <dl>
+      <dt>Angry Birds</dt>
+      <form action="/play/angrybird.html">
+        <input type="submit" value="Play Now">
+      </form>
+    </dl>
+  </div>
+
+  <div class="game">
+    <img src="https://www.mediafire.com/convkey/13ce/zw7q7l17htz3iug7g.jpg" alt="Angry Birds Epic">
+    <dl>
+      <dt>Angry Birds Epic</dt>
+      <form action="/play/abepic.html">
+        <input type="submit" value="Play Now">
+      </form>
+    </dl>
+  </div>
+
+  <div class="game">
+    <img src="https://www.mediafire.com/convkey/c9b4/dgoer8eo7sp7mnt7g.jpg" alt="Among Us">
+    <dl>
+      <dt>Among Us</dt>
+      <form action="/play/amongus.html">
+        <input type="submit" value="Play Now">
+      </form>
+    </dl>
+  </div>
+
+  <div class="game">
+    <img src="https://www.mediafire.com/convkey/c4f2/oi2ca1yskdtra1m7g.jpg" alt="Angry Birds Rio">
+    <dl>
+      <dt>Angry Birds Rio</dt>
+      <form action="/play/rio.html">
+        <input type="submit" value="Play Now">
+      </form>
+    </dl>
+  </div>
+
+  <div class="game">
+    <img src="https://www.mediafire.com/convkey/a0a9/joybetmdtxzk6cm7g.jpg" alt="Angry Birds Stella">
+    <dl>
+      <dt>Angry Birds Stella</dt>
+      <form action="/play/stella.html">
+        <input type="submit" value="Play Now">
+      </form>
+    </dl>
+  </div>
+
+  <div class="game">
+    <img src="https://www.mediafire.com/convkey/f2cd/5pvv55vzgy80sq97g.jpg" alt="Basket Bros">
+    <dl>
+      <dt>Basket Bros</dt>
+      <form action="/play/basketbros.html">
+        <input type="submit" value="Play Now">
+      </form>
+    </dl>
+  </div>
+
+  <div class="game">
+    <img src="https://www.mediafire.com/convkey/b985/jp96yg6v4dr8rzo7g.jpg" alt="Battleship">
+    <dl>
+      <dt>Battleship</dt>
+      <form action="/play/battleship.html">
+        <input type="submit" value="Play Now">
+      </form>
+    </dl>
+  </div>
+
+  <div class="game">
+    <img src="https://www.mediafire.com/convkey/00ec/vcpc59fot723szw7g.jpg" alt="BitLife">
+    <dl>
+      <dt>BitLife</dt>
+      <form action="/play/bitlife.html">
+        <input type="submit" value="Play Now">
+      </form>
+    </dl>
+  </div>
+
+  <div class="game">
+    <img src="https://www.mediafire.com/convkey/acca/4izkblqrulevfn57g.jpg" alt="Block Blast">
+    <dl>
+      <dt>Block Blast</dt>
+      <form action="/play/blockblast.html">
+        <input type="submit" value="Play Now">
+      </form>
+    </dl>
+  </div>
+
+  <div class="game">
+    <img src="https://www.mediafire.com/convkey/0866/vsh0682j2w9qxhl7g.jpg" alt="Bad Piggies">
+    <dl>
+      <dt>Bad Piggies</dt>
+      <form action="/play/badpiggies.html">
+        <input type="submit" value="Play Now">
+      </form>
+    </dl>
+  </div>
+
+  <div class="game">
+    <img src="https://www.mediafire.com/convkey/4a04/gs0b6crk0n5xzhv7g.jpg" alt="Call of Ops 2">
+    <dl>
+      <dt>Call of Ops 2</dt>
+      <form action="/play/callofops2.html">
+        <input type="submit" value="Play Now">
+      </form>
+    </dl>
+  </div>
+
+  <div class="game">
+    <img src="https://www.mediafire.com/convkey/3adc/6czeo5tzxhx5hla7g.jpg" alt="Call of Ops 3">
+    <dl>
+      <dt>Call of Ops 3</dt>
+      <form action="/play/callofops3.html">
+        <input type="submit" value="Play Now">
+      </form>
+    </dl>
+  </div>
+
+  <div class="game">
+    <img src="https://www.mediafire.com/convkey/dc19/fyjm4208ciii1d37g.jpg" alt="Call of Ops 3 Zombies">
+    <dl>
+      <dt>Call of Ops 3 Zombies</dt>
+      <form action="/play/callofops3zombies.html">
+        <input type="submit" value="Play Now">
+      </form>
+    </dl>
+  </div>
+
+  <div class="game">
+    <img src="https://www.mediafire.com/convkey/835b/2ap4blch50z33p27g.jpg" alt="Catac.io">
+    <dl>
+      <dt>Catac.io</dt>
+      <form action="/play/catacio.html">
+        <input type="submit" value="Play Now">
+      </form>
+    </dl>
+  </div>
+
+  <div class="game">
+    <img src="https://www.mediafire.com/convkey/99a3/s5lxuivh0n6jdq47g.jpg" alt="Chess">
+    <dl>
+      <dt>Chess</dt>
+      <form action="/play/chess.html">
+        <input type="submit" value="Play Now">
+      </form>
+    </dl>
+  </div>
+
+  <div class="game">
+    <img src="https://www.mediafire.com/convkey/2e18/xf90vbqrawmret77g.jpg" alt="Cookie Clicker">
+    <dl>
+      <dt>Cookie Clicker</dt>
+      <form action="/play/cookieclicker.html">
+        <input type="submit" value="Play Now">
+      </form>
+    </dl>
+  </div>
+
+  <div class="game">
+    <img src="https://www.mediafire.com/convkey/1dc5/ep5lpbtg61zkb2a7g.jpg" alt="Cut the Rope">
+    <dl>
+      <dt>Cut the Rope</dt>
+      <form action="/play/cuttherope.html">
+        <input type="submit" value="Play Now">
+      </form>
+    </dl>
+  </div>
+
+  <div class="game">
+    <img src="https://www.mediafire.com/convkey/9d7e/lcpz8u1t904dgfv7g.jpg" alt="Cut the Rope 2">
+    <dl>
+      <dt>Cut the Rope 2</dt>
+      <form action="/play/cuttherope2.html">
+        <input type="submit" value="Play Now">
+      </form>
+    </dl>
+  </div>
+
+  <div class="game">
+    <img src="https://www.mediafire.com/convkey/c5ac/mr39ydydg5a22oi7g.jpg" alt="Dodge the Bar">
+    <dl>
+      <dt>Dodge the Bar</dt>
+      <form action="/play/dodgethebar.html">
+        <input type="submit" value="Play Now">
+      </form>
+    </dl>
+  </div>
+
+  <div class="game">
+    <img src="https://www.mediafire.com/convkey/e980/c6s9opnclguywbn7g.jpg" alt="Drift Boss">
+    <dl>
+      <dt>Drift Boss</dt>
+      <form action="/play/driftboss.html">
+        <input type="submit" value="Play Now">
+      </form>
+    </dl>
+  </div>
+
+  <div class="game">
+    <img src="https://www.mediafire.com/convkey/c29b/e3n575c8zvwoylj7g.jpg" alt="Fireboy and Watergirl">
+    <dl>
+      <dt>Fireboy and Watergirl</dt>
+      <form action="/play/fireboyandwatergirl.html">
+        <input type="submit" value="Play Now">
+      </form>
+    </dl>
+  </div>
+
+  <div class="game">
+    <img src="https://www.mediafire.com/convkey/caa3/ch3tzgf6koc047e7g.jpg" alt="Flappy Bird">
+    <dl>
+      <dt>Flappy Bird</dt>
+      <form action="/play/flappybird.html">
+        <input type="submit" value="Play Now">
+      </form>
+    </dl>
+  </div>
+
+  <div class="game">
+    <img src="https://www.mediafire.com/convkey/4d91/9bogsg5iuezz0a17g.jpg" alt="FNAF 1">
+    <dl>
+      <dt>FNAF 1</dt>
+      <form action="/play/fnaf1.html">
+        <input type="submit" value="Play Now">
+      </form>
+    </dl>
+  </div>
+
+  <div class="game">
+    <img src="https://www.mediafire.com/convkey/8bc3/5a09bjo1j67b9lt7g.jpg" alt="FNAF 2">
+    <dl>
+      <dt>FNAF 2</dt>
+      <form action="/play/fnaf2.html">
+        <input type="submit" value="Play Now">
+      </form>
+    </dl>
+  </div>
+
+  <div class="game">
+    <img src="https://www.mediafire.com/convkey/c20e/e2plb6ktp5mb8cg7g.jpg" alt="FNAF 3">
+    <dl>
+      <dt>FNAF 3</dt>
+      <form action="/play/fnaf3.html">
+        <input type="submit" value="Play Now">
+      </form>
+    </dl>
+  </div>
+
+  <div class="game">
+    <img src="https://www.mediafire.com/convkey/a18c/wrq22xj6bqzxaky7g.jpg" alt="FNAF 4">
+    <dl>
+      <dt>FNAF 4</dt>
+      <form action="/play/fnaf4.html">
+        <input type="submit" value="Play Now">
+      </form>
+    </dl>
+  </div>
+
+  <div class="game">
+    <img src="https://www.mediafire.com/convkey/2692/q47l4ewzosd0ddc7g.jpg" alt="Friday Night Funkin">
+    <dl>
+      <dt>Friday Night Funkin</dt>
+      <form action="/play/fnf.html">
+        <input type="submit" value="Play Now">
+      </form>
+    </dl>
+  </div>
+
+  <div class="game">
+    <img src="https://www.mediafire.com/convkey/7a48/lk2gegrck5l149r7g.jpg" alt="Fortnite">
+    <dl>
+      <dt>Fortnite</dt>
+      <h2>SCRATCH version</h2>
+      <form action="/play/fortscratch.html">
+        <input type="submit" value="Play Now">
+      </form>
+    </dl>
+  </div>
+
+  <div class="game">
+    <img src="https://www.mediafire.com/convkey/7ae0/3mz9oz0hc63nu4v7g.jpg" alt="Geometry Dash">
+    <dl>
+      <dt>Geometry Dash</dt>
+      <form action="/play/geometrydash.html">
+        <input type="submit" value="Play Now">
+      </form>
+    </dl>
+  </div>
+
+  <div class="game">
+    <img src="https://www.mediafire.com/convkey/dd96/kl9qvz9qxvgf8ri7g.jpg" alt="Glitch">
+    <dl>
+      <dt>Glitch</dt>
+      <form action="/play/glitch.html">
+        <input type="submit" value="Play Now">
+      </form>
+    </dl>
+  </div>
+
+  <div class="game">
+    <img src="https://www.mediafire.com/convkey/d3f6/51o2px2f4rauxvb7g.jpg" alt="Guess their Answer">
+    <dl>
+      <dt>Guess their Answer</dt>
+      <form action="/play/guesstheiranswer.html">
+        <input type="submit" value="Play Now">
+      </form>
+    </dl>
+  </div>
+
+  <div class="game">
+    <img src="https://www.mediafire.com/convkey/d479/f0ijgipurbfrofo7g.jpg" alt="Subway Surfers">
+    <dl>
+      <dt>Subway Surfers</dt>
+      <form action="/play/subwaysurfers.html">
+        <input type="submit" value="Play Now">
+      </form>
+    </dl>
+  </div>
+
+  <div class="game">
+    <img src="https://www.mediafire.com/convkey/6456/rpuwycg2fp5wr987g.jpg" alt="Super Mario Bros">
+    <dl>
+      <dt>Super Mario Bros</dt>
+      <form action="/play/supermariobros.html">
+        <input type="submit" value="Play Now">
+      </form>
+    </dl>
+  </div>
+
+  <div class="game">
+    <img src="https://www.mediafire.com/convkey/83b6/vdx1l7p7kbegnnu7g.jpg" alt="Tiny Fishing">
+    <dl>
+      <dt>Tiny Fishing</dt>
+      <form action="/play/tinyfishing.html">
+        <input type="submit" value="Play Now">
+      </form>
+    </dl>
+  </div>
+
+  <div class="game">
+    <img src="https://www.mediafire.com/convkey/20b0/u146qzvpooa02ot7g.jpg" alt="Fantasy Avengers">
+    <dl>
+      <dt>Fantasy Avengers</dt>
+      <form action="/play/fantasyavengers.html">
+        <input type="submit" value="Play Now">
+      </form>
+    </dl>
+  </div>
+
+  <div class="game">
+    <img src="https://www.mediafire.com/convkey/20b0/u146qzvpooa02ot7g.jpg" alt="Fantasy Avengers Stage 2">
+    <dl>
+      <dt>Fantasy Avengers Stage 2</dt>
+      <form action="/play/fantasyavengers2.html">
+        <input type="submit" value="Play Now">
+      </form>
+    </dl>
+  </div>
+
+  <div class="game">
+    <img src="https://www.mediafire.com/convkey/20b0/u146qzvpooa02ot7g.jpg" alt="Fantasy Avengers Stage 3">
+    <dl>
+      <dt>Fantasy Avengers Stage 3</dt>
+      <form action="/play/fantasyavengers3.html">
+        <input type="submit" value="Play Now">
+      </form>
+    </dl>
+  </div>
+
+  <div class="game">
+    <img src="https://crazycattle-3d.com/thumbs/crazy-cattle-3d_1.webp" alt="Crazy Cattle 3D">
+    <dl>
+      <dt>Crazy Cattle 3D</dt>
+      <form action="/play/crazycattle.html">
+        <input type="submit" value="Play Now">
+      </form>
+    </dl>
+  </div>
+
+  <div class="game">
+    <img src="https://i.ytimg.com/vi/95EpsdUjTQw/maxresdefault.jpg" alt="Super Mario 64 Web">
+    <dl>
+      <dt>Super Mario 64 Web</dt>
+      <form action="/play/64.html">
+        <input type="submit" value="Play Now">
+      </form>
+    </dl>
+  </div>
+
+</div>
+
+</body>
+</html>
