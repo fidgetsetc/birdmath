@@ -1441,11 +1441,12 @@
   }
 
   function checkAndGrantMoney() {
-    // Only grant money if the game player overlay is active
+    console.log("checkAndGrantMoney called. gamePlayerOverlay active:", gamePlayerOverlay.classList.contains('active'));
     if (gamePlayerOverlay.classList.contains('active')) {
       const now = Date.now();
       const lastEarnTime = parseInt(localStorage.getItem('epixgamesLastEarnTime') || '0');
       const timeElapsed = now - lastEarnTime; // in milliseconds
+      console.log(`  now: ${now}, lastEarnTime: ${lastEarnTime}, timeElapsed: ${timeElapsed}`);
 
       // Grant money every minute (60,000 ms)
       // Use a small buffer (e.g., 500ms) to account for setInterval inaccuracies
@@ -1454,8 +1455,12 @@
         localStorage.setItem('epixgamesMoney', money);
         localStorage.setItem('epixgamesLastEarnTime', now); // Update last earn time
         updateMoneyDisplay();
-        console.log("Earned 5 money! Total:", money);
+        console.log("  Earned 5 money! Total:", money);
+      } else {
+        console.log("  Not enough time elapsed to earn money.");
       }
+    } else {
+      console.log("  Game player overlay is not active. Not earning money.");
     }
   }
 
@@ -1464,7 +1469,7 @@
 
     // Set last earn time to now when game starts playing, to ensure accurate first interval
     localStorage.setItem('epixgamesLastEarnTime', Date.now());
-    console.log("Game started, initial lastEarnTime set:", Date.now());
+    console.log("startMoneyGranting called. Initial lastEarnTime set to:", localStorage.getItem('epixgamesLastEarnTime'));
 
     // Start the interval to check and grant money every minute
     moneyInterval = setInterval(() => {
