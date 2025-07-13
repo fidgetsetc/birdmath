@@ -1,532 +1,1906 @@
 <!DOCTYPE HTML>
 <html>
-<body style="background-color:#4287f5;">
-<title>EPIXGAMES Home</title>
-<ol align="center">
-<h1 style="font-family:'verdana'">EPIXGAMES Home</h1>
-<p style="font-family:'verdana'">We got a slight upgrade to the site.</p>
-<a href="./beta" style="
-  display: inline-block;
-  padding: 10px 20px;
-  background-color: #007bff;
-  color: white;
-  text-decoration: none;
-  border-radius: 5px;
-  font-family: sans-serif;
-  font-size: 16px;
-  border: none;
-  cursor: pointer;
-">
-  Try the beta!
-</a>
-<h2 style="font-family:'verdana'">EPIXGAMES games</h2>
-</ol>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EPIXGAMES Home 🎮</title>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      /* Default values - these will be overridden by JavaScript */
+      --bg-color: #282c34; /* Will be a darker accent */
+      --primary-color: #4287f5; /* Will be the accent color */
+      --secondary-color: #61dafb; /* Will be the accent color */
+      --text-color: #ffffff;
+      --card-bg: #3c4048;
+      --button-bg: var(--accent-color, #61dafb); /* Button background uses accent */
+      --button-hover-bg: var(--accent-hover-color, #21a1f1); /* Button hover uses darker accent */
+      --accent-color: #61dafb; /* Default accent color */
+      --accent-hover-color: #21a1f1; /* Default accent hover color */
 
-<style type="text/css">
-  .games-container {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 20px;
+      /* Default accessory styles */
+      --home-background: var(--bg-color);
+      --home-text-color: var(--text-color);
+    }
+
+    body {
+      background: var(--home-background); /* Changed from background-color to background */
+      background-attachment: fixed; /* Added for parallax scrolling effect */
+      color: var(--home-text-color); /* Now uses dynamic text color */
+      font-family: 'Roboto', sans-serif;
+      margin: 0;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+      box-sizing: border-box;
+      transition: background-color 0.5s ease; /* Smooth transition for background changes */
+    }
+
+    header {
+      margin-bottom: 40px;
+      width: 100%;
+      max-width: 900px;
+      position: relative; /* Make header a positioning context for absolute children */
+      /* padding-right removed from header as search is now inside tab content */
+      box-sizing: border-box; /* Include padding in width */
+      text-align: center; /* Center header content */
+    }
+
+    .header-content {
+      text-align: center; /* Center text within its container */
+      margin: 0; /* Ensure no default margins push it down */
+    }
+
+    h1 {
+      font-family: 'Press Start 2P', cursive;
+      color: var(--primary-color); /* Now uses the accent color */
+      font-size: 2.5em;
+      margin-bottom: 10px;
+      text-shadow: 3px 3px #000;
+      margin-top: 0; /* Reset default margin */
+    }
+
+    p {
+      font-size: 1.1em;
+      color: #bbb;
+      margin-top: 0;
+    }
+
+    h2 {
+      font-family: 'Press Start 2P', cursive;
+      color: var(--secondary-color); /* Now uses the accent color */
+      font-size: 1.8em;
+      margin-top: 40px;
+      margin-bottom: 30px;
+      text-align: center;
+      text-shadow: 2px 2px #000;
+    }
+
+    /* Tabs Navigation */
+    #tabs-container {
+      display: flex;
+      justify-content: center;
+      width: 100%;
+      max-width: 900px;
+      margin-bottom: 30px;
+      background-color: var(--card-bg);
+      border-radius: 12px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+      overflow: hidden; /* Ensures rounded corners apply */
+    }
+
+    .tab-button {
+      flex: 1;
+      padding: 15px 20px;
+      background-color: var(--card-bg);
+      color: var(--text-color);
+      border: none;
+      border-right: 1px solid rgba(255, 255, 255, 0.1); /* Separator */
+      font-family: 'Press Start 2P', cursive;
+      font-size: 1em;
+      cursor: pointer;
+      transition: background-color 0.3s ease, color 0.3s ease;
+      text-align: center;
+    }
+
+    .tab-button:last-child {
+      border-right: none; /* No separator on the last button */
+    }
+
+    .tab-button:hover {
+      background-color: rgba(255, 255, 255, 0.1);
+    }
+
+    .tab-button.active {
+      background-color: var(--button-bg);
+      color: var(--bg-color); /* Active button text contrasts with accent */
+      box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5); /* Inner shadow for active state */
+    }
+
+    /* Tab Content */
+    .tab-content {
+      display: none; /* Hidden by default */
+      width: 100%;
+      max-width: 1200px;
+      padding: 20px;
+      background-color: var(--card-bg);
+      border-radius: 12px;
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+      box-sizing: border-box;
+      position: relative; /* For search bar positioning within Games tab */
+    }
+
+    .tab-content.active {
+      display: block; /* Show active tab content */
+    }
+
+    /* Games Tab Specific Styles */
+    #games-tab {
+      padding-top: 80px; /* Make space for the search widget */
+      background-color: transparent; /* Make background transparent */
+      box-shadow: none; /* Remove box shadow for transparent effect */
+    }
+
+    .games-container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 30px;
+      width: 100%;
+    }
+
+    .game {
+      background-color: var(--card-bg);
+      border-radius: 12px;
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+      padding: 15px;
+      text-align: center;
+      width: 200px;
+      transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out, border 0.3s ease; /* Added border transition */
+      overflow: hidden; /* Ensures border-radius applies to content */
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between; /* Pushes button to bottom */
+      border: 2px solid transparent; /* Default transparent border */
+    }
+
+    .game:hover {
+      transform: translateY(-8px) scale(1.02);
+      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.6);
+    }
+
+    .game.highlighted-game { /* Highlighted style */
+      border: 4px solid var(--accent-color); /* Stronger accent border */
+      box-shadow: 0 0 25px var(--accent-color); /* Glowing effect */
+      transform: scale(1.05); /* Slightly larger when highlighted */
+    }
+
+    .game img {
+      width: 100%;
+      height: 150px; /* Fixed height for consistent look */
+      object-fit: cover; /* Ensures images cover the area without distortion */
+      border-radius: 8px;
+      margin-bottom: 15px;
+      border: 2px solid var(--primary-color); /* Border uses accent color */
+    }
+
+    .game dt {
+      font-family: 'Roboto', sans-serif;
+      font-size: 1.1em;
+      font-weight: 700;
+      color: var(--secondary-color); /* Game titles use accent color */
+      margin-bottom: 10px;
+    }
+
+    .game h2 { /* For "SCRATCH version" */
+      font-family: 'Roboto', sans-serif;
+      font-size: 0.9em;
+      color: #ccc; /* This specific h2 remains light grey */
+      margin-top: 5px;
+      margin-bottom: 15px;
+      text-shadow: none; /* Override general h2 shadow */
+    }
+
+    .game form {
+      margin-top: auto; /* Pushes form to the bottom */
+    }
+
+    .play-now-button {
+      background-color: var(--button-bg);
+      color: var(--bg-color);
+      border: none;
+      border-radius: 8px;
+      padding: 10px 20px;
+      font-size: 1em;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background-color 0.3s ease, transform 0.2s ease;
+      width: 100%;
+      box-sizing: border-box;
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      appearance: none;
+      display: block;
+      text-align: center;
+      text-decoration: none;
+    }
+
+    .play-now-button:hover {
+      background-color: var(--button-hover-bg);
+      transform: translateY(-2px);
+    }
+
+    /* Search Widget Container (now inside #games-tab) */
+    .search-widget-container {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      padding: 5px;
+      width: 210px;
+      box-sizing: border-box;
+      z-index: 10;
+    }
+
+    /* Header Search Group (just the input and button) */
+    .header-search-group {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      width: 100%;
+    }
+
+    .header-search-group input[type="text"] {
+      flex-grow: 1;
+      padding: 8px 12px;
+      border-radius: 8px;
+      border: 2px solid var(--primary-color);
+      background-color: #282c34;
+      color: var(--text-color);
+      font-family: 'Roboto', sans-serif;
+      font-size: 0.9em;
+    }
+
+    .header-search-group button {
+      background-color: var(--button-bg);
+      color: var(--bg-color);
+      border: none;
+      border-radius: 8px;
+      padding: 8px 15px;
+      font-size: 0.9em;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background-color 0.3s ease, transform 0.2s ease;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    }
+
+    .header-search-group button:hover {
+      background-color: var(--button-hover-bg);
+      transform: translateY(-2px);
+    }
+
+    /* Search Results now inside the widget container */
+    #searchResults {
+      width: 100%;
+      max-height: 200px;
+      overflow-y: auto;
+      background-color: var(--card-bg);
+      border-radius: 8px;
+      border: 1px dashed var(--secondary-color);
+      padding: 10px;
+      margin-top: 10px;
+      color: var(--text-color);
+      text-align: left;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    }
+
+    #searchResults p {
+      margin: 5px 0;
+      padding: 5px;
+      cursor: pointer;
+      border-radius: 5px;
+      transition: background-color 0.2s ease;
+    }
+
+    #searchResults p:hover {
+      background-color: rgba(255, 255, 255, 0.1);
+    }
+
+    .loading-spinner {
+      border: 4px solid rgba(255, 255, 255, 0.3);
+      border-top: 4px solid var(--accent-color);
+      border-radius: 50%;
+      width: 30px;
+      height: 30px;
+      animation: spin 1s linear infinite;
+      display: none;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    /* Iframe Game Player Styles */
+    .game-player-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.9);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      padding: 10px;
+      box-sizing: border-box;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s ease, visibility 0.3s ease;
+    }
+
+    .game-player-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .game-iframe-container {
+      width: 95%;
+      height: calc(100% - 100px);
+      background-color: #000;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.7);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .game-iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+      display: block;
+    }
+
+    .game-controls-bar {
+      width: 95%;
+      height: 60px;
+      background-color: var(--card-bg);
+      border-radius: 12px;
+      margin-top: 10px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 20px;
+      padding: 0 20px;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+    }
+
+    .game-controls-bar button {
+      background-color: var(--button-bg);
+      color: var(--bg-color);
+      border: none;
+      border-radius: 8px;
+      padding: 10px 20px;
+      font-size: 0.9em;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background-color 0.3s ease, transform 0.2s ease;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    }
+
+    .game-controls-bar button:hover {
+      background-color: var(--button-hover-bg);
+      transform: translateY(-2px);
+    }
+
+    /* Store Tab Styles */
+    .store-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 20px;
+      padding: 20px;
+      justify-content: center;
+      width: 100%;
+    }
+
+    .store-item {
+      background-color: #282c34;
+      border-radius: 12px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+      padding: 15px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .store-item img {
+      width: 100px;
+      height: 100px;
+      object-fit: contain;
+      border-radius: 8px;
+      border: 2px solid var(--primary-color);
+    }
+
+    .store-item h4 {
+      margin: 0;
+      color: var(--secondary-color);
+      font-size: 1.1em;
+    }
+
+    .store-item p {
+      margin: 5px 0;
+      font-size: 0.9em;
+      color: #bbb;
+    }
+
+    .store-item button {
+      background-color: var(--button-bg);
+      color: var(--bg-color);
+      border: none;
+      border-radius: 8px;
+      padding: 8px 15px;
+      font-size: 0.9em;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background-color 0.3s ease, transform 0.2s ease;
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    .store-item button:hover:not(:disabled) {
+      background-color: var(--button-hover-bg);
+      transform: translateY(-2px);
+    }
+
+    .store-item button:disabled {
+      background-color: #555;
+      cursor: not-allowed;
+      opacity: 0.7;
+    }
+
+    .money-display {
+      text-align: center;
+      font-family: 'Press Start 2P', cursive;
+      font-size: 1.5em;
+      color: gold;
+      margin-bottom: 20px;
+      text-shadow: 2px 2px #000;
+    }
+
+    /* Settings Tab Styles */
+    .settings-section {
+      background-color: #282c34;
+      border-radius: 12px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+      padding: 20px;
+      margin-bottom: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    .settings-section label {
+      font-size: 1.1em;
+      color: var(--secondary-color);
+      margin-bottom: 5px;
+      display: block;
+    }
+
+    .settings-section select, .settings-section input[type="color"] {
+      padding: 8px;
+      border-radius: 8px;
+      border: 2px solid var(--primary-color);
+      background-color: #3c4048;
+      color: var(--text-color);
+      font-family: 'Roboto', sans-serif;
+      font-size: 1em;
+      width: 100%;
+      max-width: 250px;
+      box-sizing: border-box;
+    }
+
+    .settings-section input[type="color"] {
+      height: 40px;
+      width: 80px;
+    }
+
+    .settings-section button {
+      background-color: var(--button-bg);
+      color: var(--bg-color);
+      border: none;
+      border-radius: 8px;
+      padding: 10px 20px;
+      font-size: 1em;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background-color 0.3s ease, transform 0.2s ease;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    }
+
+    .settings-section button:hover {
+      background-color: var(--button-hover-bg);
+      transform: translateY(-2px);
+    }
+
+    .reset-button {
+      background-color: #f44336 !important;
+    }
+
+    .reset-button:hover {
+      background-color: #d32f2f !important;
+    }
+
+    .confirmation-message {
+      color: #f44336;
+      font-weight: bold;
+      margin-top: 10px;
+    }
+
+    /* Custom Message Box Styles */
+    #messageBox {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background-color: var(--card-bg);
+      color: var(--text-color);
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.6);
+      z-index: 1001;
+      display: none;
+      text-align: center;
+      font-family: 'Roboto', sans-serif;
+      font-size: 1.1em;
+      max-width: 300px;
+      box-sizing: border-box;
+    }
+
+    #messageBox button {
+      background-color: var(--button-bg);
+      color: var(--bg-color);
+      border: none;
+      border-radius: 8px;
+      padding: 8px 15px;
+      margin-top: 15px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    #messageBox button:hover {
+      background-color: var(--button-hover-bg);
+    }
+
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+      header {
+        flex-direction: column;
+        align-items: center;
+        gap: 15px;
+        padding-right: 20px;
+      }
+      .header-content {
+        text-align: center;
+      }
+      .search-widget-container {
+        position: static;
+        margin-top: 10px;
+        width: 100%;
+        align-items: center;
+        padding: 0;
+      }
+      .header-search-group {
+        justify-content: center;
+      }
+      .header-search-group input[type="text"] {
+        width: calc(100% - 100px);
+        max-width: 250px;
+      }
+
+      h1 {
+        font-size: 2em;
+      }
+      h2 {
+        font-size: 1.5em;
+      }
+      .games-container {
+        gap: 20px;
+      }
+      .game {
+        width: 180px;
+      }
+      #searchResults {
+        margin-top: 10px;
+      }
+      .game-iframe-container {
+        height: calc(100% - 120px);
+        width: 98%;
+      }
+      .game-controls-bar {
+        width: 98%;
+        height: 80px;
+        flex-wrap: wrap;
+        gap: 10px;
+        padding: 10px;
+      }
+      .game-controls-bar button {
+        font-size: 0.8em;
+        padding: 8px 15px;
+      }
+      .store-grid {
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      }
+    }
+
+    @media (max-width: 480px) {
+      h1 {
+        font-size: 1.8em;
+      }
+      h2 {
+        font-size: 1.3em;
+      }
+      .game {
+        width: 100%;
+        max-width: 250px;
+      }
+      .color-picker-container {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 10px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="header-content">
+    <h1 data-i18n-key="homeTitle">EPIXGAMES Home 🎮</h1>
+    <p data-i18n-key="homeSubtitle">We just got a MAJOR upgrade to the site, fam! Get ready for some epic gaming! 😎</p>
+  </div>
+</header>
+
+<!-- Tabs Navigation -->
+<nav id="tabs-container">
+  <button class="tab-button active" data-tab="games-tab" data-i18n-key="tabGames">Games</button>
+  <button class="tab-button" data-tab="store-tab" data-i18n-key="tabStore">Store</button>
+  <button class="tab-button" data-tab="settings-tab" data-i18n-key="tabSettings">Settings</button>
+</nav>
+
+<!-- Tab Content -->
+<div id="tab-content">
+  <!-- Games Tab -->
+  <div id="games-tab" class="tab-content active">
+    <!-- Search Widget Container (now inside Games Tab) -->
+    <div class="search-widget-container">
+      <div class="header-search-group">
+        <input type="text" id="searchInput" placeholder="Search games...">
+        <button id="searchButton">Search</button>
+      </div>
+      <div id="searchResults" class="search-results"></div>
+    </div>
+
+    <h2 data-i18n-key="gamesSectionTitle">EPIXGAMES Games</h2>
+    <div class="games-container">
+
+      <div class="game" id="game-1v1-lol">
+        <img src="https://www.mediafire.com/convkey/0fba/fjsl0ca42p00o9m7g.jpg" alt="1v1.lol">
+        <dl>
+          <dt>1v1.lol</dt>
+          <button class="play-now-button" data-game-path="/play/1v1lol.html">Play Now</button>
+        </dl>
+      </div>
+
+      <div class="game" id="game-Angry-Birds">
+        <img src="https://www.mediafire.com/convkey/ceef/iy0vghjso78nenc7g.jpg" alt="Angry Birds">
+        <dl>
+          <dt>Angry Birds</dt>
+          <button class="play-now-button" data-game-path="/play/angrybird.html">Play Now</button>
+        </dl>
+      </div>
+
+      <div class="game" id="game-Angry-Birds-Epic">
+        <img src="https://www.mediafire.com/convkey/13ce/zw7q7l17htz3iug7g.jpg" alt="Angry Birds Epic">
+        <dl>
+          <dt>Angry Birds Epic</dt>
+          <button class="play-now-button" data-game-path="/play/abepic.html">Play Now</button>
+        </dl>
+      </div>
+
+      <div class="game" id="game-Among-Us">
+        <img src="https://www.mediafire.com/convkey/c9b4/dgoer8eo7sp7mnt7g.jpg" alt="Among Us">
+        <dl>
+          <dt>Among Us</dt>
+          <button class="play-now-button" data-game-path="/play/amongus.html">Play Now</button>
+        </dl>
+      </div>
+
+      <div class="game" id="game-Angry-Birds-Rio">
+        <img src="https://www.mediafire.com/convkey/c4f2/oi2ca1yskdtra1m7g.jpg" alt="Angry Birds Rio">
+        <dl>
+          <dt>Angry Birds Rio</dt>
+          <button class="play-now-button" data-game-path="/play/rio.html">Play Now</button>
+        </dl>
+      </div>
+
+      <div class="game" id="game-Angry-Birds-Stella">
+        <img src="https://www.mediafire.com/convkey/a0a9/joybetmdtxzk6cm7g.jpg" alt="Angry Birds Stella">
+        <dl>
+          <dt>Angry Birds Stella</dt>
+          <button class="play-now-button" data-game-path="/play/stella.html">Play Now</button>
+        </dl>
+      </div>
+
+      <div class="game" id="game-Basket-Bros">
+        <img src="https://www.mediafire.com/convkey/f2cd/5pvv55vzgy80sq97g.jpg" alt="Basket Bros">
+        <dl>
+          <dt>Basket Bros</dt>
+          <button class="play-now-button" data-game-path="/play/basketbros.html">Play Now</button>
+        </dl>
+      </div>
+
+      <div class="game" id="game-Battleship">
+        <img src="https://www.mediafire.com/convkey/b985/jp96yg6v4dr8rzo7g.jpg" alt="Battleship">
+        <dl>
+          <dt>Battleship</dt>
+          <button class="play-now-button" data-game-path="/play/battleship.html">Play Now</button>
+        </dl>
+      </div>
+
+      <div class="game" id="game-BitLife">
+        <img src="https://www.mediafire.com/convkey/00ec/vcpc59fot723szw7g.jpg" alt="BitLife">
+        <dl>
+          <dt>BitLife</dt>
+          <button class="play-now-button" data-game-path="/play/bitlife.html">Play Now</button>
+        </dl>
+      </div>
+
+      <div class="game" id="game-Block-Blast">
+        <img src="https://www.mediafire.com/convkey/acca/4izkblqrulevfn57g.jpg" alt="Block Blast">
+        <dl>
+          <dt>Block Block</dt>
+          <button class="play-now-button" data-game-path="/play/blockblast.html">Play Now</button>
+        </dl>
+      </div>
+
+      <div class="game" id="game-Bad-Piggies">
+        <img src="https://www.mediafire.com/convkey/0866/vsh0682j2w9qxhl7g.jpg" alt="Bad Piggies">
+        <dl>
+          <dt>Bad Piggies</dt>
+          <button class="play-now-button" data-game-path="/play/badpiggies.html">Play Now</button>
+        </dl>
+      </div>
+
+      <div class="game" id="game-Call-of-Ops-2">
+        <img src="https://www.mediafire.com/convkey/4a04/gs0b6crk0n5xzhv7g.jpg" alt="Call of Ops 2">
+        <dl>
+          <dt>Call of Ops 2</dt>
+          <button class="play-now-button" data-game-path="/play/callofops2.html">Play Now</button>
+        </dl>
+      </div>
+
+      <div class="game" id="game-Call-of-Ops-3">
+        <img src="https://www.mediafire.com/convkey/3adc/6czeo5tzxhx5hla7g.jpg" alt="Call of Ops 3">
+        <dl>
+          <dt>Call of Ops 3</dt>
+          <button class="play-now-button" data-game-path="/play/callofops3.html">Play Now</button>
+        </dl>
+      </div>
+
+      <div class="game" id="game-Call-of-Ops-3-Zombies">
+        <img src="https://www.mediafire.com/convkey/dc19/fyjm4208ciii1d37g.jpg" alt="Call of Ops 3 Zombies">
+        <dl>
+          <dt>Call of Ops 3 Zombies</dt>
+          <button class="play-now-button" data-game-path="/play/callofops3zombies.html">Play Now</button>
+        </dl>
+      </div>
+
+      <div class="game" id="game-Catac-io">
+        <img src="https://www.mediafire.com/convkey/835b/2ap4blch50z33p27g.jpg" alt="Catac.io">
+        <dl>
+          <dt>Catac.io</dt>
+          <button class="play-now-button" data-game-path="/play/catacio.html">Play Now</button>
+        </dl>
+      </div>
+
+      <div class="game" id="game-Chess">
+        <img src="https://www.mediafire.com/convkey/99a3/s5lxuivh0n6jdq47g.jpg" alt="Chess">
+        <dl>
+          <dt>Chess</dt>
+          <button class="play-now-button" data-game-path="/play/chess.html">Play Now</button>
+        </dl>
+      </div>
+
+      <div class="game" id="game-Cookie-Clicker">
+        <img src="https://www.mediafire.com/convkey/2e18/xf90vbqrawmret77g.jpg" alt="Cookie Clicker">
+        <dl>
+          <dt>Cookie Clicker</dt>
+          <button class="play-now-button" data-game-path="/play/cookieclicker.html">Play Now</button>
+        </dl>
+      </div>
+
+      <div class="game" id="game-Cut-the-Rope">
+        <img src="https://www.mediafire.com/convkey/1dc5/ep5lpbtg61zkb2a7g.jpg" alt="Cut the Rope">
+        <dl>
+          <dt>Cut the Rope</dt>
+          <button class="play-now-button" data-game-path="/play/cuttherope.html">Play Now</button>
+        </dl>
+      </div>
+
+      <div class="game" id="game-Cut-the-Rope-2">
+        <img src="https://www.mediafire.com/convkey/9d7e/lcpz8u1t904dgfv7g.jpg" alt="Cut the Rope 2">
+        <dl>
+          <dt>Cut the Rope 2</dt>
+          <button class="play-now-button" data-game-path="/play/cuttherope2.html">Play Now</button>
+        </dl>
+      </div>
+
+      <div class="game" id="game-Dodge-the-Bar">
+        <img src="https://www.mediafire.com/convkey/c5ac/mr39ydydg5a22oi7g.jpg" alt="Dodge the Bar">
+        <dl>
+          <dt>Dodge the Bar</dt>
+          <button class="play-now-button" data-game-path="/play/dodgethebar.html">Play Now</button>
+        </dl>
+      </div>
+
+      <div class="game" id="game-Drift-Boss">
+        <img src="https://www.mediafire.com/convkey/e980/c6s9opnclguywbn7g.jpg" alt="Drift Boss">
+        <dl>
+          <dt>Drift Boss</dt>
+          <button class="play-now-button" data-game-path="/play/driftboss.html">Play Now</button>
+        </dl>
+      </div>
+
+      <div class="game" id="game-Fireboy-and-Watergirl">
+        <img src="https://www.mediafire.com/convkey/c29b/e3n575c8zvwoylj7g.jpg" alt="Fireboy and Watergirl">
+        <dl>
+          <dt>Fireboy and Watergirl</dt>
+          <button class="play-now-button" data-game-path="/play/fireboyandwatergirl.html">Play Now</button>
+        </dl>
+      </div>
+
+      <div class="game" id="game-Flappy-Bird">
+        <img src="https://www.mediafire.com/convkey/caa3/ch3tzgf6koc047e7g.jpg" alt="Flappy Bird">
+        <dl>
+          <dt>Flappy Bird</dt>
+          <button class="play-now-button" data-game-path="/play/flappybird.html">Play Now</button>
+        </dl>
+      </div>
+
+      <div class="game" id="game-FNAF-1">
+        <img src="https://www.mediafire.com/convkey/4d91/9bogsg5iuezz0a17g.jpg" alt="FNAF 1">
+        <dl>
+          <dt>FNAF 1</dt>
+          <button class="play-now-button" data-game-path="/play/fnaf1.html">Play Now</button>
+        </dl>
+      </div>
+
+      <div class="game" id="game-FNAF-2">
+        <img src="https://www.mediafire.com/convkey/8bc3/5a09bjo1j67b9lt7g.jpg" alt="FNAF 2">
+        <dl>
+          <dt>FNAF 2</dt>
+          <button class="play-now-button" data-game-path="/play/fnaf2.html">Play Now</button>
+        </dl>
+      </div>
+
+      <div class="game" id="game-FNAF-3">
+        <img src="https://www.mediafire.com/convkey/c20e/e2plb6ktp5mb8cg7g.jpg" alt="FNAF 3">
+        <dl>
+          <dt>FNAF 3</dt>
+          <button class="play-now-button" data-game-path="/play/fnaf3.html">Play Now</button>
+        </dl>
+      </div>
+
+      <div class="game" id="game-FNAF-4">
+        <img src="https://www.mediafire.com/convkey/a18c/wrq22xj6bqzxaky7g.jpg" alt="FNAF 4">
+        <dl>
+          <dt>FNAF 4</dt>
+          <button class="play-now-button" data-game-path="/play/fnaf4.html">Play Now</button>
+        </dl>
+      </div>
+
+      <div class="game" id="game-Friday-Night-Funkin">
+        <img src="https://www.mediafire.com/convkey/2692/q47l4ewzosd0ddc7g.jpg" alt="Friday Night Funkin">
+        <dl>
+          <dt>Friday Night Funkin</dt>
+          <button class="play-now-button" data-game-path="/play/fnf.html">Play Now</button>
+        </dl>
+      </div>
+
+      <div class="game" id="game-Fortnite">
+        <img src="https://www.mediafire.com/convkey/7a48/lk2gegrck5l149r7g.jpg" alt="Fortnite">
+        <dl>
+          <dt>Fortnite</dt>
+          <h2>SCRATCH version</h2>
+          <button class="play-now-button" data-game-path="/play/fortscratch.html">Play Now</button>
+        </dl>
+      </div>
+
+      <div class="game" id="game-Geometry-Dash">
+        <img src="https://www.mediafire.com/convkey/7ae0/3mz9oz0hc63nu4v7g.jpg" alt="Geometry Dash">
+        <dl>
+          <dt>Geometry Dash</dt>
+          <button class="play-now-button" data-game-path="/play/geometrydash.html">Play Now</button>
+        </dl>
+      </div>
+
+      <div class="game" id="game-Glitch">
+        <img src="https://www.mediafire.com/convkey/dd96/kl9qvz9qxvgf8ri7g.jpg" alt="Glitch">
+        <dl>
+          <dt>Glitch</dt>
+          <button class="play-now-button" data-game-path="/play/glitch.html">Play Now</button>
+        </dl>
+      </div>
+
+      <div class="game" id="game-Guess-their-Answer">
+        <img src="https://www.mediafire.com/convkey/d3f6/51o2px2f4rauxvb7g.jpg" alt="Guess their Answer">
+        <dl>
+          <dt>Guess their Answer</dt>
+          <button class="play-now-button" data-game-path="/play/guesstheiranswer.html">Play Now</button>
+        </dl>
+      </div>
+
+      <div class="game" id="game-Subway-Surfers">
+        <img src="https://www.mediafire.com/convkey/d479/f0ijgipurbfrofo7g.jpg" alt="Subway Surfers">
+        <dl>
+          <dt>Subway Surfers</dt>
+          <button class="play-now-button" data-game-path="/play/subwaysurfers.html">Play Now</button>
+        </dl>
+      </div>
+
+      <div class="game" id="game-Super-Mario-Bros">
+        <img src="https://www.mediafire.com/convkey/6456/rpuwycg2fp5wr987g.jpg" alt="Super Mario Bros">
+        <dl>
+          <dt>Super Mario Bros</dt>
+          <button class="play-now-button" data-game-path="/play/supermariobros.html">Play Now</button>
+        </dl>
+      </div>
+
+      <div class="game" id="game-Tiny-Fishing">
+        <img src="https://www.mediafire.com/convkey/83b6/vdx1l7p7kbegnnu7g.jpg" alt="Tiny Fishing">
+        <dl>
+          <dt>Tiny Fishing</dt>
+          <button class="play-now-button" data-game-path="/play/tinyfishing.html">Play Now</button>
+        </dl>
+      </div>
+
+      <div class="game" id="game-Fantasy-Avengers">
+        <img src="https://www.mediafire.com/convkey/20b0/u146qzvpooa02ot7g.jpg" alt="Fantasy Avengers">
+        <dl>
+          <dt>Fantasy Avengers</dt>
+          <button class="play-now-button" data-game-path="/play/fantasyavengers.html">Play Now</button>
+        </dl>
+      </div>
+
+      <div class="game" id="game-Fantasy-Avengers-Stage-2">
+        <img src="https://www.mediafire.com/convkey/20b0/u146qzvpooa02ot7g.jpg" alt="Fantasy Avengers Stage 2">
+        <dl>
+          <dt>Fantasy Avengers Stage 2</dt>
+          <button class="play-now-button" data-game-path="/play/fantasyavengers2.html">Play Now</button>
+        </dl>
+      </div>
+
+      <div class="game" id="game-Fantasy-Avengers-Stage-3">
+        <img src="https://www.mediafire.com/convkey/20b0/u146qzvpooa02ot7g.jpg" alt="Fantasy Avengers Stage 3">
+        <dl>
+          <dt>Fantasy Avengers Stage 3</dt>
+          <button class="play-now-button" data-game-path="/play/fantasyavengers3.html">Play Now</button>
+        </dl>
+      </div>
+
+      <div class="game" id="game-Crazy-Cattle-3D">
+        <img src="https://crazycattle-3d.com/thumbs/crazy-cattle-3d_1.webp" alt="Crazy Cattle 3D">
+        <dl>
+          <dt>Crazy Cattle 3D</dt>
+          <button class="play-now-button" data-game-path="/play/crazycattle.html">Play Now</button>
+        </dl>
+      </div>
+
+      <div class="game" id="game-Super-Mario-64-Web">
+        <img src="https://i.ytimg.com/vi/95EpsdUjTQw/maxresdefault.jpg" alt="Super Mario 64 Web">
+        <dl>
+          <dt>Super Mario 64 Web</dt>
+          <button class="play-now-button" data-game-path="/play/64.html">Play Now</button>
+        </dl>
+      </div>
+
+      <!-- New Game: The Origin of Darwin -->
+      <div class="game" id="game-The-Origin-of-Darwin">
+        <img src="https://cn.i.cdn.ti-platform.com/cnemea/content/17043/game/TheOriginOfDarwin-GB-Cover-EN.jpg" alt="The Origin of Darwin">
+        <dl>
+          <dt>The Origin of Darwin</dt>
+          <button class="play-now-button" data-game-path="/play/darwinorigin.html">Play Now</button>
+        </dl>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Store Tab -->
+  <div id="store-tab" class="tab-content">
+    <h2 data-i18n-key="storeSectionTitle">EPIXGAMES Store 🛍️</h2>
+    <!-- Changed data-i18n-key to a span inside the div -->
+    <div class="money-display"><span data-i18n-key="yourMoneyPrefix">Money:</span> <span id="currentMoney">0</span> 💰</div>
+    <div id="storeItemsContainer" class="store-grid">
+      <!-- Store items will be dynamically loaded here -->
+    </div>
+  </div>
+
+  <!-- Settings Tab -->
+  <div id="settings-tab" class="tab-content">
+    <h2 data-i18n-key="settingsSectionTitle">Settings ⚙️</h2>
+
+    <div class="settings-section">
+      <label for="accentColorPicker" data-i18n-key="settingsAccentColor">Choose Accent Color:</label>
+      <input type="color" id="accentColorPicker" value="#61dafb">
+    </div>
+
+    <div class="settings-section">
+      <label for="languageSelect" data-i18n-key="settingsLanguage">Language:</label>
+      <select id="languageSelect">
+        <option value="en" data-i18n-key="langEnglish">English</option>
+        <option value="es" data-i18n-key="langSpanish">Español</option>
+        <option value="fr" data-i18n-key="langFrench">Français</option>
+      </select>
+    </div>
+
+    <div class="settings-section">
+      <label data-i18n-key="settingsReset">Reset All Data:</label>
+      <button id="resetEverythingButton" class="reset-button" data-i18n-key="resetButton">Reset Everything</button>
+      <p id="resetConfirmationMessage" class="confirmation-message"></p>
+    </div>
+  </div>
+</div>
+
+<!-- Iframe Game Player Overlay -->
+<div id="gamePlayerOverlay" class="game-player-overlay">
+  <div class="game-iframe-container">
+    <iframe id="gameIframe" class="game-iframe" allowfullscreen></iframe>
+  </div>
+  <div class="game-controls-bar">
+    <button id="reloadGameButton" data-i18n-key="reloadButton">Reload</button>
+    <button id="switchUrlButton" data-i18n-key="switchUrlButton">Switch URL</button>
+    <button id="fullScreenButton" data-i18n-key="fullScreenButton">Full Screen</button>
+    <button id="exitGameButton" data-i18n-key="exitButton">Exit</button>
+    <button id="copyLinkButton" data-i18n-key="copyLink보다">Copy Link</button>
+  </div>
+</div>
+
+<!-- Custom Message Box -->
+<div id="messageBox">
+  <p id="messageBoxText"></p>
+  <button id="messageBoxCloseButton">OK</button>
+</div>
+
+<script>
+  // Define the base URLs for the games
+  const GAME_BASE_URLS = [
+    'https://epix.pages.dev',
+    'https://birdmath.vercel.app',
+    'https://birdmath-yqlov.kinsta.page',
+    'https://birdmath-fidgetsetcs-projects.vercel.app',
+    'https://birdmath-git-main-fidgetsetcs-projects.vercel.app',
+    'https://lustrous-horse-7c8ec9.netlify.app',
+    'https://coolmathgames-4gyl5.kinsta.page',
+    'https://friend-b14n3.kinsta.page',
+    'https://a-c2tq2.kinsta.page'
+  ];
+
+  // Translations for internationalization
+  const translations = {
+    en: {
+      homeTitle: "EPIXGAMES Home 🎮",
+      homeSubtitle: "We just got a MAJOR upgrade to the site, fam! Get ready for some epic gaming! 😎",
+      tabGames: "Games",
+      tabStore: "Store",
+      tabSettings: "Settings",
+      gamesSectionTitle: "EPIXGAMES Games",
+      storeSectionTitle: "EPIXGAMES Store 🛍️",
+      yourMoneyPrefix: "Money:", // New translation key for the prefix
+      settingsSectionTitle: "Settings ⚙️",
+      settingsAccentColor: "Choose Accent Color:",
+      settingsLanguage: "Language:",
+      langEnglish: "English",
+      langSpanish: "Español",
+      langFrench: "Français",
+      settingsReset: "Reset All Data:",
+      resetButton: "Reset Everything",
+      reloadButton: "Reload",
+      switchUrlButton: "Switch URL",
+      fullScreenButton: "Full Screen",
+      exitButton: "Exit",
+      copyLinkButton: "Copy Link",
+      buyButton: "Buy for {cost} 💰",
+      applyButton: "Apply",
+      appliedText: "Applied!",
+      ownedText: "Owned",
+      insufficientFunds: "Not enough money!",
+      resetConfirm: "Are you sure? Click {count} more times to confirm!",
+      resetFinalConfirm: "All data reset! Reloading...",
+      linkCopied: "Game link copied to clipboard!",
+      searchPlaceholder: "Search games..."
+    },
+    es: {
+      homeTitle: "EPIXJUEGOS Inicio 🎮",
+      homeSubtitle: "¡Acabamos de actualizar el sitio, familia! ¡Prepárense para juegos épicos! 😎",
+      tabGames: "Juegos",
+      tabStore: "Tienda",
+      tabSettings: "Ajustes",
+      gamesSectionTitle: "Juegos EPIXGAMES",
+      storeSectionTitle: "Tienda EPIXGAMES 🛍️",
+      yourMoneyPrefix: "Dinero:", // New translation key for the prefix
+      settingsSectionTitle: "Ajustes ⚙️",
+      settingsAccentColor: "Elige Color de Acento:",
+      settingsLanguage: "Idioma:",
+      langEnglish: "Inglés",
+      langSpanish: "Español",
+      langFrench: "Francés",
+      settingsReset: "Restablecer Todos los Datos:",
+      resetButton: "Restablecer Todo",
+      reloadButton: "Recargar",
+      switchUrlButton: "Cambiar URL",
+      fullScreenButton: "Pantalla Completa",
+      exitButton: "Salir",
+      copyLinkButton: "Copiar Enlace",
+      buyButton: "Comprar por {cost} 💰",
+      applyButton: "Aplicar",
+      appliedText: "¡Aplicado!",
+      ownedText: "Poseído",
+      insufficientFunds: "¡Dinero insuficiente!",
+      resetConfirm: "¿Estás seguro? ¡Haz clic {count} veces más para confirmar!",
+      resetFinalConfirm: "¡Todos los datos restablecidos! Recargando...",
+      linkCopied: "¡Enlace del juego copiado!",
+      searchPlaceholder: "Buscar juegos..."
+    },
+    fr: {
+      homeTitle: "EPIXJEUX Accueil 🎮",
+      homeSubtitle: "On a fait une GROSSE mise à jour du site, la famille ! Préparez-vous pour des jeux épiques ! 😎",
+      tabGames: "Jeux",
+      tabStore: "Boutique",
+      tabSettings: "Paramètres",
+      gamesSectionTitle: "Jeux EPIXGAMES",
+      storeSectionTitle: "Boutique EPIXGAMES 🛍️",
+      yourMoneyPrefix: "Argent :", // New translation key for the prefix
+      settingsSectionTitle: "Paramètres ⚙️",
+      settingsAccentColor: "Choisir la Couleur d'Accentuation :",
+      settingsLanguage: "Langue :",
+      langEnglish: "Anglais",
+      langSpanish: "Español",
+      langFrench: "Français",
+      settingsReset: "Réinitialiser Toutes les Données :",
+      resetButton: "Tout Réinitialiser",
+      reloadButton: "Recharger",
+      switchUrlButton: "Changer l'URL",
+      fullScreenButton: "Plein Écran",
+      exitButton: "Quitter",
+      copyLinkButton: "Copier le Lien",
+      buyButton: "Acheter pour {cost} 💰",
+      applyButton: "Appliquer",
+      appliedText: "Appliqué !",
+      ownedText: "Possédé",
+      insufficientFunds: "Pas assez d'argent !",
+      resetConfirm: "Êtes-vous sûr ? Cliquez {count} fois de plus pour confirmer !",
+      resetFinalConfirm: "Toutes les données réinitialisées ! Rechargement...",
+      linkCopied: "Lien du jeu copié !",
+      searchPlaceholder: "Rechercher des jeux..."
+    }
+  };
+
+  // Store items data
+  const storeItems = [
+    { id: 'bg-stars', name: 'Starry Night', type: 'background', value: 'url(https://placehold.co/1920x1080/000033/FFFFFF?text=Starry+Night) no-repeat center center / cover', cost: 50, default: false, img: 'https://placehold.co/100x100/000033/FFFFFF?text=Stars' },
+    { id: 'bg-neon', name: 'Neon Grid', type: 'background', value: 'url(https://placehold.co/1920x1080/330033/FF00FF?text=Neon+Grid) no-repeat center center / cover', cost: 75, default: false, img: 'https://placehold.co/100x100/330033/FF00FF?text=Neon' },
+    { id: 'text-gold', name: 'Gold Text', type: 'text-color', value: 'gold', cost: 30, default: false, img: 'https://placehold.co/100x100/3c4048/FFD700?text=Gold' },
+    { id: 'text-lime', name: 'Lime Text', type: 'text-color', value: 'lime', cost: 30, default: false, img: 'https://placehold.co/100x100/3c4048/00FF00?text=Lime' },
+    { id: 'bg-gumball', name: 'The Amazing World of Gumball Theme', type: 'background', value: 'url(https://images6.alphacoders.com/950/950030.jpg) no-repeat center center / cover', cost: 20, default: false, img: 'https://placehold.co/100x100/4CAF50/FFFFFF?text=Gumball' },
+    { id: 'bg-minecraft', name: 'Minecraft Theme', type: 'background', value: 'url(https://wallpapers.com/images/featured/minecraft-s2kxfahyg30sob8q.jpg) no-repeat center center / cover', cost: 15, default: false, img: 'https://placehold.co/100x100/8BC34A/FFFFFF?text=Minecraft' },
+    { id: 'bg-amongus', name: 'Among Us Theme', type: 'background', value: 'url(https://i.redd.it/jo89zfzqi9t51.png) no-repeat center center / cover', cost: 10, default: false, img: 'https://placehold.co/100x100/FF5722/FFFFFF?text=AmongUs' },
+    { id: 'default-theme', name: 'Default Theme', type: 'full-theme', value: {
+      '--home-background': '#282c34',
+      '--home-text-color': '#ffffff'
+    }, cost: 0, default: true, img: 'https://placehold.co/100x100/282c34/FFFFFF?text=Default' },
+    { id: 'rgb-theme', name: 'RGB Theme', type: 'dynamic-theme', value: {}, cost: 70, default: false, img: 'https://placehold.co/100x100/FF00FF/00FFFF?text=RGB' }
+  ];
+
+
+  // Global variables
+  let currentBaseUrl = GAME_BASE_URLS[0];
+  let money = parseInt(localStorage.getItem('epixgamesMoney') || '0');
+  let ownedAccessories = JSON.parse(localStorage.getItem('epixgamesOwnedAccessories') || '{}');
+  let appliedAccessory = localStorage.getItem('epixgamesAppliedAccessory') || 'default-theme';
+  let currentLanguage = localStorage.getItem('epixgamesLanguage') || 'en';
+  let totalPlaytimeSeconds = parseInt(localStorage.getItem('epixgamesTotalPlaytimeSeconds') || '0'); // New: total accumulated playtime
+  let sessionStartTime = 0; // New: timestamp for current session start
+  let moneyInterval = null;
+  let resetConfirmCount = 0;
+  let resetConfirmTimeout = null;
+  let rgbIntervalId = null; // New: for RGB theme interval
+  let currentHue = 0; // New: for RGB theme color cycling
+
+  // Get elements (these are safe to get globally as they exist from the start)
+  const accentColorPicker = document.getElementById('accentColorPicker');
+  const root = document.documentElement;
+  const searchInput = document.getElementById('searchInput');
+  const searchButton = document.getElementById('searchButton');
+  const searchResultsDiv = document.getElementById('searchResults');
+  const gamePlayerOverlay = document.getElementById('gamePlayerOverlay');
+  const gameIframe = document.getElementById('gameIframe');
+  const reloadGameButton = document.getElementById('reloadGameButton');
+  const switchUrlButton = document.getElementById('switchUrlButton');
+  const fullScreenButton = document.getElementById('fullScreenButton');
+  const exitGameButton = document.getElementById('exitGameButton');
+  const copyLinkButton = document.getElementById('copyLinkButton');
+  const tabButtons = document.querySelectorAll('.tab-button');
+  const tabContents = document.querySelectorAll('.tab-content');
+
+  const storeItemsContainer = document.getElementById('storeItemsContainer');
+  const languageSelect = document.getElementById('languageSelect');
+  const resetEverythingButton = document.getElementById('resetEverythingButton');
+  const resetConfirmationMessage = document.getElementById('resetConfirmationMessage');
+  const messageBox = document.getElementById('messageBox');
+  const messageBoxText = document.getElementById('messageBoxText');
+  const messageBoxCloseButton = document.getElementById('messageBoxCloseButton');
+
+  // Declare currentMoneySpan globally, but assign it inside DOMContentLoaded
+  let currentMoneySpan;
+
+
+  // Store all game data for easy lookup
+  const allGamesData = new Map(); // Map: gameTitle -> { id: 'game-title-id', path: '/play/game.html' }
+
+  // --- Helper Functions ---
+
+  // Custom Message Box
+  function showMessageBox(message) {
+    messageBoxText.textContent = message;
+    messageBox.style.display = 'block';
   }
-  .game {
-    text-align: center;
-    width: 200px;
+
+  // Convert hex to RGB
+  const hexToRgb = (hex) => {
+    const bigint = parseInt(hex.slice(1), 16);
+    const r = (bigint >> 16) & 255;
+    const g = (bigint >> 8) & 255;
+    const b = bigint & 255;
+    return [r, g, b];
+  };
+
+  // Convert RGB to hex
+  const rgbToHex = (r, g, b) => {
+    return '#' + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
+  };
+
+  // Darken a color by a percentage
+  const darkenColor = (hex, percent) => {
+    let [r, g, b] = hexToRgb(hex);
+    r = Math.max(0, r - Math.floor(r * percent));
+    g = Math.max(0, g - Math.floor(g * percent));
+    b = Math.max(0, b - Math.floor(b * percent));
+    return rgbToHex(r, g, b);
+  };
+
+  // HSL to RGB conversion (needed for RGB theme)
+  function hslToRgb(h, s, l) {
+    s /= 100;
+    l /= 100;
+    let c = (1 - Math.abs(2 * l - 1)) * s,
+        x = c * (1 - Math.abs((h / 60) % 2 - 1)),
+        m = l - c / 2,
+        r = 0,
+        g = 0,
+        b = 0;
+
+    if (0 <= h && h < 60) {
+      r = c; g = x; b = 0;
+    } else if (60 <= h && h < 120) {
+      r = x; g = c; b = 0;
+    } else if (120 <= h && h < 180) {
+      r = 0; g = c; b = x;
+    } else if (180 <= h && h < 240) {
+      r = 0; g = x; b = c;
+    } else if (240 <= h && h < 300) {
+      r = x; g = 0; b = c;
+    } else if (300 <= h && h < 360) {
+      r = c; g = 0; b = x;
+    }
+    r = Math.round((r + m) * 255);
+    g = Math.round((g + m) * 255);
+    b = Math.round((b + m) * 255);
+
+    return rgbToHex(r, g, b);
   }
-  .game img {
-    width: 100%;
-    height: auto;
+
+  // Update all accent-related colors
+  function updateAccentColors(color) {
+    root.style.setProperty('--accent-color', color);
+    const hoverColor = darkenColor(color, 0.2);
+    root.style.setProperty('--accent-hover-color', hoverColor);
+    root.style.setProperty('--primary-color', color);
+    root.style.setProperty('--secondary-color', color);
+    const darkBgColor = darkenColor(color, 0.5);
+    root.style.setProperty('--bg-color', darkBgColor);
+    localStorage.setItem('epixgamesAccentColor', color);
   }
-  .game dl {
-    margin: 0;
+
+  // --- RGB Theme Functions ---
+  function startRgbEffect() {
+    stopRgbEffect(); // Ensure any existing interval is cleared
+    currentHue = 0; // Start from red
+
+    rgbIntervalId = setInterval(() => {
+      currentHue = (currentHue + 1) % 360; // Cycle hue from 0 to 359
+      const newAccentColor = hslToRgb(currentHue, 100, 50); // Full saturation, medium lightness
+
+      // Apply the new accent color
+      root.style.setProperty('--accent-color', newAccentColor);
+      root.style.setProperty('--accent-hover-color', darkenColor(newAccentColor, 0.2));
+      root.style.setProperty('--primary-color', newAccentColor);
+      root.style.setProperty('--secondary-color', newAccentColor);
+
+      // Dynamically set the background to a darker version of the current accent color
+      const dynamicBgColor = darkenColor(newAccentColor, 0.5);
+      root.style.setProperty('--home-background', dynamicBgColor);
+      root.style.setProperty('--home-text-color', 'var(--text-color)'); // Keep text color default white
+    }, 50); // Update every 50ms for a smooth transition
   }
-  .game dt {
-    margin-top: 10px;
-    font-family: 'Verdana', sans-serif;
-    font-size: 14px;
+
+  function stopRgbEffect() {
+    if (rgbIntervalId) {
+      clearInterval(rgbIntervalId);
+      rgbIntervalId = null;
+      // Reset to default theme colors when RGB effect stops
+      const defaultTheme = storeItems.find(item => item.id === 'default-theme');
+      if (defaultTheme && defaultTheme.type === 'full-theme') {
+        for (const prop in defaultTheme.value) {
+          root.style.setProperty(prop, defaultTheme.value[prop]);
+        }
+      }
+      // Also reset accent color picker to its last saved value or default
+      const savedAccentColor = localStorage.getItem('epixgamesAccentColor');
+      updateAccentColors(savedAccentColor || accentColorPicker.value);
+    }
   }
-</style>
 
-<div class="games-container">
-  <div class="game">
-    <img src="https://www.mediafire.com/convkey/0fba/fjsl0ca42p00o9m7g.jpg" alt="1v1.lol" height="200" width="200">
-    <dl>
-      <dt>1v1.lol</dt>
-      <form action="/play/1v1lol.html">
-        <input type="submit" value="Play" />
-      </form>
-    </dl>
-  </div>
-  <div class="game">
-    <img src="https://www.mediafire.com/convkey/ceef/iy0vghjso78nenc7g.jpg" alt="Angry Birds" height="200" width="200">
-    <dl>
-      <dt>Angry Birds</dt>
-      <form action="/play/angrybird.html">
-        <input type="submit" value="Play" />
-      </form>
-    </dl>
-  </div>
-  <div class="game">
-    <img src="https://www.mediafire.com/convkey/13ce/zw7q7l17htz3iug7g.jpg" alt="Angry Birds Epic" height="200" width="200">
-    <dl>
-      <dt>Angry Birds Epic</dt>
-      <form action="/play/abepic.html">
-        <input type="submit" value="Play" />
-      </form>
-    </dl>
-  </div>
-  <div class="game">
-    <img src="https://www.mediafire.com/convkey/c9b4/dgoer8eo7sp7mnt7g.jpg" alt="Among Us" height="200" width="200">
-    <dl>
-      <dt>Among Us</dt>
-      <form action="/play/amongus.html">
-        <input type="submit" value="Play" />
-      </form>
-    </dl>
-  </div>
-  <div class="game">
-    <img src="https://www.mediafire.com/convkey/c4f2/oi2ca1yskdtra1m7g.jpg" alt="Angry Birds Rio" height="200" width="200">
-    <dl>
-      <dt>Angry Birds Rio</dt>
-      <form action="/play/rio.html">
-        <input type="submit" value="Play" />
-      </form>
-    </dl>
-  </div>
-  <div class="game">
-    <img src="https://www.mediafire.com/convkey/a0a9/joybetmdtxzk6cm7g.jpg" alt="Angry Birds Stella" height="200" width="200">
-    <dl>
-      <dt>Angry Birds Stella</dt>
-      <form action="/play/stella.html">
-        <input type="submit" value="Play" />
-      </form>
-    </dl>
-  </div>
-  <div class="game">
-    <img src="https://www.mediafire.com/convkey/f2cd/5pvv55vzgy80sq97g.jpg" alt="Basket Bros" height="200" width="200">
-    <dl>
-      <dt>Basket Bros</dt>
-      <form action="/play/basketbros.html">
-        <input type="submit" value="Play" />
-      </form>
-    </dl>
-  </div>
-  <div class="game">
-    <img src="https://www.mediafire.com/convkey/b985/jp96yg6v4dr8rzo7g.jpg" alt="Battleship" height="200" width="200">
-    <dl>
-      <dt>Battleship</dt>
-      <form action="/play/battleship.html">
-        <input type="submit" value="Play" />
-      </form>
-    </dl>
-  </div>
-  <div class="game">
-    <img src="https://www.mediafire.com/convkey/00ec/vcpc59fot723szw7g.jpg" alt="BitLife" height="200" width="200">
-    <dl>
-      <dt>BitLife</dt>
-      <form action="/play/bitlife.html">
-        <input type="submit" value="Play" />
-      </form>
-    </dl>
-  </div>
-  <div class="game">
-    <img src="https://www.mediafire.com/convkey/acca/4izkblqrulevfn57g.jpg" alt="Block Blast" height="200" width="200">
-    <dl>
-      <dt>Block Blast</dt>
-      <form action="/play/blockblast.html">
-        <input type="submit" value="Play" />
-      </form>
-    </dl>
-  </div>
-  <div class="game">
-    <img src="https://www.mediafire.com/convkey/0866/vsh0682j2w9qxhl7g.jpg" alt="Bad Piggies" height="200" width="200">
-    <dl>
-      <dt>Bad Piggies</dt>
-      <form action="/play/badpiggies.html">
-        <input type="submit" value="Play" />
-      </form>
-    </dl>
-  </div>
-  <div class="game">
-    <img src="https://www.mediafire.com/convkey/4a04/gs0b6crk0n5xzhv7g.jpg" alt="Call of Ops 2" height="200" width="200">
-    <dl>
-      <dt>Call of Ops 2</dt>
-      <form action="/play/callofops2.html">
-        <input type="submit" value="Play" />
-      </form>
-    </dl>
-  </div>
-  <div class="game">
-    <img src="https://www.mediafire.com/convkey/3adc/6czeo5tzxhx5hla7g.jpg" alt="Call of Ops 3" height="200" width="200">
-    <dl>
-      <dt>Call of Ops 3</dt>
-      <form action="/play/callofops3.html">
-        <input type="submit" value="Play" />
-      </form>
-    </dl>
-  </div>
-  <div class="game">
-    <img src="https://www.mediafire.com/convkey/dc19/fyjm4208ciii1d37g.jpg" alt="Call of Ops 3 Zombies" height="200" width="200">
-    <dl>
-      <dt>Call of Ops 3 Zombies</dt>
-      <form action="/play/callofops3zombies.html">
-        <input type="submit" value="Play" />
-      </form>
-    </dl>
-  </div>
-  <div class="game">
-    <img src="https://www.mediafire.com/convkey/835b/2ap4blch50z33p27g.jpg" alt="Catac.io" height="200" width="200">
-    <dl>
-      <dt>Catac.io</dt>
-      <form action="/play/catacio.html">
-        <input type="submit" value="Play" />
-      </form>
-    </dl>
-  </div>
-  <div class="game">
-    <img src="https://www.mediafire.com/convkey/99a3/s5lxuivh0n6jdq47g.jpg" alt="Chess" height="200" width="200">
-    <dl>
-      <dt>Chess</dt>
-      <form action="/play/chess.html">
-        <input type="submit" value="Play" />
-      </form>
-    </dl>
-  </div>
-  <div class="game">
-    <img src="https://www.mediafire.com/convkey/2e18/xf90vbqrawmret77g.jpg" alt="Cookie Clicker" height="200" width="200">
-    <dl>
-      <dt>Cookie Clicker</dt>
-      <form action="/play/cookieclicker.html">
-        <input type="submit" value="Play" />
-      </form>
-    </dl>
-  </div>
-<div class="game">
-  <img src="https://www.mediafire.com/convkey/00ec/vcpc59fot723szw7g.jpg" alt="BitLife" height="200" width="200">
-  <dl>
-    <dt>BitLife</dt>
-    <form action="/play/bitlife.html">
-      <input type="submit" value="Play" />
-    </form>
-  </dl>
-</div>
+  // --- Tab Switching Logic ---
+  function showTab(tabId) {
+    tabContents.forEach(content => {
+      content.classList.remove('active');
+    });
+    tabButtons.forEach(button => {
+      button.classList.remove('active');
+    });
 
-<div class="game">
-  <img src="https://www.mediafire.com/convkey/acca/4izkblqrulevfn57g.jpg" alt="Block Blast" height="200" width="200">
-  <dl>
-    <dt>Block Blast</dt>
-    <form action="/play/blockblast.html">
-      <input type="submit" value="Play" />
-    </form>
-  </dl>
-</div>
+    document.getElementById(tabId).classList.add('active');
+    document.querySelector(`.tab-button[data-tab="${tabId}"]`).classList.add('active');
 
-<div class="game">
-  <img src="https://www.mediafire.com/convkey/0866/vsh0682j2w9qxhl7g.jpg" alt="Bad Piggies" height="200" width="200">
-  <dl>
-    <dt>Bad Piggies</dt>
-    <form action="/play/badpiggies.html">
-      <input type="submit" value="Play" />
-    </form>
-  </dl>
-</div>
+    // Hide search widget if not on games tab
+    const searchWidget = document.querySelector('.search-widget-container');
+    if (tabId !== 'games-tab') {
+      if (searchWidget) searchWidget.style.display = 'none';
+    } else {
+      if (searchWidget) searchWidget.style.display = 'flex'; // Or 'block' depending on its flex state
+    }
+  }
 
-<div class="game">
-  <img src="https://www.mediafire.com/convkey/4a04/gs0b6crk0n5xzhv7g.jpg" alt="Call of Ops 2" height="200" width="200">
-  <dl>
-    <dt>Call of Ops 2</dt>
-    <form action="/play/callofops2.html">
-      <input type="submit" value="Play" />
-    </form>
-  </dl>
-</div>
+  // --- Game Player Functions ---
+  function openGameInIframe(gameRelativePath) {
+    currentLoadedGamePath = gameRelativePath;
+    gameIframe.src = `${currentBaseUrl}${gameRelativePath}`;
+    gamePlayerOverlay.classList.add('active');
+    startMoneyGranting(); // Start granting money when game starts
+  }
 
-<div class="game">
-  <img src="https://www.mediafire.com/convkey/3adc/6czeo5tzxhx5hla7g.jpg" alt="Call of Ops 3" height="200" width="200">
-  <dl>
-    <dt>Call of Ops 3</dt>
-    <form action="/play/callofops3.html">
-      <input type="submit" value="Play" />
-    </form>
-  </dl>
-</div>
+  function reloadIframe() {
+    if (currentLoadedGamePath) {
+      gameIframe.src = `${currentBaseUrl}${currentLoadedGamePath}`;
+    }
+  }
 
-<div class="game">
-  <img src="https://www.mediafire.com/convkey/dc19/fyjm4208ciii1d37g.jpg" alt="Call of Ops 3 Zombies" height="200" width="200">
-  <dl>
-    <dt>Call of Ops 3 Zombies</dt>
-    <form action="/play/callofops3zombies.html">
-      <input type="submit" value="Play" />
-    </form>
-  </dl>
-</div>
+  function exitIframe() {
+    // Before exiting, update playtime and money
+    stopMoneyGranting(); // This will also handle the final money calculation for the session
+    gameIframe.src = '';
+    gamePlayerOverlay.classList.remove('active');
+    currentLoadedGamePath = '';
 
-<div class="game">
-  <img src="https://www.mediafire.com/convkey/835b/2ap4blch50z33p27g.jpg" alt="Catac.io" height="200" width="200">
-  <dl>
-    <dt>Catac.io</dt>
-    <form action="/play/catacio.html">
-      <input type="submit" value="Play" />
-    </form>
-  </dl>
-</div>
+    const url = new URL(window.location.href);
+    if (url.searchParams.has('game')) {
+      url.searchParams.delete('game');
+      window.history.pushState({}, '', url.toString());
+    }
+  }
 
-<div class="game">
-  <img src="https://www.mediafire.com/convkey/99a3/s5lxuivh0n6jdq47g.jpg" alt="Chess" height="200" width="200">
-  <dl>
-    <dt>Chess</dt>
-    <form action="/play/chess.html">
-      <input type="submit" value="Play" />
-    </form>
-  </dl>
-</div>
+  function copyGameLink() {
+    if (currentLoadedGamePath) {
+      const shareableUrl = `${window.location.origin}${window.location.pathname}?game=${encodeURIComponent(currentLoadedGamePath)}&base=${encodeURIComponent(currentBaseUrl)}`;
+      const tempInput = document.createElement('input');
+      tempInput.value = shareableUrl;
+      document.body.appendChild(tempInput);
+      tempInput.select();
+      document.execCommand('copy');
+      document.body.removeChild(tempInput);
+      showMessageBox(translations[currentLanguage].linkCopied);
+    } else {
+      showMessageBox('No game is currently loaded to copy a link for.');
+    }
+  }
 
-<div class="game">
-  <img src="https://www.mediafire.com/convkey/2e18/xf90vbqrawmret77g.jpg" alt="Cookie Clicker" height="200" width="200">
-  <dl>
-    <dt>Cookie Clicker</dt>
-    <form action="/play/cookieclicker.html">
-      <input type="submit" value="Play" />
-    </form>
-  </dl>
-</div>
+  function switchBaseUrl() {
+    let currentIndex = GAME_BASE_URLS.indexOf(currentBaseUrl);
+    let nextIndex = (currentIndex + 1) % GAME_BASE_URLS.length;
+    currentBaseUrl = GAME_BASE_URLS[nextIndex];
+    localStorage.setItem('epixgamesBaseUrl', currentBaseUrl);
+    showMessageBox(`Switched game URL to: ${currentBaseUrl}`);
+    if (currentLoadedGamePath && gamePlayerOverlay.classList.contains('active')) {
+      reloadIframe();
+    }
+  }
 
-<div class="game">
-  <img src="https://www.mediafire.com/convkey/1dc5/ep5lpbtg61zkb2a7g.jpg" alt="Cut the Rope" height="200" width="200">
-  <dl>
-    <dt>Cut the Rope</dt>
-    <form action="/play/cuttherope.html">
-      <input type="submit" value="Play" />
-    </form>
-  </dl>
-</div>
+  function toggleFullScreen() {
+    if (!document.fullscreenElement) {
+      if (gameIframe.requestFullscreen) {
+        gameIframe.requestFullscreen();
+      } else if (gameIframe.mozRequestFullScreen) {
+        gameIframe.mozRequestFullScreen();
+      } else if (gameIframe.webkitRequestFullscreen) {
+        gameIframe.webkitRequestFullscreen();
+      } else if (gameIframe.msRequestFullscreen) {
+        gameIframe.msRequestFullscreen();
+      }
+    } else {
+      if (document.exitFullscreen) {
+        document.exitFullscreen();
+      } else if (document.mozCancelFullScreen) {
+        document.mozCancelFullScreen();
+      } else if (document.webkitExitFullscreen) {
+        document.webkitExitFullscreen();
+      } else if (document.msExitFullscreen) {
+        document.msExitFullscreen();
+      }
+    }
+  }
 
-<div class="game">
-  <img src="https://www.mediafire.com/convkey/9d7e/lcpz8u1t904dgfv7g.jpg" alt="Cut the Rope 2" height="200" width="200">
-  <dl>
-    <dt>Cut the Rope 2</dt>
-    <form action="/play/cuttherope2.html">
-      <input type="submit" value="Play" />
-    </form>
-  </dl>
-</div>
+  function highlightAndScrollGame(gameTitle) {
+    document.querySelectorAll('.highlighted-game').forEach(el => {
+      el.classList.remove('highlighted-game');
+    });
 
-<div class="game">
-  <img src="https://www.mediafire.com/convkey/c5ac/mr39ydydg5a22oi7g.jpg" alt="Dodge the Bar" height="200" width="200">
-  <dl>
-    <dt>Dodge the Bar</dt>
-    <form action="/play/dodgethebar.html">
-      <input type="submit" value="Play" />
-    </form>
-  </dl>
-</div>
+    const gameData = allGamesData.get(gameTitle);
+    if (gameData && gameData.id) {
+      const gameElement = document.getElementById(gameData.id);
+      if (gameElement) {
+        gameElement.classList.add('highlighted-game');
+        gameElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        // Switch to Games tab if not already active
+        if (!document.getElementById('games-tab').classList.contains('active')) {
+          showTab('games-tab');
+        }
+      }
+    }
+  }
 
-<div class="game">
-  <img src="https://www.mediafire.com/convkey/e980/c6s9opnclguywbn7g.jpg" alt="Drift Boss" height="200" width="200">
-  <dl>
-    <dt>Drift Boss</dt>
-    <form action="/play/driftboss.html">
-      <input type="submit" value="Play" />
-    </form>
-  </dl>
-</div>
+  // --- Search Function ---
+  async function performSearch() {
+    const query = searchInput.value.trim().toLowerCase();
+    searchResultsDiv.innerHTML = '';
 
-<div class="game">
-  <img src="https://www.mediafire.com/convkey/c29b/e3n575c8zvwoylj7g.jpg" alt="Fireboy and Watergirl" height="200" width="200">
-  <dl>
-    <dt>Fireboy and Watergirl</dt>
-    <form action="/play/fireboyandwatergirl.html">
-      <input type="submit" value="Play" />
-    </form>
-  </dl>
-</div>
+    if (!query) {
+      searchResultsDiv.textContent = "Please enter a search term.";
+      return;
+    }
 
-<div class="game">
-  <img src="https://www.mediafire.com/convkey/caa3/ch3tzgf6koc047e7g.jpg" alt="Flappy Bird" height="200" width="200">
-  <dl>
-    <dt>Flappy Bird</dt>
-    <form action="/play/flappybird.html">
-      <input type="submit" value="Play" />
-    </form>
-  </dl>
-</div>
+    const matchingGames = Array.from(allGamesData.keys()).filter(title =>
+      title.toLowerCase().includes(query)
+    );
 
-<div class="game">
-  <img src="https://www.mediafire.com/convkey/4d91/9bogsg5iuezz0a17g.jpg" alt="FNAF 1" height="200" width="200">
-  <dl>
-    <dt>FNAF 1</dt>
-    <form action="/play/fnaf1.html">
-      <input type="submit" value="Play" />
-    </form>
-  </dl>
-</div>
+    if (matchingGames.length > 0) {
+      const resultHeader = document.createElement('p');
+      resultHeader.innerHTML = `<strong>Direct Matches:</strong>`;
+      searchResultsDiv.appendChild(resultHeader);
+      matchingGames.forEach(title => {
+        const p = document.createElement('p');
+        p.textContent = title;
+        p.style.cursor = 'pointer';
+        p.onclick = () => highlightAndScrollGame(title);
+        searchResultsDiv.appendChild(p);
+      });
+    } else {
+      searchResultsDiv.textContent = "No direct matches found.";
+    }
+  }
 
-<div class="game">
-  <img src="https://www.mediafire.com/convkey/8bc3/5a09bjo1j67b9lt7g.jpg" alt="FNAF 2" height="200" width="200">
-  <dl>
-    <dt>FNAF 2</dt>
-    <form action="/play/fnaf2.html">
-      <input type="submit" value="Play" />
-    </form>
-  </dl>
-</div>
+  // --- Money and Store Logic ---
+  function updateMoneyDisplay() {
+    // Use the globally declared currentMoneySpan which is assigned in DOMContentLoaded
+    if (currentMoneySpan) {
+      console.log("Attempting to update money display. Money value:", money);
+      currentMoneySpan.textContent = money;
+      console.log("Money display updated to:", money);
+    } else {
+      console.error("Error: currentMoneySpan element not found during updateMoneyDisplay!");
+    }
+  }
 
-<div class="game">
-  <img src="https://www.mediafire.com/convkey/c20e/e2plb6ktp5mb8cg7g.jpg" alt="FNAF 3" height="200" width="200">
-  <dl>
-    <dt>FNAF 3</dt>
-    <form action="/play/fnaf3.html">
-      <input type="submit" value="Play" />
-    </form>
-  </dl>
-</div>
+  function updatePlaytimeAndMoney() {
+    console.log("updatePlaytimeAndMoney called.");
+    if (!gamePlayerOverlay.classList.contains('active')) {
+      console.log("Game not active, stopping money granting.");
+      stopMoneyGranting();
+      return;
+    }
 
-<div class="game">
-  <img src="https://www.mediafire.com/convkey/a18c/wrq22xj6bqzxaky7g.jpg" alt="FNAF 4" height="200" width="200">
-  <dl>
-    <dt>FNAF 4</dt>
-    <form action="/play/fnaf4.html">
-      <input type="submit" value="Play" />
-    </form>
-  </dl>
-</div>
+    const now = Date.now();
+    // Calculate elapsed seconds since the last update or session start
+    const elapsedSecondsInInterval = Math.floor((now - sessionStartTime) / 1000);
 
-<div class="game">
-  <img src="https://www.mediafire.com/convkey/2692/q47l4ewzosd0ddc7g.jpg" alt="Friday Night Funkin" height="200" width="200">
-  <dl>
-    <dt>Friday Night Funkin</dt>
-    <form action="/play/fnf.html">
-      <input type="submit" value="Play" />
-    </form>
-  </dl>
-</div>
-<div class="game">
-  <img src="https://www.mediafire.com/convkey/7a48/lk2gegrck5l149r7g.jpg" alt="Game" height="200" width="200">
-  <dl>
-    <dt>Fortnite</dt>
-    <dt><h2>SCRATCH version</h2></dt>
-    <form action="/play/fortscratch.html">
-      <input type="submit" value="Play" />
-    </form>
-  </dl>
-</div>
+    // Only proceed if at least one second has truly passed
+    if (elapsedSecondsInInterval < 1) {
+        console.log("Less than one second elapsed, skipping update.");
+        return;
+    }
 
-<div class="game">
-  <img src="https://www.mediafire.com/convkey/7ae0/3mz9oz0hc63nu4v7g.jpg" alt="Game" height="200" width="200">
-  <dl>
-    <dt>Geometry Dash</dt>
-    <form action="/play/geometrydash.html">
-      <input type="submit" value="Play" />
-    </form>
-  </dl>
-</div>
+    const oldTotalPlaytimeSeconds = totalPlaytimeSeconds; // Store for comparison
+    totalPlaytimeSeconds += elapsedSecondsInInterval; // Accumulate playtime
+    localStorage.setItem('epixgamesTotalPlaytimeSeconds', totalPlaytimeSeconds);
+    console.log(`Accumulated playtime: ${totalPlaytimeSeconds} seconds.`);
 
-<div class="game">
-  <img src="https://www.mediafire.com/convkey/dd96/kl9qvz9qxvgf8ri7g.jpg" alt="Game" height="200" width="200">
-  <dl>
-    <dt>Glitch</dt>
-    <form action="/play/glitch.html">
-      <input type="submit" value="Play" />
-    </form>
-  </dl>
-</div>
+    const oldMinutesEarned = Math.floor(oldTotalPlaytimeSeconds / 60);
+    const newMinutesEarned = Math.floor(totalPlaytimeSeconds / 60);
 
-<div class="game">
-  <img src="https://www.mediafire.com/convkey/d3f6/51o2px2f4rauxvb7g.jpg" alt="Game" height="200" width="200">
-  <dl>
-    <dt>Guess their Answer</dt>
-    <form action="/play/guesstheiranswer.html">
-      <input type="submit" value="Play" />
-    </form>
-  </dl>
-</div>
+    if (newMinutesEarned > oldMinutesEarned) {
+      const minutesToAward = newMinutesEarned - oldMinutesEarned;
+      money += (minutesToAward * 5);
+      localStorage.setItem('epixgamesMoney', money);
+      updateMoneyDisplay(); // Call updateMoneyDisplay here to refresh the UI
+      console.log(`Earned ${minutesToAward * 5} money! Total: ${money}`);
+    }
 
-<!-- Continue the same for other games... -->
+    // Reset sessionStartTime for the next interval calculation
+    sessionStartTime = now;
+  }
 
-<div class="game">
-  <img src="https://www.mediafire.com/convkey/d479/f0ijgipurbfrofo7g.jpg" alt="Game" height="200" width="200">
-  <dl>
-    <dt>Subway Surfers</dt>
-    <form action="/play/subwaysurfers.html">
-      <input type="submit" value="Play" />
-    </form>
-  </dl>
-</div>
+  function startMoneyGranting() {
+    if (moneyInterval) clearInterval(moneyInterval); // Clear any existing interval
 
-<div class="game">
-  <img src="https://www.mediafire.com/convkey/6456/rpuwycg2fp5wr987g.jpg" alt="Game" height="200" width="200">
-  <dl>
-    <dt>Super Mario Bros</dt>
-    <form action="/play/supermariobros.html">
-      <input type="submit" value="Play" />
-    </form>
-  </dl>
-</div>
+    sessionStartTime = Date.now(); // Mark the beginning of this earning period
+    console.log("startMoneyGranting called. Session start time set to:", sessionStartTime);
 
-<div class="game">
-  <img src="https://www.mediafire.com/convkey/83b6/vdx1l7p7kbegnnu7g.jpg" alt="Game" height="200" width="200">
-  <dl>
-    <dt>Tiny Fishing</dt>
-    <form action="/play/tinyfishing.html">
-      <input type="submit" value="Play" />
-    </form>
-  </dl>
-</div>
+    // Start the interval to update playtime and potentially grant money every second
+    moneyInterval = setInterval(updatePlaytimeAndMoney, 1000); // Check every second
+    console.log("Money granting interval started (checking every second).");
+  }
 
-<div class="game">
-  <img src="https://www.mediafire.com/convkey/20b0/u146qzvpooa02ot7g.jpg" alt="Game" height="200" width="200">
-  <dl>
-    <dt>Fantasy Avengers</dt>
-    <form action="/play/fantasyavengers.html">
-      <input type="submit" value="Play" />
-    </form>
-  </dl>
-</div>
+  function stopMoneyGranting() {
+    if (moneyInterval) {
+      clearInterval(moneyInterval);
+      moneyInterval = null;
+      console.log("Money granting interval stopped.");
 
-<div class="game">
-  <img src="https://www.mediafire.com/convkey/20b0/u146qzvpooa02ot7g.jpg" alt="Game" height="200" width="200">
-  <dl>
-    <dt>Fantasy Avengers Stage 2</dt>
-    <form action="/play/fantasyavengers2.html">
-      <input type="submit" value="Play" />
-    </form>
-  </dl>
-</div>
+      // Ensure any remaining partial seconds in the current session are accounted for
+      if (sessionStartTime > 0) {
+        const remainingSessionDurationSeconds = Math.floor((Date.now() - sessionStartTime) / 1000);
+        if (remainingSessionDurationSeconds > 0) {
+            const oldTotalPlaytimeSecondsBeforeExit = totalPlaytimeSeconds;
+            totalPlaytimeSeconds += remainingSessionDurationSeconds;
+            localStorage.setItem('epixgamesTotalPlaytimeSeconds', totalPlaytimeSeconds);
+            console.log(`(On exit) Added remaining ${remainingSessionDurationSeconds} seconds. New total playtime: ${totalPlaytimeSeconds}`);
 
-<div class="game">
-  <img src="https://www.mediafire.com/convkey/20b0/u146qzvpooa02ot7g.jpg" alt="Game" height="200" width="200">
-  <dl>
-    <dt>Fantasy Avengers Stage 3</dt>
-    <form action="/play/fantasyavengers3.html">
-      <input type="submit" value="Play" />
-    </form>
-  </dl>
-</div>
+            const oldMinutesEarned = Math.floor(oldTotalPlaytimeSecondsBeforeExit / 60);
+            const newMinutesEarned = Math.floor(totalPlaytimeSeconds / 60);
 
-<div class="game">
-  <img src="https://crazycattle-3d.com/thumbs/crazy-cattle-3d_1.webp" alt="Game" height="200" width="200">
-  <dl>
-    <dt>Crazy Cattle 3D</dt>
-    <form action="/play/crazycattle.html">
-      <input type="submit" value="Play" />
-    </form>
-  </dl>
-</div>
-<div class="game">
-  <img src="https://i.ytimg.com/vi/95EpsdUjTQw/maxresdefault.jpg" alt="Game" height="200" width="200">
-  <dl>
-    <dt>Super Mario 64 Web</dt>
-    <form action="/play/64.html">
-      <input type="submit" value="Play" />
-    </form>
-  </dl>
-</div>
+            if (newMinutesEarned > oldMinutesEarned) {
+                const minutesToAward = newMinutesEarned - oldMinutesEarned;
+                money += (minutesToAward * 5);
+                localStorage.setItem('epixgamesMoney', money);
+                updateMoneyDisplay(); // Call updateMoneyDisplay here to refresh the UI
+                console.log(`(On exit) Earned ${minutesToAward * 5} money! Total: ${money}`);
+            }
+        }
+        sessionStartTime = 0; // Reset session start
+      }
+    }
+  }
 
-</div>
+  function renderStore() {
+    storeItemsContainer.innerHTML = ''; // Clear previous items
 
-<!-- Continue similarly for other games -->
+    storeItems.forEach(item => {
+      const itemDiv = document.createElement('div');
+      itemDiv.className = 'store-item';
 
-</div>
+      const img = document.createElement('img');
+      img.src = item.img || 'https://placehold.co/100x100/3c4048/FFFFFF?text=Item'; // Placeholder if no img
+      img.alt = item.name;
+      itemDiv.appendChild(img);
+
+      const name = document.createElement('h4');
+      name.textContent = item.name;
+      itemDiv.appendChild(name);
+
+      const statusText = document.createElement('p');
+      const buyApplyButton = document.createElement('button');
+
+      if (ownedAccessories[item.id] || item.default) {
+        // Item is owned or is a default item
+        statusText.textContent = translations[currentLanguage].ownedText;
+        buyApplyButton.textContent = translations[currentLanguage].applyButton;
+        buyApplyButton.disabled = (appliedAccessory === item.id); // Disable if already applied
+        if (appliedAccessory === item.id) {
+          buyApplyButton.textContent = translations[currentLanguage].appliedText;
+        }
+        buyApplyButton.onclick = () => applyAccessory(item.id);
+      } else {
+        // Item is not owned
+        statusText.textContent = `${item.cost} 💰`;
+        buyApplyButton.textContent = translations[currentLanguage].buyButton.replace('{cost}', item.cost);
+        buyApplyButton.disabled = (money < item.cost); // Disable if not enough money
+        buyApplyButton.onclick = () => buyAccessory(item.id, item.cost);
+      }
+
+      itemDiv.appendChild(statusText);
+      itemDiv.appendChild(buyApplyButton);
+      storeItemsContainer.appendChild(itemDiv);
+    });
+  }
+
+  function buyAccessory(itemId, cost) {
+    if (money >= cost) {
+      money -= cost;
+      ownedAccessories[itemId] = true;
+      localStorage.setItem('epixgamesMoney', money);
+      localStorage.setItem('epixgamesOwnedAccessories', JSON.stringify(ownedAccessories));
+      updateMoneyDisplay();
+      renderStore(); // Re-render store to update button states
+      applyAccessory(itemId); // Automatically apply after buying
+    } else {
+      showMessageBox(translations[currentLanguage].insufficientFunds);
+    }
+  }
+
+  function applyAccessory(itemId) {
+    const item = storeItems.find(i => i.id === itemId);
+    if (!item) return;
+
+    // Always stop RGB effect before applying any theme
+    stopRgbEffect();
+
+    // Clear previous custom styles if any
+    root.style.removeProperty('--home-background');
+    root.style.removeProperty('--home-text-color');
+
+    if (item.type === 'background') {
+      root.style.setProperty('--home-background', item.value);
+      root.style.setProperty('--home-text-color', 'var(--text-color)'); // Reset text color to default
+    } else if (item.type === 'text-color') {
+      root.style.setProperty('--home-text-color', item.value);
+      root.style.setProperty('--home-background', 'var(--bg-color)'); // Reset background to default
+    } else if (item.type === 'full-theme') {
+      for (const prop in item.value) {
+        root.style.setProperty(prop, item.value[prop]);
+      }
+    } else if (item.type === 'dynamic-theme' && item.id === 'rgb-theme') {
+      startRgbEffect(); // Start the RGB cycling effect
+    }
+    appliedAccessory = itemId;
+    localStorage.setItem('epixgamesAppliedAccessory', itemId);
+    renderStore(); // Re-render store to update "Applied!" status
+  }
+
+  // --- Settings Logic ---
+  function applyLanguage(lang) {
+    currentLanguage = lang;
+    localStorage.setItem('epixgamesLanguage', lang);
+    languageSelect.value = lang; // Set dropdown value
+
+    // Update all elements with data-i18n-key
+    document.querySelectorAll('[data-i18n-key]').forEach(element => {
+      const key = element.dataset.i18nKey;
+      if (translations[lang] && translations[lang][key]) {
+        element.textContent = translations[lang][key];
+      }
+    });
+
+    // Special handling for placeholder
+    if (searchInput) {
+      searchInput.placeholder = translations[currentLanguage].searchPlaceholder || "Search games...";
+    }
+
+    // Re-render store to update button texts
+    renderStore();
+  }
+
+  function resetAllData() {
+    resetConfirmCount++;
+    clearTimeout(resetConfirmTimeout); // Clear previous timeout
+
+    if (resetConfirmCount >= 5) {
+      showMessageBox(translations[currentLanguage].resetFinalConfirm);
+      localStorage.clear(); // Clear all local storage data
+      setTimeout(() => {
+        window.location.reload(); // Reload the page to apply reset
+      }, 1000);
+    } else {
+      resetConfirmationMessage.textContent = translations[currentLanguage].resetConfirm.replace('{count}', (5 - resetConfirmCount));
+      resetConfirmTimeout = setTimeout(() => {
+        resetConfirmCount = 0; // Reset count if no further clicks within 3 seconds
+        resetConfirmationMessage.textContent = '';
+      }, 3000);
+    }
+  }
+
+  // --- Initialization ---
+  document.addEventListener('DOMContentLoaded', () => {
+    // Assign currentMoneySpan here, after the DOM is ready
+    currentMoneySpan = document.getElementById('currentMoney');
+    console.log("currentMoneySpan element found (inside DOMContentLoaded):", currentMoneySpan);
+
+    // --- URL Parameter Processing ---
+    const urlParams = new URLSearchParams(window.location.search);
+    let paramsProcessed = false;
+
+    // ?add_money=###
+    const addMoneyValue = urlParams.get('add_money');
+    if (addMoneyValue) {
+      const amount = parseInt(addMoneyValue);
+      if (!isNaN(amount) && amount > 0) {
+        money += amount;
+        localStorage.setItem('epixgamesMoney', money);
+        showMessageBox(`Added ${amount} money!`);
+        paramsProcessed = true;
+      }
+    }
+
+    // ?add_infinitemoney
+    if (urlParams.has('add_infinitemoney')) {
+      money = 999999999999; // A very large number
+      localStorage.setItem('epixgamesMoney', money);
+      showMessageBox('Infinite money unlocked! 🤑');
+      paramsProcessed = true;
+    }
+
+    // ?add_allitems
+    if (urlParams.has('add_allitems')) {
+      storeItems.forEach(item => {
+        ownedAccessories[item.id] = true;
+      });
+      localStorage.setItem('epixgamesOwnedAccessories', JSON.stringify(ownedAccessories));
+      showMessageBox('All store items unlocked! ✨');
+      paramsProcessed = true;
+    }
+
+    // Clean up URL parameters after processing
+    if (paramsProcessed) {
+      const newUrl = new URL(window.location.href);
+      newUrl.searchParams.delete('add_money');
+      newUrl.searchParams.delete('add_infinitemoney');
+      newUrl.searchParams.delete('add_allitems');
+      window.history.replaceState({}, document.title, newUrl.toString());
+    }
+    // --- End URL Parameter Processing ---
+
+
+    // Populate allGamesData Map
+    document.querySelectorAll('.game').forEach(gameDiv => {
+      const titleElement = gameDiv.querySelector('dt');
+      const buttonElement = gameDiv.querySelector('.play-now-button');
+      if (titleElement && buttonElement) {
+        const gameTitle = titleElement.textContent.trim();
+        const gamePath = buttonElement.dataset.gamePath;
+        const gameId = gameDiv.id;
+        allGamesData.set(gameTitle, { id: gameId, path: gamePath });
+      }
+    });
+
+    // Load saved accent color
+    const savedAccentColor = localStorage.getItem('epixgamesAccentColor');
+    if (savedAccentColor) {
+      accentColorPicker.value = savedAccentColor;
+      updateAccentColors(savedAccentColor);
+    } else {
+      updateAccentColors(accentColorPicker.value);
+    }
+
+    // Load saved base URL
+    const savedBaseUrl = localStorage.getItem('epixgamesBaseUrl');
+    if (savedBaseUrl && GAME_BASE_URLS.includes(savedBaseUrl)) {
+      currentBaseUrl = savedBaseUrl;
+    }
+
+    // Initialize money display
+    updateMoneyDisplay();
+
+    // Initialize owned accessories (ensure default theme is always owned)
+    if (!ownedAccessories['default-theme']) {
+      ownedAccessories['default-theme'] = true;
+      localStorage.setItem('epixgamesOwnedAccessories', JSON.stringify(ownedAccessories));
+    }
+
+    // Apply saved accessory
+    // Check if the applied accessory is the RGB theme and start its effect
+    if (appliedAccessory === 'rgb-theme') {
+      startRgbEffect();
+    } else {
+      applyAccessory(appliedAccessory);
+    }
+
+
+    // Initialize language
+    applyLanguage(currentLanguage);
+
+    // --- Event Listeners ---
+    accentColorPicker.addEventListener('input', (event) => {
+      // If RGB theme is active, changing accent color should stop it
+      if (appliedAccessory === 'rgb-theme') {
+        stopRgbEffect();
+        // Set appliedAccessory back to default or a static theme
+        appliedAccessory = 'default-theme';
+        localStorage.setItem('epixgamesAppliedAccessory', appliedAccessory);
+      }
+      updateAccentColors(event.target.value);
+    });
+
+    tabButtons.forEach(button => {
+      button.addEventListener('click', (event) => {
+        showTab(event.target.dataset.tab);
+      });
+    });
+
+    document.querySelectorAll('.play-now-button').forEach(button => {
+      button.addEventListener('click', (event) => {
+        const gamePath = event.target.dataset.gamePath;
+        openGameInIframe(gamePath);
+      });
+    });
+
+    reloadGameButton.addEventListener('click', reloadIframe);
+    switchUrlButton.addEventListener('click', switchBaseUrl);
+    fullScreenButton.addEventListener('click', toggleFullScreen);
+    exitGameButton.addEventListener('click', exitIframe);
+    copyLinkButton.addEventListener('click', copyGameLink);
+
+    searchButton.addEventListener('click', performSearch);
+    searchInput.addEventListener('keypress', (event) => {
+      if (event.key === 'Enter') {
+        performSearch();
+      }
+    });
+
+    languageSelect.addEventListener('change', (event) => {
+      applyLanguage(event.target.value);
+    });
+
+    resetEverythingButton.addEventListener('click', resetAllData);
+
+    // Message box close button listener
+    messageBoxCloseButton.addEventListener('click', () => {
+      messageBox.style.display = 'none';
+    });
+
+    // Check for game parameter in URL on page load
+    const gameToLoad = urlParams.get('game');
+    const baseToLoad = urlParams.get('base');
+
+    if (gameToLoad) {
+      openGameInIframe(decodeURIComponent(gameToLoad));
+      showTab('games-tab'); // Ensure games tab is active if a game is loaded via URL
+    } else {
+      showTab('games-tab'); // Default to Games tab on initial load
+    }
+
+    // Render store items initially
+    renderStore();
+  });
+</script>
 
 </body>
 </html>
