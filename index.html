@@ -937,6 +937,32 @@
       outline: none;
     }
 
+    /* Context Menu Styles */
+    .context-menu {
+      position: fixed; /* Crucial for overlay behavior */
+      background-color: var(--card-bg);
+      border: 1px solid var(--primary-color);
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+      padding: 8px 0;
+      z-index: 1000; /* Ensure it's above other content but below message box/command prompt */
+      display: none; /* Hidden by default */
+      min-width: 150px;
+    }
+
+    .context-menu-item {
+      padding: 10px 15px;
+      color: var(--text-color);
+      font-size: 0.95em;
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+    }
+
+    .context-menu-item:hover {
+      background-color: rgba(255, 255, 255, 0.1);
+    }
+
+
     /* Responsive adjustments */
     @media (min-width: 769px) {
       .search-widget-container {
@@ -1261,7 +1287,7 @@
       fullScreenButton: "Full Screen",
       exitButton: "Exit",
       copyLinkButton: "Copy Link",
-      buyButton: "Buy for {cost} �",
+      buyButton: "Buy for {cost} 💰",
       applyButton: "Apply",
       appliedText: "Applied!",
       ownedText: "Owned",
@@ -2283,7 +2309,7 @@
         buyApplyButton.onclick = () => applyAccessory(item.id);
       } else {
         // Item is not owned
-        statusText.textContent = `${item.cost} 💰`;
+        statusText.textContent = `${item.cost} �`;
         buyApplyButton.textContent = translations[currentLanguage].buyButton.replace('{cost}', item.cost);
         buyApplyButton.disabled = (money < item.cost); // Disable if not enough money
         buyApplyButton.onclick = () => buyAccessory(item.id, item.cost);
@@ -3059,10 +3085,34 @@
           contextMenuToggleFavoriteButton.textContent = translations[currentLanguage].favoriteGameText;
       }
 
-      // Position the context menu
-      gameContextMenu.style.left = `${event.clientX}px`;
-      gameContextMenu.style.top = `${event.clientY}px`;
+      // Display the menu first to get its dimensions
       gameContextMenu.style.display = 'block';
+
+      // Calculate position to keep it within viewport
+      let x = event.clientX;
+      let y = event.clientY;
+      const menuWidth = gameContextMenu.offsetWidth;
+      const menuHeight = gameContextMenu.offsetHeight;
+      const viewportWidth = window.innerWidth;
+      const viewportHeight = window.innerHeight;
+
+      // Add a small offset so the menu doesn't appear directly under the cursor
+      const offset = 10;
+
+      if (x + menuWidth + offset > viewportWidth) {
+          x = viewportWidth - menuWidth - offset;
+      } else {
+          x += offset;
+      }
+
+      if (y + menuHeight + offset > viewportHeight) {
+          y = viewportHeight - menuHeight - offset;
+      } else {
+          y += offset;
+      }
+
+      gameContextMenu.style.left = `${x}px`;
+      gameContextMenu.style.top = `${y}px`;
   }
 
   function hideContextMenu() {
