@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>EPIXGAMES Home 🎮</title>
   <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+  <!-- Three.js library for 3D animation -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <style>
     :root {
       /* Default values - these will be overridden by JavaScript */
@@ -37,6 +39,11 @@
       box-sizing: border-box;
       transition: background-color 0.5s ease; /* Smooth transition for background changes */
     }
+
+    /* Removed body.animation-active background: transparent !important;
+       The 3D canvas is z-index: -1, so it will appear behind the body's background.
+       This allows the custom background to show through while cubes animate on top.
+    */
 
     header {
       margin-bottom: 40px;
@@ -580,6 +587,214 @@
       background-color: var(--button-hover-bg);
     }
 
+    /* Classic Theme Specific Styles */
+    body.classic-theme {
+      /* Base background and text color are set via JS variables */
+    }
+
+    body.classic-theme h1,
+    body.classic-theme p,
+    body.classic-theme h2,
+    body.classic-theme .game dt,
+    body.classic-theme .store-item h4, /* Added for white text */
+    body.classic-theme .store-item p,  /* Added for white text */
+    body.classic-theme .settings-section label, /* Added for white text */
+    body.classic-theme #searchResults p /* Added for white text */
+    {
+      color: #ffffff !important; /* Force white text for all these elements */
+      font-family: 'Verdana', sans-serif !important; /* Override Press Start 2P */
+      text-shadow: none !important; /* Remove text shadow */
+    }
+
+    body.classic-theme .game dt {
+      font-size: 14px !important;
+      margin-top: 10px !important;
+    }
+
+    body.classic-theme #tabs-container,
+    body.classic-theme .tab-content,
+    body.classic-theme .game,
+    body.classic-theme .store-item,
+    body.classic-theme .settings-section,
+    body.classic-theme #messageBox {
+      background-color: transparent !important; /* Make card backgrounds transparent */
+      box-shadow: none !important; /* Remove shadows */
+      border: none !important; /* Remove borders */
+    }
+
+    body.classic-theme .tab-button {
+      background-color: transparent !important;
+      border-right: none !important;
+    }
+
+    body.classic-theme .tab-button.active {
+      /* This will now also look generic, but will still be 'active' due to its class */
+      background-color: #e0e0e0 !important; /* Generic light grey */
+      color: #333 !important; /* Dark text for contrast */
+      border: 1px solid #a0a0a0 !important; /* Generic border */
+      border-radius: 4px !important; /* Slight rounded corners */
+      box-shadow: none !important;
+    }
+    body.classic-theme .tab-button.active:hover {
+      background-color: #d0d0d0 !important; /* Darker grey on hover */
+      transform: none !important;
+    }
+
+
+    body.classic-theme .play-now-button,
+    body.classic-theme .header-search-group button,
+    body.classic-theme .store-item button,
+    body.classic-theme .settings-section button,
+    body.classic-theme #messageBox button {
+      background-color: #e0e0e0 !important; /* Generic light grey */
+      color: #333 !important; /* Dark text for contrast */
+      border: 1px solid #a0a0a0 !important; /* Generic border */
+      border-radius: 4px !important; /* Slight rounded corners */
+      padding: 8px 15px !important; /* Adjusted padding for generic look */
+      font-size: 0.9em !important; /* Adjusted font size */
+      font-weight: normal !important; /* Normal font weight */
+      font-family: 'Roboto', sans-serif !important; /* Use Roboto for generic buttons */
+      box-shadow: none !important; /* Remove shadows */
+      transition: background-color 0.1s ease, transform 0.1s ease; /* Faster transition for generic feel */
+    }
+
+    body.classic-theme .play-now-button:hover,
+    body.classic-theme .header-search-group button:hover,
+    body.classic-theme .store-item button:hover,
+    body.classic-theme .settings-section button:hover,
+    body.classic-theme #messageBox button:hover {
+      background-color: #d0d0d0 !important; /* Darker grey on hover */
+      transform: none !important; /* Remove translateY on hover */
+    }
+
+    body.classic-theme .game img {
+      border: none !important; /* Remove image border */
+    }
+
+    body.classic-theme .header-search-group input[type="text"] {
+      background-color: #ffffff !important; /* White background for input */
+      color: #000000 !important; /* Black text for input */
+      border: 1px solid #ccc !important; /* Light border */
+      border-radius: 5px !important;
+    }
+
+    body.classic-theme #searchResults {
+      background-color: #ffffff !important;
+      color: #000000 !important;
+      border: 1px solid #ccc !important;
+    }
+
+    body.classic-theme #searchResults p:hover {
+      background-color: #eee !important;
+    }
+
+    /* New styles for iframe and its container in classic theme */
+    body.classic-theme .game-player-overlay {
+        background-color: rgba(0, 0, 0, 0.8) !important; /* Slightly darker overlay */
+    }
+
+    body.classic-theme .game-iframe-container {
+        background-color: #ffffff !important; /* White background for the container */
+        border-radius: 0 !important; /* Remove border-radius */
+        box-shadow: none !important; /* Remove box-shadow */
+        border: 1px solid #a0a0a0 !important; /* Add a generic border */
+    }
+
+    body.classic-theme .game-iframe {
+        border: none !important; /* Ensure no internal border on the iframe itself */
+    }
+
+    body.classic-theme .game-controls-bar {
+        background-color: #f0f0f0 !important; /* Light grey background for controls bar */
+        border-radius: 0 !important; /* Remove border-radius */
+        box-shadow: none !important; /* Remove box-shadow */
+        border: 1px solid #a0a0a0 !important; /* Add a generic border */
+        border-top: none !important; /* No top border to blend with iframe container */
+    }
+
+    /* RGB Theme Specific Styles for text */
+    body.rgb-theme h1,
+    body.rgb-theme p,
+    body.rgb-theme h2,
+    body.rgb-theme .game dt,
+    body.rgb-theme .store-item h4, /* Added for white text */
+    body.rgb-theme .store-item p,  /* Added for white text */
+    body.rgb-theme .settings-section label, /* Added for white text */
+    body.rgb-theme #searchResults p /* Added for white text */
+    {
+      color: #ffffff !important; /* Force white text for main content elements */
+    }
+
+    /* 3D Background Canvas */
+    #background3DCanvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: -1; /* Send it to the background */
+      display: none; /* Hidden by default, enabled by JS */
+      background-color: transparent; /* Ensure canvas background is transparent */
+    }
+
+    /* More Tab Specific Styles */
+    .more-links-container {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      padding: 20px;
+      align-items: center;
+      width: 100%;
+    }
+
+    .more-link-item {
+      background-color: var(--card-bg);
+      border-radius: 12px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+      padding: 20px;
+      width: 80%; /* Adjust width as needed */
+      max-width: 600px;
+      text-align: center;
+      transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+    }
+
+    .more-link-item:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5);
+    }
+
+    .more-link-item h3 {
+      font-family: 'Press Start 2P', cursive;
+      color: var(--primary-color);
+      font-size: 1.2em;
+      margin-top: 0;
+      margin-bottom: 10px;
+    }
+
+    .more-link-item p {
+      font-size: 0.95em;
+      color: #ccc;
+      margin-bottom: 15px;
+    }
+
+    .more-link-item a {
+      display: inline-block;
+      background-color: var(--button-bg);
+      color: var(--bg-color);
+      border: none;
+      border-radius: 8px;
+      padding: 10px 20px;
+      font-size: 0.9em;
+      font-weight: bold;
+      text-decoration: none;
+      transition: background-color 0.3s ease, transform 0.2s ease;
+    }
+
+    .more-link-item a:hover {
+      background-color: var(--button-hover-bg);
+      transform: translateY(-2px);
+    }
+
 
     /* Responsive adjustments */
     @media (max-width: 768px) {
@@ -640,6 +855,10 @@
       .store-grid {
         grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
       }
+      .more-link-item {
+        width: 95%; /* Make it wider on smaller screens */
+        padding: 15px;
+      }
     }
 
     @media (max-width: 480px) {
@@ -663,6 +882,9 @@
 </head>
 <body>
 
+<!-- 3D Background Canvas -->
+<canvas id="background3DCanvas"></canvas>
+
 <header>
   <div class="header-content">
     <h1 data-i18n-key="homeTitle">EPIXGAMES Home 🎮</h1>
@@ -675,6 +897,7 @@
   <button class="tab-button active" data-tab="games-tab" data-i18n-key="tabGames">Games</button>
   <button class="tab-button" data-tab="store-tab" data-i18n-key="tabStore">Store</button>
   <button class="tab-button" data-tab="settings-tab" data-i18n-key="tabSettings">Settings</button>
+  <button class="tab-button" data-tab="more-tab" data-i18n-key="tabMore">More</button>
 </nav>
 
 <!-- Tab Content -->
@@ -1055,11 +1278,44 @@
     </div>
 
     <div class="settings-section">
+      <label for="enable3DAnimation">Enable 3D Background Animation:</label>
+      <input type="checkbox" id="enable3DAnimation">
+    </div>
+
+    <div class="settings-section">
       <label data-i18n-key="settingsReset">Reset All Data:</label>
       <button id="resetEverythingButton" class="reset-button" data-i18n-key="resetButton">Reset Everything</button>
       <p id="resetConfirmationMessage" class="confirmation-message"></p>
     </div>
   </div>
+
+  <!-- More Tab -->
+  <div id="more-tab" class="tab-content">
+    <h2 data-i18n-key="moreSectionTitle">More EPIX Content ✨</h2>
+    <div class="more-links-container">
+      <div class="more-link-item">
+        <h3>BirdMath Classic (Before EPIXGAMES)</h3>
+        <p data-i18n-key="birdMathClassicDesc">Relive the OG days with the classic BirdMath site! It's where it all began. 🐦</p>
+        <a href="/play/classic/" target="_blank" data-i18n-key="visitLink">Visit Site</a>
+      </div>
+      <div class="more-link-item">
+        <h3>MultiScreen Animation</h3>
+        <p data-i18n-key="multiScreenAnimationDesc">Experience cool animations across multiple devices. Just press the number based on what order the device is in to have the illusion that something is moving across a screen. 📱➡️📱➡️📱</p>
+        <a href="/play/screen/" target="_blank" data-i18n-key="visitLink">Visit Site</a>
+      </div>
+      <div class="more-link-item">
+        <h3>BirdMath Local Minimal Browser</h3>
+        <p data-i18n-key="minimalBrowserDesc">A lightweight browser with a bunch of pr0x1es. Not really recommended to use as it isn't maintained, but it's there if you're feeling nostalgic! 💾</p>
+        <a href="/play/minilocal/" target="_blank" data-i18n-key="visitLink">Visit Site</a>
+      </div>
+      <div class="more-link-item">
+        <h3>Proxser</h3>
+        <p data-i18n-key="proxserDesc">A reliable pr0xy with tabs that works today. Get your browsing on! 🌐</p>
+        <a href="https://proxser.pages.dev" target="_blank" data-i18n-key="visitLink">Visit Site</a>
+      </div>
+    </div>
+  </div>
+
 </div>
 
 <!-- Iframe Game Player Overlay -->
@@ -1099,11 +1355,12 @@
   // Translations for internationalization
   const translations = {
     en: {
-      homeTitle: "EPIXGAMES Home 🎮",
+      homeTitle: "EPIXGAMES Home �",
       homeSubtitle: "We just got a MAJOR upgrade to the site, fam! Get ready for some epic gaming! 😎",
       tabGames: "Games",
       tabStore: "Store",
       tabSettings: "Settings",
+      tabMore: "More", // New translation
       gamesSectionTitle: "EPIXGAMES Games",
       storeSectionTitle: "EPIXGAMES Store 🛍️",
       yourMoneyPrefix: "Money:", // New translation key for the prefix
@@ -1128,7 +1385,13 @@
       resetConfirm: "Are you sure? Click {count} more times to confirm!",
       resetFinalConfirm: "All data reset! Reloading...",
       linkCopied: "Game link copied to clipboard!",
-      searchPlaceholder: "Search games..."
+      searchPlaceholder: "Search games...",
+      moreSectionTitle: "More EPIX Content ✨", // New translation
+      birdMathClassicDesc: "Relive the OG days with the classic BirdMath site! It's where it all began. 🐦", // New translation
+      multiScreenAnimationDesc: "Experience cool animations across multiple devices. Just press the number based on what order the device is in to have the illusion that something is moving across a screen. 📱➡️📱➡️📱", // New translation
+      minimalBrowserDesc: "A lightweight browser with a bunch of pr0x1es. Not really recommended to use as it isn't maintained, but it's there if you're feeling nostalgic! 💾", // New translation
+      proxserDesc: "A reliable pr0xy with tabs that works today. Get your browsing on! 🌐", // New translation
+      visitLink: "Visit Site" // New translation
     },
     es: {
       homeTitle: "EPIXJUEGOS Inicio 🎮",
@@ -1136,6 +1399,7 @@
       tabGames: "Juegos",
       tabStore: "Tienda",
       tabSettings: "Ajustes",
+      tabMore: "Más", // New translation
       gamesSectionTitle: "Juegos EPIXGAMES",
       storeSectionTitle: "Tienda EPIXGAMES 🛍️",
       yourMoneyPrefix: "Dinero:", // New translation key for the prefix
@@ -1160,14 +1424,21 @@
       resetConfirm: "¿Estás seguro? ¡Haz clic {count} veces más para confirmar!",
       resetFinalConfirm: "¡Todos los datos restablecidos! Recargando...",
       linkCopied: "¡Enlace del juego copiado!",
-      searchPlaceholder: "Buscar juegos..."
+      searchPlaceholder: "Buscar juegos...",
+      moreSectionTitle: "Más Contenido EPIX ✨", // New translation
+      birdMathClassicDesc: "¡Revive los días de antaño con el sitio clásico de BirdMath! ¡Aquí es donde todo comenzó! 🐦", // New translation
+      multiScreenAnimationDesc: "Experimenta animaciones geniales en múltiples dispositivos. Simplemente presiona el número según el orden del dispositivo para tener la ilusión de que algo se mueve por la pantalla. 📱➡️📱➡️📱", // New translation
+      minimalBrowserDesc: "Un navegador ligero con varios proxies. No se recomienda mucho su uso ya que no se mantiene, ¡pero está ahí si sientes nostalgia! 💾", // New translation
+      proxserDesc: "Un proxy fiable con pestañas que funciona hoy. ¡A navegar! 🌐", // New translation
+      visitLink: "Visitar Sitio" // New translation
     },
     fr: {
       homeTitle: "EPIXJEUX Accueil 🎮",
-      homeSubtitle: "On a fait une GROSSE mise à jour du site, la famille ! Préparez-vous pour des jeux épiques ! 😎",
+      homeSubtitle: "On a fait une GROSSE mise a jour du site, la famille ! Préparez-vous pour des jeux épiques ! 😎",
       tabGames: "Jeux",
       tabStore: "Boutique",
       tabSettings: "Paramètres",
+      tabMore: "Plus", // New translation
       gamesSectionTitle: "Jeux EPIXGAMES",
       storeSectionTitle: "Boutique EPIXGAMES 🛍️",
       yourMoneyPrefix: "Argent :", // New translation key for the prefix
@@ -1189,10 +1460,16 @@
       appliedText: "Appliqué !",
       ownedText: "Possédé",
       insufficientFunds: "Pas assez d'argent !",
-      resetConfirm: "Êtes-vous sûr ? Cliquez {count} fois de plus pour confirmer !",
+      resetConfirm: "Êtes-vous sûr ? Cliquez {count} fois de plus para confirmar !",
       resetFinalConfirm: "Toutes les données réinitialisées ! Rechargement...",
       linkCopied: "Lien du jeu copié !",
-      searchPlaceholder: "Rechercher des jeux..."
+      searchPlaceholder: "Rechercher des jeux...",
+      moreSectionTitle: "Plus de Contenu EPIX ✨", // New translation
+      birdMathClassicDesc: "Revivez les jours OG avec le site classique de BirdMath ! C'est là que tout a commencé. 🐦", // New translation
+      multiScreenAnimationDesc: "Découvrez des animations sympas sur plusieurs appareils. Appuyez simplement sur le numéro en fonction de l'ordre de l'appareil pour avoir l'illusion que quelque chose se déplace sur un écran. 📱➡️📱➡️📱", // New translation
+      minimalBrowserDesc: "Un navigateur léger avec un tas de proxys. Il n'est pas vraiment recommandé de l'utiliser car il n'est pas maintenu, mais il est là si vous êtes nostalgique ! 💾", // New translation
+      proxserDesc: "Un proxy fiable avec des onglets qui fonctionne aujourd'hui. Naviguez ! 🌐", // New translation
+      visitLink: "Visiter le Site" // New translation
     }
   };
 
@@ -1209,7 +1486,17 @@
       '--home-background': '#282c34',
       '--home-text-color': '#ffffff'
     }, cost: 0, default: true, img: 'https://placehold.co/100x100/282c34/FFFFFF?text=Default' },
-    { id: 'rgb-theme', name: 'RGB Theme', type: 'dynamic-theme', value: {}, cost: 70, default: false, img: 'https://placehold.co/100x100/FF00FF/00FFFF?text=RGB' }
+    { id: 'rgb-theme', name: 'RGB Theme', type: 'dynamic-theme', value: {}, cost: 70, default: false, img: 'https://placehold.co/100x100/FF00FF/00FFFF?text=RGB' },
+    { id: 'classic-theme', name: 'Classic EPIXGAMES Theme', type: 'full-theme', value: {
+      '--home-background': '#4287f5',
+      '--home-text-color': '#ffffff',
+      '--bg-color': '#4287f5', /* Used for tab/card background, will be overridden by !important */
+      '--primary-color': '#007bff',
+      '--secondary-color': '#007bff',
+      '--card-bg': 'transparent', /* Will be overridden by !important */
+      '--button-bg': '#007bff',
+      '--button-hover-bg': '#0056b3'
+    }, cost: 40, default: false, img: 'https://placehold.co/100x100/4287f5/FFFFFF?text=Classic' }
   ];
 
 
@@ -1226,6 +1513,12 @@
   let resetConfirmTimeout = null;
   let rgbIntervalId = null; // New: for RGB theme interval
   let currentHue = 0; // New: for RGB theme color cycling
+
+  // Three.js related global variables
+  let scene, camera, renderer, animationObjects = [];
+  let isAnimationEnabled = JSON.parse(localStorage.getItem('epixgames3DAnimationEnabled') || 'false');
+  let animationFrameId = null; // To store the requestAnimationFrame ID for stopping animation
+
 
   // Get elements (these are safe to get globally as they exist from the start)
   const accentColorPicker = document.getElementById('accentColorPicker');
@@ -1250,6 +1543,8 @@
   const messageBox = document.getElementById('messageBox');
   const messageBoxText = document.getElementById('messageBoxText');
   const messageBoxCloseButton = document.getElementById('messageBoxCloseButton');
+  const enable3DAnimationCheckbox = document.getElementById('enable3DAnimation'); // New checkbox element
+  const background3DCanvas = document.getElementById('background3DCanvas'); // New canvas element
 
   // Declare currentMoneySpan globally, but assign it inside DOMContentLoaded
   let currentMoneySpan;
@@ -1330,6 +1625,11 @@
     const darkBgColor = darkenColor(color, 0.5);
     root.style.setProperty('--bg-color', darkBgColor);
     localStorage.setItem('epixgamesAccentColor', color);
+
+    // Update 3D cube colors if animation is active
+    if (isAnimationEnabled && animationObjects.length > 0) {
+        update3DCubeColors(color);
+    }
   }
 
   // --- RGB Theme Functions ---
@@ -1350,7 +1650,12 @@
       // Dynamically set the background to a darker version of the current accent color
       const dynamicBgColor = darkenColor(newAccentColor, 0.5);
       root.style.setProperty('--home-background', dynamicBgColor);
-      root.style.setProperty('--home-text-color', 'var(--text-color)'); // Keep text color default white
+      root.style.setProperty('--home-text-color', '#ffffff'); // Force text color to white for RGB theme
+
+      // Update 3D cube colors if animation is active
+      if (isAnimationEnabled && animationObjects.length > 0) {
+          update3DCubeColors(newAccentColor);
+      }
     }, 50); // Update every 50ms for a smooth transition
   }
 
@@ -1370,6 +1675,103 @@
       updateAccentColors(savedAccentColor || accentColorPicker.value);
     }
   }
+
+  // --- Three.js 3D Animation Functions ---
+  function init3DAnimation() {
+      if (!background3DCanvas) {
+          console.error("3D Canvas element not found!");
+          return;
+      }
+      if (scene && camera && renderer) { // Already initialized
+          return;
+      }
+
+      scene = new THREE.Scene();
+      camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+      renderer = new THREE.WebGLRenderer({ canvas: background3DCanvas, alpha: true, antialias: true }); // alpha: true for transparent background
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      renderer.setPixelRatio(window.devicePixelRatio); // Improve quality on high-DPI screens
+
+      // Get the current accent color for initial cube material
+      const initialAccentColor = getComputedStyle(root).getPropertyValue('--accent-color').trim();
+      const material = new THREE.MeshBasicMaterial({ color: new THREE.Color(initialAccentColor), wireframe: true }); // Green wireframe cubes
+
+      for (let i = 0; i < 50; i++) { // More objects for a cooler effect
+          const cube = new THREE.Mesh(new THREE.BoxGeometry(1, 1, 1), material); // Use the shared material
+          cube.position.set(
+              (Math.random() - 0.5) * 40, // Wider spread
+              (Math.random() - 0.5) * 40,
+              (Math.random() - 0.5) * 40
+          );
+          cube.rotation.set(
+              Math.random() * Math.PI,
+              Math.random() * Math.PI,
+              Math.random() * Math.PI
+          );
+          scene.add(cube);
+          animationObjects.push(cube);
+      }
+
+      camera.position.z = 15; // Pull camera back for wider view
+
+      // Handle window resize
+      window.addEventListener('resize', onWindowResize3D);
+  }
+
+  // New function to update the color of existing 3D cubes
+  function update3DCubeColors(color) {
+      if (animationObjects.length > 0) {
+          const newColor = new THREE.Color(color);
+          animationObjects.forEach(obj => {
+              if (obj.material) {
+                  obj.material.color.set(newColor);
+              }
+          });
+      }
+  }
+
+  function onWindowResize3D() {
+      if (camera && renderer) {
+          camera.aspect = window.innerWidth / window.innerHeight;
+          camera.updateProjectionMatrix();
+          renderer.setSize(window.innerWidth, window.innerHeight);
+      }
+  }
+
+  function animate3D() {
+      if (isAnimationEnabled && renderer) {
+          animationFrameId = requestAnimationFrame(animate3D); // Store the ID
+
+          animationObjects.forEach(obj => {
+              obj.rotation.x += 0.005;
+              obj.rotation.y += 0.005;
+          });
+
+          renderer.render(scene, camera);
+      }
+  }
+
+  function toggle3DAnimation(enable) {
+      isAnimationEnabled = enable;
+      localStorage.setItem('epixgames3DAnimationEnabled', JSON.stringify(isAnimationEnabled));
+
+      if (isAnimationEnabled) {
+          if (!scene) init3DAnimation(); // Initialize if not already
+          if (background3DCanvas) background3DCanvas.style.display = 'block';
+          // The 3D canvas is z-index: -1, so it will always be behind the body's background.
+          animate3D(); // Start the animation loop
+          // Ensure cubes match current accent color when animation is enabled
+          const currentAccentColor = getComputedStyle(root).getPropertyValue('--accent-color').trim();
+          update3DCubeColors(currentAccentColor);
+      } else {
+          if (background3DCanvas) background3DCanvas.style.display = 'none';
+          if (animationFrameId) {
+              cancelAnimationFrame(animationFrameId); // Stop the animation loop
+              animationFrameId = null;
+          }
+      }
+  }
+
 
   // --- Tab Switching Logic ---
   function showTab(tabId) {
@@ -1674,9 +2076,27 @@
     // Always stop RGB effect before applying any theme
     stopRgbEffect();
 
+    // Determine if 3D animation should be enabled based on user setting and theme compatibility
+    const userPrefers3D = JSON.parse(localStorage.getItem('epixgames3DAnimationEnabled') || 'false');
+    const isThemeCompatibleWith3D = !(itemId === 'classic-theme' || itemId === 'rgb-theme');
+    isAnimationEnabled = userPrefers3D && isThemeCompatibleWith3D; // Update global isAnimationEnabled
+
+    toggle3DAnimation(isAnimationEnabled); // Call toggle3DAnimation with the determined state
+    if (enable3DAnimationCheckbox) enable3DAnimationCheckbox.checked = userPrefers3D; // Update checkbox state based on user preference
+
+
+    // Remove theme classes from body
+    document.body.classList.remove('classic-theme', 'rgb-theme'); // 'animation-active' class is no longer used for background transparency
+
     // Clear previous custom styles if any
     root.style.removeProperty('--home-background');
     root.style.removeProperty('--home-text-color');
+    root.style.removeProperty('--bg-color');
+    root.style.removeProperty('--primary-color');
+    root.style.removeProperty('--secondary-color');
+    root.style.removeProperty('--card-bg');
+    root.style.removeProperty('--button-bg');
+    root.style.removeProperty('--button-hover-bg');
 
     if (item.type === 'background') {
       root.style.setProperty('--home-background', item.value);
@@ -1685,15 +2105,31 @@
       root.style.setProperty('--home-text-color', item.value);
       root.style.setProperty('--home-background', 'var(--bg-color)'); // Reset background to default
     } else if (item.type === 'full-theme') {
-      for (const prop in item.value) {
-        root.style.setProperty(prop, item.value[prop]);
+      if (itemId === 'classic-theme') {
+        document.body.classList.add('classic-theme');
+        // Set specific variables for classic theme, which will be overridden by !important CSS
+        root.style.setProperty('--home-background', '#4287f5');
+        root.style.setProperty('--home-text-color', '#ffffff');
+        root.style.setProperty('--bg-color', '#4287f5'); // Used for tab/card background
+        root.style.setProperty('--primary-color', '#007bff');
+        root.style.setProperty('--secondary-color', '#007bff');
+        root.style.setProperty('--card-bg', 'transparent');
+        root.style.setProperty('--button-bg', '#007bff');
+        root.style.setProperty('--button-hover-bg', '#0056b3');
+      } else {
+        for (const prop in item.value) {
+          root.style.setProperty(prop, item.value[prop]);
+        }
       }
     } else if (item.type === 'dynamic-theme' && item.id === 'rgb-theme') {
+      document.body.classList.add('rgb-theme'); // Add rgb-theme class
       startRgbEffect(); // Start the RGB cycling effect
     }
+
     appliedAccessory = itemId;
     localStorage.setItem('epixgamesAppliedAccessory', itemId);
     renderStore(); // Re-render store to update "Applied!" status
+    toggleAccentColorPickerState(); // Update picker state
   }
 
   // --- Settings Logic ---
@@ -1736,6 +2172,18 @@
         resetConfirmationMessage.textContent = '';
       }, 3000);
     }
+  }
+
+  function toggleAccentColorPickerState() {
+      if (appliedAccessory === 'rgb-theme' || appliedAccessory === 'classic-theme') {
+          accentColorPicker.disabled = true;
+          accentColorPicker.style.opacity = 0.5;
+          accentColorPicker.style.cursor = 'not-allowed';
+      } else {
+          accentColorPicker.disabled = false;
+          accentColorPicker.style.opacity = 1;
+          accentColorPicker.style.cursor = 'pointer';
+      }
   }
 
   // --- Initialization ---
@@ -1826,11 +2274,20 @@
     }
 
     // Apply saved accessory
-    // Check if the applied accessory is the RGB theme and start its effect
-    if (appliedAccessory === 'rgb-theme') {
-      startRgbEffect();
-    } else {
-      applyAccessory(appliedAccessory);
+    // This will also handle the initial state of 3D animation and RGB theme
+    applyAccessory(appliedAccessory);
+
+    // Set initial state of 3D animation checkbox
+    if (enable3DAnimationCheckbox) {
+        // The applyAccessory function now correctly sets isAnimationEnabled based on userPrefers3D and theme compatibility.
+        // So, just set the checkbox state to match the user's saved preference.
+        enable3DAnimationCheckbox.checked = JSON.parse(localStorage.getItem('epixgames3DAnimationEnabled') || 'false');
+        enable3DAnimationCheckbox.addEventListener('change', (event) => {
+            // When the checkbox is toggled, update the user's preference in localStorage
+            localStorage.setItem('epixgames3DAnimationEnabled', JSON.stringify(event.target.checked));
+            // Then re-apply the current accessory to ensure the 3D animation state is correctly updated
+            applyAccessory(appliedAccessory);
+        });
     }
 
 
@@ -1839,9 +2296,14 @@
 
     // --- Event Listeners ---
     accentColorPicker.addEventListener('input', (event) => {
-      // If RGB theme is active, changing accent color should stop it
-      if (appliedAccessory === 'rgb-theme') {
-        stopRgbEffect();
+      // If RGB or Classic theme is active, changing accent color should stop it
+      if (appliedAccessory === 'rgb-theme' || appliedAccessory === 'classic-theme') {
+        stopRgbEffect(); // This will also remove rgb-theme class and reset colors
+        // For classic theme, we need to explicitly remove the class and re-apply default
+        if (appliedAccessory === 'classic-theme') {
+          document.body.classList.remove('classic-theme');
+          applyAccessory('default-theme'); // Revert to default theme
+        }
         // Set appliedAccessory back to default or a static theme
         appliedAccessory = 'default-theme';
         localStorage.setItem('epixgamesAppliedAccessory', appliedAccessory);
@@ -1899,6 +2361,7 @@
 
     // Render store items initially
     renderStore();
+    toggleAccentColorPickerState(); // Initial state for picker
   });
 </script>
 

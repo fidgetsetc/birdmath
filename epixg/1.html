@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>EPIXGAMES Home 🎮</title>
   <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+  <!-- Three.js library for 3D animation -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <style>
     :root {
       /* Default values - these will be overridden by JavaScript */
@@ -37,6 +39,11 @@
       box-sizing: border-box;
       transition: background-color 0.5s ease; /* Smooth transition for background changes */
     }
+
+    /* Removed body.animation-active background: transparent !important;
+       The 3D canvas is z-index: -1, so it will appear behind the body's background.
+       This allows the custom background to show through while cubes animate on top.
+    */
 
     header {
       margin-bottom: 40px;
@@ -718,6 +725,17 @@
       color: #ffffff !important; /* Force white text for main content elements */
     }
 
+    /* 3D Background Canvas */
+    #background3DCanvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: -1; /* Send it to the background */
+      display: none; /* Hidden by default, enabled by JS */
+    }
+
 
     /* Responsive adjustments */
     @media (max-width: 768px) {
@@ -801,6 +819,9 @@
 </head>
 <body>
 
+<!-- 3D Background Canvas -->
+<canvas id="background3DCanvas"></canvas>
+
 <header>
   <div class="header-content">
     <h1 data-i18n-key="homeTitle">EPIXGAMES Home 🎮</h1>
@@ -812,7 +833,7 @@
 <nav id="tabs-container">
   <button class="tab-button active" data-tab="games-tab" data-i18n-key="tabGames">Games</button>
   <button class="tab-button" data-tab="store-tab" data-i18n-key="tabStore">Store</button>
-  <button class="tab-button" data-tab="settings-tab" data-i18n-key="tabSettings">Settings</button>
+  <button class="tab-button" data-tab="settings-tab" data-i18n-key="tabSettings">Settings <p>Try out the 3D theme</p></button>
 </nav>
 
 <!-- Tab Content -->
@@ -1193,6 +1214,11 @@
     </div>
 
     <div class="settings-section">
+      <label for="enable3DAnimation">Enable 3D Background Animation:</label>
+      <input type="checkbox" id="enable3DAnimation">
+    </div>
+
+    <div class="settings-section">
       <label data-i18n-key="settingsReset">Reset All Data:</label>
       <button id="resetEverythingButton" class="reset-button" data-i18n-key="resetButton">Reset Everything</button>
       <p id="resetConfirmationMessage" class="confirmation-message"></p>
@@ -1238,7 +1264,7 @@
   const translations = {
     en: {
       homeTitle: "EPIXGAMES Home 🎮",
-      homeSubtitle: "We just got a MAJOR upgrade to the site, fam! Get ready for some epic gaming! 😎",
+      homeSubtitle: "We just got a MAJOR upgrade to the site, fam! Get ready for some epic gaming! �",
       tabGames: "Games",
       tabStore: "Store",
       tabSettings: "Settings",
@@ -1375,6 +1401,12 @@
   let rgbIntervalId = null; // New: for RGB theme interval
   let currentHue = 0; // New: for RGB theme color cycling
 
+  // Three.js related global variables
+  let scene, camera, renderer, animationObjects = [];
+  let isAnimationEnabled = JSON.parse(localStorage.getItem('epixgames3DAnimationEnabled') || 'false');
+  let animationFrameId = null; // To store the requestAnimationFrame ID for stopping animation
+
+
   // Get elements (these are safe to get globally as they exist from the start)
   const accentColorPicker = document.getElementById('accentColorPicker');
   const root = document.documentElement;
@@ -1398,6 +1430,8 @@
   const messageBox = document.getElementById('messageBox');
   const messageBoxText = document.getElementById('messageBoxText');
   const messageBoxCloseButton = document.getElementById('messageBoxCloseButton');
+  const enable3DAnimationCheckbox = document.getElementById('enable3DAnimation'); // New checkbox element
+  const background3DCanvas = document.getElementById('background3DCanvas'); // New canvas element
 
   // Declare currentMoneySpan globally, but assign it inside DOMContentLoaded
   let currentMoneySpan;
@@ -1478,6 +1512,11 @@
     const darkBgColor = darkenColor(color, 0.5);
     root.style.setProperty('--bg-color', darkBgColor);
     localStorage.setItem('epixgamesAccentColor', color);
+
+    // Update 3D cube colors if animation is active
+    if (isAnimationEnabled && animationObjects.length > 0) {
+        update3DCubeColors(color);
+    }
   }
 
   // --- RGB Theme Functions ---
@@ -1499,6 +1538,11 @@
       const dynamicBgColor = darkenColor(newAccentColor, 0.5);
       root.style.setProperty('--home-background', dynamicBgColor);
       root.style.setProperty('--home-text-color', '#ffffff'); // Force text color to white for RGB theme
+
+      // Update 3D cube colors if animation is active
+      if (isAnimationEnabled && animationObjects.length > 0) {
+          update3DCubeColors(newAccentColor);
+      }
     }, 50); // Update every 50ms for a smooth transition
   }
 
@@ -1518,6 +1562,105 @@
       updateAccentColors(savedAccentColor || accentColorPicker.value);
     }
   }
+
+  // --- Three.js 3D Animation Functions ---
+  function init3DAnimation() {
+      if (!background3DCanvas) {
+          console.error("3D Canvas element not found!");
+          return;
+      }
+      if (scene && camera && renderer) { // Already initialized
+          return;
+      }
+
+      scene = new THREE.Scene();
+      camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+      renderer = new THREE.WebGLRenderer({ canvas: background3DCanvas, alpha: true, antialias: true }); // alpha: true for transparent background
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      renderer.setPixelRatio(window.devicePixelRatio); // Improve quality on high-DPI screens
+
+      // Get the current accent color for initial cube material
+      const initialAccentColor = getComputedStyle(root).getPropertyValue('--accent-color').trim();
+      const material = new THREE.MeshBasicMaterial({ color: new THREE.Color(initialAccentColor), wireframe: true }); // Green wireframe cubes
+
+      for (let i = 0; i < 50; i++) { // More objects for a cooler effect
+          const cube = new THREE.Mesh(new THREE.BoxGeometry(1, 1, 1), material); // Use the shared material
+          cube.position.set(
+              (Math.random() - 0.5) * 40, // Wider spread
+              (Math.random() - 0.5) * 40,
+              (Math.random() - 0.5) * 40
+          );
+          cube.rotation.set(
+              Math.random() * Math.PI,
+              Math.random() * Math.PI,
+              Math.random() * Math.PI
+          );
+          scene.add(cube);
+          animationObjects.push(cube);
+      }
+
+      camera.position.z = 15; // Pull camera back for wider view
+
+      // Handle window resize
+      window.addEventListener('resize', onWindowResize3D);
+  }
+
+  // New function to update the color of existing 3D cubes
+  function update3DCubeColors(color) {
+      if (animationObjects.length > 0) {
+          const newColor = new THREE.Color(color);
+          animationObjects.forEach(obj => {
+              if (obj.material) {
+                  obj.material.color.set(newColor);
+              }
+          });
+      }
+  }
+
+  function onWindowResize3D() {
+      if (camera && renderer) {
+          camera.aspect = window.innerWidth / window.innerHeight;
+          camera.updateProjectionMatrix();
+          renderer.setSize(window.innerWidth, window.innerHeight);
+      }
+  }
+
+  function animate3D() {
+      if (isAnimationEnabled && renderer) {
+          animationFrameId = requestAnimationFrame(animate3D); // Store the ID
+
+          animationObjects.forEach(obj => {
+              obj.rotation.x += 0.005;
+              obj.rotation.y += 0.005;
+          });
+
+          renderer.render(scene, camera);
+      }
+  }
+
+  function toggle3DAnimation(enable) {
+      isAnimationEnabled = enable;
+      localStorage.setItem('epixgames3DAnimationEnabled', JSON.stringify(isAnimationEnabled));
+
+      if (isAnimationEnabled) {
+          if (!scene) init3DAnimation(); // Initialize if not already
+          if (background3DCanvas) background3DCanvas.style.display = 'block';
+          // No longer adding 'animation-active' class to body, as it used to make background transparent.
+          // The 3D canvas is z-index: -1, so it will always be behind the body's background.
+          animate3D(); // Start the animation loop
+          // Ensure cubes match current accent color when animation is enabled
+          const currentAccentColor = getComputedStyle(root).getPropertyValue('--accent-color').trim();
+          update3DCubeColors(currentAccentColor);
+      } else {
+          if (background3DCanvas) background3DCanvas.style.display = 'none';
+          // No longer removing 'animation-active' class from body.
+          if (animationFrameId) {
+              cancelAnimationFrame(animationFrameId); // Stop the animation loop
+              animationFrameId = null;
+          }
+      }
+  }
+
 
   // --- Tab Switching Logic ---
   function showTab(tabId) {
@@ -1822,8 +1965,17 @@
     // Always stop RGB effect before applying any theme
     stopRgbEffect();
 
+    // Determine if 3D animation should be enabled based on user setting and theme compatibility
+    const userPrefers3D = JSON.parse(localStorage.getItem('epixgames3DAnimationEnabled') || 'false');
+    const isThemeCompatibleWith3D = !(itemId === 'classic-theme' || itemId === 'rgb-theme');
+    isAnimationEnabled = userPrefers3D && isThemeCompatibleWith3D; // Update global isAnimationEnabled
+
+    toggle3DAnimation(isAnimationEnabled); // Call toggle3DAnimation with the determined state
+    if (enable3DAnimationCheckbox) enable3DAnimationCheckbox.checked = userPrefers3D; // Update checkbox state based on user preference
+
+
     // Remove theme classes from body
-    document.body.classList.remove('classic-theme', 'rgb-theme');
+    document.body.classList.remove('classic-theme', 'rgb-theme'); // 'animation-active' class is no longer used for background transparency
 
     // Clear previous custom styles if any
     root.style.removeProperty('--home-background');
@@ -1862,6 +2014,7 @@
       document.body.classList.add('rgb-theme'); // Add rgb-theme class
       startRgbEffect(); // Start the RGB cycling effect
     }
+
     appliedAccessory = itemId;
     localStorage.setItem('epixgamesAppliedAccessory', itemId);
     renderStore(); // Re-render store to update "Applied!" status
@@ -2010,15 +2163,20 @@
     }
 
     // Apply saved accessory
-    // Check if the applied accessory is the RGB theme and start its effect
-    if (appliedAccessory === 'rgb-theme') {
-      document.body.classList.add('rgb-theme'); // Ensure class is added on load
-      startRgbEffect();
-    } else if (appliedAccessory === 'classic-theme') {
-      document.body.classList.add('classic-theme'); // Ensure class is added on load
-      applyAccessory(appliedAccessory); // Apply the full theme values
-    } else {
-      applyAccessory(appliedAccessory);
+    // This will also handle the initial state of 3D animation and RGB theme
+    applyAccessory(appliedAccessory);
+
+    // Set initial state of 3D animation checkbox
+    if (enable3DAnimationCheckbox) {
+        // The applyAccessory function now correctly sets isAnimationEnabled based on userPrefers3D and theme compatibility.
+        // So, just set the checkbox state to match the user's saved preference.
+        enable3DAnimationCheckbox.checked = JSON.parse(localStorage.getItem('epixgames3DAnimationEnabled') || 'false');
+        enable3DAnimationCheckbox.addEventListener('change', (event) => {
+            // When the checkbox is toggled, update the user's preference in localStorage
+            localStorage.setItem('epixgames3DAnimationEnabled', JSON.stringify(event.target.checked));
+            // Then re-apply the current accessory to ensure the 3D animation state is correctly updated
+            applyAccessory(appliedAccessory);
+        });
     }
 
 
