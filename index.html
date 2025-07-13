@@ -71,7 +71,7 @@
 
     p {
       font-size: 1.1em;
-      color: #bbb;
+      color: var(--text-color); /* Changed to use --text-color */
       margin-top: 0;
     }
 
@@ -446,7 +446,7 @@
     .store-item p {
       margin: 5px 0;
       font-size: 0.9em;
-      color: #bbb;
+      color: var(--text-color); /* Changed to use --text-color */
     }
 
     .store-item button {
@@ -1388,7 +1388,7 @@
       searchPlaceholder: "Search games...",
       moreSectionTitle: "More EPIX Content ✨", // New translation
       birdMathClassicDesc: "Relive the OG days with the classic BirdMath site! It's where it all began. 🐦", // New translation
-      multiScreenAnimationDesc: "Experience cool animations across multiple devices. Just press the number based on what order the device is in to have the illusion that something is moving across a screen. 📱➡️📱➡️�", // New translation
+      multiScreenAnimationDesc: "Experience cool animations across multiple devices. Just press the number based on what order the device is in to have the illusion that something is moving across a screen. 📱➡️📱➡️📱", // New translation
       minimalBrowserDesc: "A lightweight browser with a bunch of pr0x1es. Not really recommended to use as it isn't maintained, but it's there if you're feeling nostalgic! 💾", // New translation
       proxserDesc: "A reliable pr0xy with tabs that works today. Get your browsing on! 🌐", // New translation
       visitLink: "Visit Site" // New translation
@@ -1475,8 +1475,8 @@
 
   // Store items data
   const storeItems = [
-    { id: 'bg-stars', name: 'Starry Night', type: 'background', value: 'url(https://placehold.co/1920x1080/000033/FFFFFF?text=Starry+Night) no-repeat center center / cover', cost: 50, default: false, img: 'https://placehold.co/100x100/000033/FFFFFF?text=Stars' },
-    { id: 'bg-neon', name: 'Neon Grid', type: 'background', value: 'url(https://placehold.co/1920x1080/330033/FF00FF?text=Neon+Grid) no-repeat center center / cover', cost: 75, default: false, img: 'https://placehold.co/100x100/330033/FF00FF?text=Neon' },
+    { id: 'bg-stars', name: 'Starry Night', type: 'background', value: 'url(https://upload.wikimedia.org/wikipedia/commons/thumb/e/ea/Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg/500px-Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg) no-repeat center center / cover', cost: 50, default: false, img: 'https://placehold.co/100x100/000033/FFFFFF?text=Stars' },
+    { id: 'bg-neon', name: 'Neon Grid', type: 'background', value: 'url(https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/96dfd877-6c12-43bd-b00d-92cb788dd96e/dib5prg-2233ce71-a8d1-4b3e-9885-2c059c974b9a.jpg/v1/fill/w_1194,h_669,q_70,strp/neon_grid_background_by_eneakelo_dib5prg-pre.jpg?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7InBhdGgiOiJcL2ZcLzk2ZGZkODc3LTZjMTItNDNiZC1iMDBkLTkyY2I3ODhkZDk2ZVwvZGliNXByZy0yMjMzY2U3MS1hOGQxLTRiM2UtOTJjYjc4OGRkOTZlXC9lbmVha2Vsby00LnBuZyIsIm9wYWNpdHkiOjk1LCJwcm9wb3J0aW9ucyI6MC40NSwiZ3Jhdml0eSI6ImNlbnRlciJ9fQ.K9uu0P8wFve89iAdDz_pcg6OF261jfhTQdsT7CyB5F0) no-repeat center center / cover', cost: 75, default: false, img: 'https://placehold.co/100x100/330033/FF00FF?text=Neon' },
     { id: 'text-gold', name: 'Gold Text', type: 'text-color', value: 'gold', cost: 30, default: false, img: 'https://placehold.co/100x100/3c4048/FFD700?text=Gold' },
     { id: 'text-lime', name: 'Lime Text', type: 'text-color', value: 'lime', cost: 30, default: false, img: 'https://placehold.co/100x100/3c4048/00FF00?text=Lime' },
     { id: 'bg-gumball', name: 'The Amazing World of Gumball Theme', type: 'background', value: 'url(https://images6.alphacoders.com/950/950030.jpg) no-repeat center center / cover', cost: 20, default: false, img: 'https://placehold.co/100x100/4CAF50/FFFFFF?text=Gumball' },
@@ -2080,57 +2080,65 @@
     // RGB theme is now compatible with 3D animation
     const userPrefers3D = JSON.parse(localStorage.getItem('epixgames3DAnimationEnabled') || 'false');
     const isThemeCompatibleWith3D = (itemId !== 'classic-theme'); // Only classic-theme disables 3D
-    isAnimationEnabled = userPrefers3D && isThemeCompatibleWith3D; // Update global isAnimationEnabled
-
-    toggle3DAnimation(isAnimationEnabled); // Call toggle3DAnimation with the determined state
-    if (enable3DAnimationCheckbox) enable3DAnimationCheckbox.checked = userPrefers3D; // Update checkbox state based on user preference
+    isAnimationEnabled = userPrefers3D && isThemeCompatibleWith3D;
+    toggle3DAnimation(isAnimationEnabled);
+    if (enable3DAnimationCheckbox) enable3DAnimationCheckbox.checked = userPrefers3D;
 
 
     // Remove theme classes from body
-    document.body.classList.remove('classic-theme', 'rgb-theme'); // 'animation-active' class is no longer used for background transparency
+    document.body.classList.remove('classic-theme', 'rgb-theme');
 
-    // Clear previous custom styles if any
-    root.style.removeProperty('--home-background');
-    root.style.removeProperty('--home-text-color');
-    root.style.removeProperty('--bg-color');
-    root.style.removeProperty('--primary-color');
-    root.style.removeProperty('--secondary-color');
-    root.style.removeProperty('--card-bg');
-    root.style.removeProperty('--button-bg');
-    root.style.removeProperty('--button-hover-bg');
+    // Reset all relevant CSS variables to their default values
+    root.style.setProperty('--home-background', '#282c34'); // Default background
+    root.style.setProperty('--home-text-color', '#ffffff'); // Default text color for body
+    root.style.setProperty('--text-color', '#ffffff'); // Default general text color
+    root.style.setProperty('--bg-color', '#282c34'); // Default base background for cards etc.
+    root.style.setProperty('--primary-color', '#4287f5'); // Default primary accent
+    root.style.setProperty('--secondary-color', '#61dafb'); // Default secondary accent
+    root.style.setProperty('--card-bg', '#3c4048'); // Default card background
+    root.style.setProperty('--button-bg', 'var(--accent-color, #61dafb)'); // Default button background
+    root.style.setProperty('--button-hover-bg', 'var(--accent-hover-color, #21a1f1)'); // Default button hover
+
+    // Re-apply accent color as it's independent of full themes
+    const savedAccentColor = localStorage.getItem('epixgamesAccentColor');
+    updateAccentColors(savedAccentColor || '#61dafb'); // Re-apply default or saved accent color
 
     if (item.type === 'background') {
       root.style.setProperty('--home-background', item.value);
-      root.style.setProperty('--home-text-color', 'var(--text-color)'); // Reset text color to default
+      // Text color remains default white set above, unless explicitly changed by another item.
     } else if (item.type === 'text-color') {
       root.style.setProperty('--home-text-color', item.value);
-      root.style.setProperty('--home-background', 'var(--bg-color)'); // Reset background to default
+      root.style.setProperty('--primary-color', item.value); // Apply to primary
+      root.style.setProperty('--secondary-color', item.value); // Apply to secondary
+      root.style.setProperty('--text-color', item.value); // Apply to general text
     } else if (item.type === 'full-theme') {
       if (itemId === 'classic-theme') {
         document.body.classList.add('classic-theme');
-        // Set specific variables for classic theme, which will be overridden by !important CSS
+        // Classic theme uses !important in CSS, so direct variable setting here is less critical,
+        // but setting them for consistency doesn't hurt.
         root.style.setProperty('--home-background', '#4287f5');
         root.style.setProperty('--home-text-color', '#ffffff');
-        root.style.setProperty('--bg-color', '#4287f5'); // Used for tab/card background
+        root.style.setProperty('--bg-color', '#4287f5');
         root.style.setProperty('--primary-color', '#007bff');
         root.style.setProperty('--secondary-color', '#007bff');
         root.style.setProperty('--card-bg', 'transparent');
         root.style.setProperty('--button-bg', '#007bff');
         root.style.setProperty('--button-hover-bg', '#0056b3');
       } else {
+        // For default-theme (and future full themes), apply its specific values
         for (const prop in item.value) {
           root.style.setProperty(prop, item.value[prop]);
         }
       }
     } else if (item.type === 'dynamic-theme' && item.id === 'rgb-theme') {
-      document.body.classList.add('rgb-theme'); // Add rgb-theme class
-      startRgbEffect(); // Start the RGB cycling effect
+      document.body.classList.add('rgb-theme');
+      startRgbEffect();
     }
 
     appliedAccessory = itemId;
     localStorage.setItem('epixgamesAppliedAccessory', itemId);
-    renderStore(); // Re-render store to update "Applied!" status
-    toggleAccentColorPickerState(); // Update picker state
+    renderStore();
+    toggleAccentColorPickerState();
   }
 
   // --- Settings Logic ---
