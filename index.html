@@ -1338,11 +1338,13 @@
   GAME_SHOW_CUSTOM: Toggle visibility of custom games.
   THEME_CREATE: Create and save a custom theme.
   THEME_ADD: Import a custom theme from a file.
+  THEME_EXPORT: Export all custom themes to a file.
   HTML_MODIFY: Apply custom CSS modifications to elements.
   HTML_MODIFY_OPEN: View saved HTML modifications.
   HTML_MODIFY_EXPORT: Export the current page HTML with modifications.
   SETTINGS_EXPORT: Export all settings to a file.
-  SETTINGS_IMPORT: Import settings from a file.`,
+  SETTINGS_IMPORT: Import settings from a file.
+  CUSTOM_SETTINGS: Create a custom settings file by providing values.`,
       cmdExit: "Exiting command prompt.",
       cmdMoneyAdded: "Added {amount} money. New balance: {balance}💰",
       cmdMoneyRemoved: "Removed {amount} money. New balance: {balance}💰",
@@ -1375,6 +1377,7 @@
       cmdThemeAddPrompt: "Select a theme JSON file to import.",
       cmdThemeAdded: "Theme '{name}' imported successfully!",
       cmdThemeAddError: "Failed to import theme: {error}",
+      cmdThemeExported: "Custom themes exported as 'epixgames_custom_themes.json'.", // New translation
       cmdHtmlModifySelector: "Enter CSS selector (e.g., body, .header-content p):",
       cmdHtmlModifyProperty: "Enter CSS property (e.g., background-color, font-size):",
       cmdHtmlModifyValue: "Enter CSS value (e.g., red, 20px !important):",
@@ -1389,7 +1392,14 @@
       cmdSettingsImported: "Settings imported successfully! Reloading page...",
       cmdSettingsImportError: "Failed to import settings: {error}",
       cmdFileReadError: "Error reading file: {error}",
-      cmdInvalidColor: "Invalid color format. Please use hex (e.g., #RRGGBB)."
+      cmdInvalidColor: "Invalid color format. Please use hex (e.g., #RRGGBB).",
+      // New translations for CUSTOM_SETTINGS creation
+      cmdCustomSettingsMoneyPrompt: "Enter desired money amount (number):",
+      cmdCustomSettingsLanguagePrompt: "Enter desired language (en, es, fr):",
+      cmdCustomSettings3DAnimationPrompt: "Enable 3D background animation? (true/false):",
+      cmdInvalidLanguage: "Invalid language. Please enter 'en', 'es', or 'fr'.",
+      cmdInvalidBoolean: "Invalid input. Please enter 'true' or 'false'.",
+      cmdCustomSettingsFileCreated: "Custom settings file 'epixgames_custom_user_settings.json' created. You can import it using 'SETTINGS_IMPORT'."
     },
     es: {
       homeTitle: "EPIXJUEGOS Inicio 🎮",
@@ -1464,11 +1474,13 @@
   GAME_SHOW_CUSTOM: Alternar visibilidad de juegos personalizados.
   THEME_CREATE: Crear y guardar un tema personalizado.
   THEME_ADD: Importar un tema personalizado desde un archivo.
+  THEME_EXPORT: Exportar todos los temas personalizados a un archivo.
   HTML_MODIFY: Aplicar modificaciones CSS personalizadas a elementos.
   HTML_MODIFY_OPEN: Ver modificaciones HTML guardadas.
   HTML_MODIFY_EXPORT: Exportar el HTML actual de la página con modificaciones.
   SETTINGS_EXPORT: Exportar todos los ajustes a un archivo.
-  SETTINGS_IMPORT: Importar ajustes desde un archivo.`,
+  SETTINGS_IMPORT: Importar ajustes desde un archivo.
+  CUSTOM_SETTINGS: Crear un archivo de ajustes personalizados proporcionando valores.`,
       cmdExit: "Saliendo de la consola de comandos.",
       cmdMoneyAdded: "Se añadió {amount} dinero. Saldo actual: {balance}💰",
       cmdMoneyRemoved: "Se eliminó {amount} dinero. Saldo actual: {balance}💰",
@@ -1501,6 +1513,7 @@
       cmdThemeAddPrompt: "Selecciona un archivo JSON de tema para importar.",
       cmdThemeAdded: "¡Tema '{name}' importado con éxito!",
       cmdThemeAddError: "Error al importar el tema: {error}",
+      cmdThemeExported: "Temas personalizados exportados como 'epixgames_custom_themes.json'.",
       cmdHtmlModifySelector: "Introduce el selector CSS (ej. body, .header-content p):",
       cmdHtmlModifyProperty: "Introduce la propiedad CSS (ej. background-color, font-size):",
       cmdHtmlModifyValue: "Introduce el valor CSS (ej. red, 20px !important):",
@@ -1515,7 +1528,13 @@
       cmdSettingsImported: "¡Ajustes importados con éxito! Recargando página...",
       cmdSettingsImportError: "Error al importar los ajustes: {error}",
       cmdFileReadError: "Error al leer el archivo: {error}",
-      cmdInvalidColor: "Formato de color inválido. Por favor, usa hexadecimal (ej. #RRGGBB)."
+      cmdInvalidColor: "Formato de color inválido. Por favor, usa hexadecimal (ej. #RRGGBB).",
+      cmdCustomSettingsMoneyPrompt: "Introduce la cantidad de dinero deseada (número):",
+      cmdCustomSettingsLanguagePrompt: "Introduce el idioma deseado (en, es, fr):",
+      cmdCustomSettings3DAnimationPrompt: "¿Habilitar animación de fondo 3D? (true/false):",
+      cmdInvalidLanguage: "Idioma inválido. Por favor, introduce 'en', 'es' o 'fr'.",
+      cmdInvalidBoolean: "Entrada inválida. Por favor, introduce 'true' o 'false'.",
+      cmdCustomSettingsFileCreated: "Archivo de ajustes personalizados 'epixgames_custom_user_settings.json' creado. Puedes importarlo usando 'SETTINGS_IMPORT'."
     },
     fr: {
       homeTitle: "EPIXJEUX Accueil 🎮",
@@ -1553,7 +1572,7 @@
       moreSectionTitle: "Plus de Contenu EPIX ✨",
       birdMathClassicDesc: "Revivez les jours OG avec le site classique de BirdMath ! C'est là que tout a commencé. 🐦",
       multiScreenAnimationDesc: "Découvrez des animations sympas sur plusieurs appareils. Appuyez simplement sur le numéro en fonction de l'ordre de l'appareil pour avoir l'illusion que quelque chose se déplace sur un écran. 📱➡️📱➡️📱",
-      minimalBrowserDesc: "Un navigateur léger avec un tas de proxys. Il n'est pas vraiment recommandé de l'utiliser car il n'est pas maintenu, mais il est là si vous êtes nostalgique ! 💾",
+      minimalBrowserDesc: "Un navigateur léger avec un tas de proxys. Il n'est pas vraiment recommandé de l'utiliser car il n'est pas maintenu, mais il est là si vous êtes nostalgique ! �",
       proxserDesc: "Un proxy fiable avec des onglets qui fonctionne aujourd'hui. Naviguez ! 🌐",
       visitLink: "Visiter le Site",
       suggestSectionTitle: "Suggérer un Jeu ou une Fonctionnalité ! 💡",
@@ -1591,11 +1610,13 @@
   GAME_SHOW_CUSTOM: Basculer la visibilité des jeux personnalisés.
   THEME_CREATE: Créer et sauvegarder un thème personnalisé.
   THEME_ADD: Importer un thème personnalisé à partir d'un fichier.
+  THEME_EXPORT: Exporter tous les thèmes personnalisés vers un fichier.
   HTML_MODIFY: Appliquer des modifications CSS personnalisées aux éléments.
   HTML_MODIFY_OPEN: Afficher les modifications HTML enregistrées.
   HTML_MODIFY_EXPORT: Exporter le HTML actuel de la page avec les modifications.
   SETTINGS_EXPORT: Exporter tous les paramètres dans un fichier.
-  SETTINGS_IMPORT: Importer les paramètres à partir d'un fichier.`,
+  SETTINGS_IMPORT: Importer les paramètres à partir d'un fichier.
+  CUSTOM_SETTINGS: Créer un fichier de paramètres personnalisés en fournissant des valeurs.`,
       cmdExit: "Fermeture de l'invite de commande.",
       cmdMoneyAdded: "Ajout de {amount} argent. Nouveau solde : {balance}💰",
       cmdMoneyRemoved: "Suppression de {amount} argent. Nouveau solde : {balance}💰",
@@ -1628,6 +1649,7 @@
       cmdThemeAddPrompt: "Sélectionnez un fichier JSON de thème à importer.",
       cmdThemeAdded: "Thème '{name}' importé avec succès !",
       cmdThemeAddError: "Échec de l'importation du thème : {error}",
+      cmdThemeExported: "Thèmes personnalisés exportés sous 'epixgames_custom_themes.json'.",
       cmdHtmlModifySelector: "Entrez le sélecteur CSS (ex. body, .header-content p) :",
       cmdHtmlModifyProperty: "Entrez la propriété CSS (ex. background-color, font-size) :",
       cmdHtmlModifyValue: "Entrez le valeur CSS (ex. red, 20px !important) :",
@@ -1642,7 +1664,13 @@
       cmdSettingsImported: "Paramètres importés con éxito ! Rechargement de la page...",
       cmdSettingsImportError: "Échec de l'importation des paramètres : {error}",
       cmdFileReadError: "Erreur de lecture du fichier : {error}",
-      cmdInvalidColor: "Format de couleur inválido. Veuillez utiliser l'hexadécimal (ex. #RRGGBB)."
+      cmdInvalidColor: "Format de couleur inválido. Veuillez utiliser l'hexadécimal (ex. #RRGGBB).",
+      cmdCustomSettingsMoneyPrompt: "Entrez le montant d'argent désiré (nombre) :",
+      cmdCustomSettingsLanguagePrompt: "Entrez la langue désirée (en, es, fr) :",
+      cmdCustomSettings3DAnimationPrompt: "Activer l'animation de fond 3D ? (true/false) :",
+      cmdInvalidLanguage: "Langue invalide. Veuillez entrer 'en', 'es' ou 'fr'.",
+      cmdInvalidBoolean: "Entrée invalide. Veuillez entrer 'true' ou 'false'.",
+      cmdCustomSettingsFileCreated: "Fichier de paramètres personnalisés 'epixgames_custom_user_settings.json' créé. Vous pouvez l'importer en utilisant 'SETTINGS_IMPORT'."
     }
   };
 
@@ -1706,8 +1734,8 @@
   let htmlModifications = JSON.parse(localStorage.getItem('epixgamesHtmlModifications') || '[]'); // New: Store HTML modifications
 
   let commandPromptState = {
-      mode: 'normal', // 'normal', 'awaiting_sequence_name', 'recording_commands', 'awaiting_game_input', 'awaiting_theme_input', 'awaiting_html_modify_input'
-      subMode: '', // 'title', 'image', 'path' for game; 'name', 'primary', 'secondary', etc. for theme; 'selector', 'property', 'value' for html modify
+      mode: 'normal', // 'normal', 'awaiting_sequence_name', 'recording_commands', 'awaiting_game_input', 'awaiting_theme_input', 'awaiting_html_modify_input', 'awaiting_custom_settings_input'
+      subMode: '', // 'title', 'image', 'path' for game; 'name', 'primary', 'secondary', etc. for theme; 'selector', 'property', 'value' for html modify; 'money', 'language', 'animation3D' for custom settings
       data: {} // Temporary data for the current multi-step operation
   };
 
@@ -2309,7 +2337,7 @@
         buyApplyButton.onclick = () => applyAccessory(item.id);
       } else {
         // Item is not owned
-        statusText.textContent = `${item.cost} �`;
+        statusText.textContent = `${item.cost} 💰`;
         buyApplyButton.textContent = translations[currentLanguage].buyButton.replace('{cost}', item.cost);
         buyApplyButton.disabled = (money < item.cost); // Disable if not enough money
         buyApplyButton.onclick = () => buyAccessory(item.id, item.cost);
@@ -2540,6 +2568,12 @@
     const command = parts[0];
     const args = parts.slice(1);
 
+    // --- DEBUGGING LOGS ---
+    console.log("DEBUG: commandPromptState.mode before switch:", commandPromptState.mode);
+    console.log("DEBUG: command received:", command);
+    console.log("DEBUG: args received:", args);
+    // --- END DEBUGGING LOGS ---
+
     // --- Multi-step command handling ---
     if (commandPromptState.mode === 'recording_commands') {
       if (command === 'END_SEQUENCE') {
@@ -2717,9 +2751,66 @@
         return;
     }
 
+    if (commandPromptState.mode === 'awaiting_custom_settings_input') {
+        switch (commandPromptState.subMode) {
+            case 'money':
+                const moneyInput = parseInt(originalCommandLine);
+                if (isNaN(moneyInput) || moneyInput < 0) {
+                    appendToConsoleOutput(translations[currentLanguage].cmdInvalidAmount);
+                    return; // Stay in this subMode until valid input
+                }
+                commandPromptState.data.money = moneyInput;
+                commandPromptState.subMode = 'language';
+                appendToConsoleOutput(translations[currentLanguage].cmdCustomSettingsLanguagePrompt);
+                break;
+            case 'language':
+                const langInput = originalCommandLine.toLowerCase();
+                if (!translations[langInput]) {
+                    appendToConsoleOutput(translations[currentLanguage].cmdInvalidLanguage);
+                    return; // Stay in this subMode
+                }
+                commandPromptState.data.language = langInput;
+                commandPromptState.subMode = 'animation3D';
+                appendToConsoleOutput(translations[currentLanguage].cmdCustomSettings3DAnimationPrompt);
+                break;
+            case 'animation3D':
+                const animationInput = originalCommandLine.toLowerCase();
+                if (animationInput !== 'true' && animationInput !== 'false') {
+                    appendToConsoleOutput(translations[currentLanguage].cmdInvalidBoolean);
+                    return; // Stay in this subMode
+                }
+                commandPromptState.data.animation3D = (animationInput === 'true');
+
+                const customSettings = {
+                    epixgamesMoney: commandPromptState.data.money,
+                    epixgamesLanguage: commandPromptState.data.language,
+                    epixgames3DAnimationEnabled: commandPromptState.data.animation3D
+                    // Other settings like owned accessories, custom games, themes, html mods
+                    // are complex and will not be part of this simplified custom settings creation.
+                    // They can still be imported/exported via SETTINGS_IMPORT/EXPORT.
+                };
+
+                const customSettingsBlob = new Blob([JSON.stringify(customSettings, null, 2)], { type: 'application/json' });
+                const customSettingsA = document.createElement('a');
+                customSettingsA.href = URL.createObjectURL(customSettingsBlob);
+                customSettingsA.download = 'epixgames_custom_user_settings.json'; // New filename
+                document.body.appendChild(customSettingsA);
+                customSettingsA.click();
+                document.body.removeChild(customSettingsA);
+                appendToConsoleOutput(translations[currentLanguage].cmdCustomSettingsFileCreated);
+                commandPromptState = { mode: 'normal', subMode: '', data: {} }; // Reset state
+                break;
+        }
+        return; // Important to return here
+    }
+
 
     // --- Normal command handling ---
     switch (command) {
+      case 'CUSTOM_SETTINGS': // Moved to top for debugging
+          commandPromptState = { mode: 'awaiting_custom_settings_input', subMode: 'money', data: {} };
+          appendToConsoleOutput(translations[currentLanguage].cmdCustomSettingsMoneyPrompt);
+          break;
       case 'EXIT':
         appendToConsoleOutput(translations[currentLanguage].cmdExit);
         setTimeout(toggleCommandPrompt, 300); // Close after a short delay
@@ -2849,6 +2940,21 @@
               }
           };
           fileInput.click(); // Trigger file input click
+          break;
+      case 'THEME_EXPORT': // New command implementation
+          if (window.customThemes.length === 0) {
+              appendToConsoleOutput("No custom themes to export.");
+              return;
+          }
+          const customThemesData = JSON.stringify(window.customThemes, null, 2);
+          const themeBlob = new Blob([customThemesData], { type: 'application/json' });
+          const themeA = document.createElement('a');
+          themeA.href = URL.createObjectURL(themeBlob);
+          themeA.download = 'epixgames_custom_themes.json';
+          document.body.appendChild(themeA);
+          themeA.click();
+          document.body.removeChild(themeA);
+          appendToConsoleOutput(translations[currentLanguage].cmdThemeExported);
           break;
       case 'HTML_MODIFY':
           commandPromptState = { mode: 'awaiting_html_modify_input', subMode: 'selector', data: {} };
@@ -3506,3 +3612,4 @@
 
 </body>
 </html>
+�
