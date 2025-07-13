@@ -7,17 +7,20 @@
   <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg-color: #282c34;
-      --primary-color: #4287f5;
-      --secondary-color: #61dafb;
+      /* Default values - these will be overridden by JavaScript */
+      --bg-color: #282c34; /* Will be a darker accent */
+      --primary-color: #4287f5; /* Will be the accent color */
+      --secondary-color: #61dafb; /* Will be the accent color */
       --text-color: #ffffff;
       --card-bg: #3c4048;
-      --button-bg: #61dafb;
-      --button-hover-bg: #21a1f1;
+      --button-bg: var(--accent-color, #61dafb); /* Button background uses accent */
+      --button-hover-bg: var(--accent-hover-color, #21a1f1); /* Button hover uses darker accent */
+      --accent-color: #61dafb; /* Default accent color */
+      --accent-hover-color: #21a1f1; /* Default accent hover color */
     }
 
     body {
-      background-color: var(--bg-color);
+      background-color: var(--bg-color); /* Now uses the dynamic background color */
       color: var(--text-color);
       font-family: 'Roboto', sans-serif;
       margin: 0;
@@ -38,7 +41,7 @@
 
     h1 {
       font-family: 'Press Start 2P', cursive;
-      color: var(--primary-color);
+      color: var(--primary-color); /* Now uses the accent color */
       font-size: 2.5em;
       margin-bottom: 10px;
       text-shadow: 3px 3px #000;
@@ -52,7 +55,7 @@
 
     h2 {
       font-family: 'Press Start 2P', cursive;
-      color: var(--secondary-color);
+      color: var(--secondary-color); /* Now uses the accent color */
       font-size: 1.8em;
       margin-top: 40px;
       margin-bottom: 30px;
@@ -76,16 +79,23 @@
       padding: 15px;
       text-align: center;
       width: 200px;
-      transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+      transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out, border 0.3s ease; /* Added border transition */
       overflow: hidden; /* Ensures border-radius applies to content */
       display: flex;
       flex-direction: column;
       justify-content: space-between; /* Pushes button to bottom */
+      border: 2px solid transparent; /* Default transparent border */
     }
 
     .game:hover {
       transform: translateY(-8px) scale(1.02);
       box-shadow: 0 12px 24px rgba(0, 0, 0, 0.6);
+    }
+
+    .game.highlighted-game { /* Highlighted style */
+      border: 4px solid var(--accent-color); /* Stronger accent border */
+      box-shadow: 0 0 25px var(--accent-color); /* Glowing effect */
+      transform: scale(1.05); /* Slightly larger when highlighted */
     }
 
     .game img {
@@ -94,21 +104,21 @@
       object-fit: cover; /* Ensures images cover the area without distortion */
       border-radius: 8px;
       margin-bottom: 15px;
-      border: 2px solid var(--primary-color);
+      border: 2px solid var(--primary-color); /* Border uses accent color */
     }
 
     .game dt {
       font-family: 'Roboto', sans-serif;
       font-size: 1.1em;
       font-weight: 700;
-      color: var(--secondary-color);
+      color: var(--secondary-color); /* Game titles use accent color */
       margin-bottom: 10px;
     }
 
     .game h2 { /* For "SCRATCH version" */
       font-family: 'Roboto', sans-serif;
       font-size: 0.9em;
-      color: #ccc;
+      color: #ccc; /* This specific h2 remains light grey */
       margin-top: 5px;
       margin-bottom: 15px;
       text-shadow: none; /* Override general h2 shadow */
@@ -118,9 +128,9 @@
       margin-top: auto; /* Pushes form to the bottom */
     }
 
-    .game input[type="submit"] {
+    .play-now-button { /* New button style */
       background-color: var(--button-bg);
-      color: var(--bg-color);
+      color: var(--bg-color); /* Button text contrasts with accent color */
       border: none;
       border-radius: 8px;
       padding: 10px 20px;
@@ -130,14 +140,316 @@
       transition: background-color 0.3s ease, transform 0.2s ease;
       width: 100%;
       box-sizing: border-box; /* Include padding in width */
+      -webkit-appearance: none; /* Remove default button styles for consistency */
+      -moz-appearance: none;
+      appearance: none;
+      display: block; /* Ensure it takes full width */
+      text-align: center;
+      text-decoration: none; /* For potential future anchor tags */
     }
 
-    .game input[type="submit"]:hover {
+    .play-now-button:hover {
       background-color: var(--button-hover-bg);
       transform: translateY(-2px);
     }
 
+    /* Accent color picker styles */
+    .color-picker-container {
+      margin-top: 20px;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background-color: var(--card-bg);
+      padding: 10px 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    }
+
+    .color-picker-container label {
+      font-family: 'Roboto', sans-serif;
+      font-size: 1em;
+      color: var(--text-color);
+    }
+
+    .color-picker-container input[type="color"] {
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      appearance: none;
+      width: 40px;
+      height: 40px;
+      background-color: transparent;
+      border: none;
+      cursor: pointer;
+      border-radius: 50%; /* Make it round */
+      overflow: hidden; /* Hide default color picker border */
+    }
+
+    .color-picker-container input[type="color"]::-webkit-color-swatch-wrapper {
+      padding: 0;
+    }
+
+    .color-picker-container input[type="color"]::-webkit-color-swatch {
+      border: 2px solid var(--primary-color); /* Add a border to the color swatch */
+      border-radius: 50%;
+    }
+
+    .color-picker-container input[type="color"]::-moz-color-swatch-wrapper {
+      padding: 0;
+    }
+
+    .color-picker-container input[type="color"]::-moz-color-swatch {
+      border: 2px solid var(--primary-color);
+      border-radius: 50%;
+    }
+
+    /* Flex container for suggestion and search sections */
+    .suggestion-search-flex-container {
+      display: flex;
+      flex-wrap: wrap; /* Allow wrapping on smaller screens */
+      justify-content: center;
+      gap: 30px; /* Space between the two sections */
+      width: 100%;
+      max-width: 1200px; /* Adjust as needed to fit content */
+      margin-top: 40px;
+    }
+
+    /* Game Suggestion Section Styles */
+    .game-suggestion-container, .search-container { /* Combined styles for both sections */
+      background-color: var(--card-bg);
+      border-radius: 12px;
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+      padding: 20px;
+      flex: 1; /* Allow both to grow and shrink */
+      min-width: 300px; /* Minimum width before wrapping */
+      max-width: calc(50% - 15px); /* Max width to fit side-by-side with gap */
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .game-suggestion-container h3, .search-container h3 {
+      font-family: 'Press Start 2P', cursive;
+      color: var(--secondary-color);
+      font-size: 1.5em;
+      text-shadow: 2px 2px #000;
+      margin-bottom: 10px;
+    }
+
+    .game-suggestion-container textarea {
+      width: calc(100% - 20px); /* Account for padding */
+      padding: 10px;
+      border-radius: 8px;
+      border: 2px solid var(--primary-color);
+      background-color: #282c34;
+      color: var(--text-color);
+      font-family: 'Roboto', sans-serif;
+      font-size: 1em;
+      resize: vertical; /* Allow vertical resizing */
+      min-height: 80px;
+    }
+
+    .game-suggestion-container button {
+      background-color: var(--button-bg);
+      color: var(--bg-color);
+      border: none;
+      border-radius: 8px;
+      padding: 12px 25px;
+      font-size: 1.1em;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background-color 0.3s ease, transform 0.2s ease;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    .game-suggestion-container button:hover {
+      background-color: var(--button-hover-bg);
+      transform: translateY(-2px);
+    }
+
+    .game-suggestion-result {
+      margin-top: 20px;
+      padding: 15px;
+      background-color: #282c34;
+      border-radius: 8px;
+      border: 1px dashed var(--secondary-color);
+      color: var(--text-color);
+      font-family: 'Roboto', sans-serif;
+      font-size: 1.1em;
+      text-align: center;
+      min-height: 50px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      word-wrap: break-word; /* Ensure long text wraps */
+      max-width: 100%;
+    }
+
+    .loading-spinner {
+      border: 4px solid rgba(255, 255, 255, 0.3);
+      border-top: 4px solid var(--accent-color);
+      border-radius: 50%;
+      width: 30px;
+      height: 30px;
+      animation: spin 1s linear infinite;
+      display: none; /* Hidden by default */
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    /* Iframe Game Player Styles */
+    .game-player-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.9); /* Dark overlay */
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000; /* Ensure it's on top */
+      padding: 10px;
+      box-sizing: border-box;
+      opacity: 0; /* Hidden by default */
+      visibility: hidden;
+      transition: opacity 0.3s ease, visibility 0.3s ease;
+    }
+
+    .game-player-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .game-iframe-container {
+      width: 95%;
+      height: calc(100% - 100px); /* Adjusted from 80px to 100px to cut off 20px more */
+      background-color: #000;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.7);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .game-iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+      display: block;
+    }
+
+    .game-controls-bar {
+      width: 95%;
+      height: 60px; /* Height of the control bar */
+      background-color: var(--card-bg);
+      border-radius: 12px;
+      margin-top: 10px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 20px;
+      padding: 0 20px;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+    }
+
+    .game-controls-bar button {
+      background-color: var(--button-bg);
+      color: var(--bg-color);
+      border: none;
+      border-radius: 8px;
+      padding: 10px 20px;
+      font-size: 0.9em;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background-color 0.3s ease, transform 0.2s ease;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    }
+
+    .game-controls-bar button:hover {
+      background-color: var(--button-hover-bg);
+      transform: translateY(-2px);
+    }
+
+    /* Search Section Styles - Combined with suggestion section for flex behavior */
+    .search-input-group {
+      display: flex;
+      width: 100%;
+      gap: 10px;
+    }
+
+    .search-input-group input[type="text"] {
+      flex-grow: 1;
+      padding: 10px;
+      border-radius: 8px;
+      border: 2px solid var(--primary-color);
+      background-color: #282c34;
+      color: var(--text-color);
+      font-family: 'Roboto', sans-serif;
+      font-size: 1em;
+    }
+
+    .search-input-group button {
+      background-color: var(--button-bg);
+      color: var(--bg-color);
+      border: none;
+      border-radius: 8px;
+      padding: 10px 20px;
+      font-size: 1em;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background-color 0.3s ease, transform 0.2s ease;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    }
+
+    .search-input-group button:hover {
+      background-color: var(--button-hover-bg);
+      transform: translateY(-2px);
+    }
+
+    .search-results, .similar-games-results {
+      width: 100%;
+      max-height: 200px; /* Limit height for scrolling */
+      overflow-y: auto; /* Enable scrolling */
+      background-color: #282c34;
+      border-radius: 8px;
+      border: 1px dashed var(--secondary-color);
+      padding: 10px;
+      margin-top: 10px;
+      color: var(--text-color);
+      text-align: left;
+    }
+
+    .search-results p, .similar-games-results p {
+      margin: 5px 0;
+      padding: 5px;
+      cursor: pointer;
+      border-radius: 5px;
+      transition: background-color 0.2s ease;
+    }
+
+    .search-results p:hover, .similar-games-results p:hover {
+      background-color: rgba(255, 255, 255, 0.1);
+    }
+
+
     /* Responsive adjustments */
+    @media (max-width: 1200px) { /* Adjust breakpoint for flex container */
+      .suggestion-search-flex-container {
+        flex-direction: column; /* Stack vertically on smaller screens */
+        align-items: center;
+        gap: 40px; /* More space when stacked */
+      }
+      .game-suggestion-container, .search-container {
+        max-width: 600px; /* Revert to original max-width when stacked */
+      }
+    }
+
     @media (max-width: 768px) {
       h1 {
         font-size: 2em;
@@ -150,6 +462,34 @@
       }
       .game {
         width: 180px;
+      }
+      .game-suggestion-container, .search-container {
+        padding: 15px;
+      }
+      .game-suggestion-container h3, .search-container h3 {
+        font-size: 1.2em;
+      }
+      .game-iframe-container {
+        height: calc(100% - 120px); /* Adjusted from 100px to 120px for mobile */
+        width: 98%;
+      }
+      .game-controls-bar {
+        width: 98%;
+        height: 80px; /* Taller control bar */
+        flex-wrap: wrap; /* Allow buttons to wrap */
+        gap: 10px;
+        padding: 10px;
+      }
+      .game-controls-bar button {
+        font-size: 0.8em;
+        padding: 8px 15px;
+      }
+      .search-input-group {
+        flex-direction: column;
+        gap: 10px;
+      }
+      .search-input-group button {
+        width: 100%;
       }
     }
 
@@ -164,421 +504,811 @@
         width: 100%; /* Full width on smaller screens */
         max-width: 250px; /* Max width to prevent it from getting too wide if screen is very small */
       }
+      .color-picker-container {
+        flex-direction: column; /* Stack elements on small screens */
+        align-items: flex-start;
+        padding: 10px;
+      }
     }
   </style>
 </head>
 <body>
 
 <header>
-  <h1>EPIXGAMES Home 🏠✨</h1>
-  <p>We just got a MAJOR upgrade to the site, fam! Get ready for some epic gaming! 🔥</p>
+  <h1>EPIXGAMES Home 🎮</h1>
+  <p>We just got a MAJOR upgrade to the site, fam! Get ready for some epic gaming! 😎</p>
 </header>
 
-<h2>EPIXGAMES Games 🕹️</h2>
+<!-- Accent Color Picker -->
+<div class="color-picker-container">
+  <label for="accentColorPicker">Choose Accent Color:</label>
+  <input type="color" id="accentColorPicker" value="#61dafb">
+</div>
+
+<!-- Flex container for Game Suggestion and Search Sections -->
+<div class="suggestion-search-flex-container">
+  <!-- Game Suggestion Section -->
+  <div class="game-suggestion-container">
+    <h3>✨ AI Game Suggestion ✨</h3>
+    <textarea id="gamePrompt" placeholder="Tell me what kind of game you're in the mood for! (e.g., 'a chill puzzle game', 'a fast-paced shooter', 'something with dragons')"></textarea>
+    <button id="getSuggestionButton">Get Suggestion</button>
+    <div id="loadingSpinner" class="loading-spinner"></div>
+    <div id="gameSuggestionResult" class="game-suggestion-result">Your game suggestion will appear here!</div>
+  </div>
+
+  <!-- Search Section -->
+  <div class="search-container">
+    <h3>🔍 Search Games & Get Similar Suggestions 💡</h3>
+    <div class="search-input-group">
+      <input type="text" id="searchInput" placeholder="Search for a game...">
+      <button id="searchButton">Search</button>
+    </div>
+    <div id="searchResults" class="search-results"></div>
+    <div id="similarGamesResults" class="similar-games-results"></div>
+  </div>
+</div>
+
+
+<h2>EPIXGAMES Games</h2>
 <div class="games-container">
 
-  <div class="game">
+  <div class="game" id="game-1v1-lol">
     <img src="https://www.mediafire.com/convkey/0fba/fjsl0ca42p00o9m7g.jpg" alt="1v1.lol">
     <dl>
       <dt>1v1.lol</dt>
-      <form action="/play/1v1lol.html">
-        <input type="submit" value="Play Now">
-      </form>
+      <button class="play-now-button" data-game-path="/play/1v1lol.html">Play Now</button>
     </dl>
   </div>
 
-  <div class="game">
+  <div class="game" id="game-Angry-Birds">
     <img src="https://www.mediafire.com/convkey/ceef/iy0vghjso78nenc7g.jpg" alt="Angry Birds">
     <dl>
       <dt>Angry Birds</dt>
-      <form action="/play/angrybird.html">
-        <input type="submit" value="Play Now">
-      </form>
+      <button class="play-now-button" data-game-path="/play/angrybird.html">Play Now</button>
     </dl>
   </div>
 
-  <div class="game">
+  <div class="game" id="game-Angry-Birds-Epic">
     <img src="https://www.mediafire.com/convkey/13ce/zw7q7l17htz3iug7g.jpg" alt="Angry Birds Epic">
     <dl>
       <dt>Angry Birds Epic</dt>
-      <form action="/play/abepic.html">
-        <input type="submit" value="Play Now">
-      </form>
+      <button class="play-now-button" data-game-path="/play/abepic.html">Play Now</button>
     </dl>
   </div>
 
-  <div class="game">
+  <div class="game" id="game-Among-Us">
     <img src="https://www.mediafire.com/convkey/c9b4/dgoer8eo7sp7mnt7g.jpg" alt="Among Us">
     <dl>
       <dt>Among Us</dt>
-      <form action="/play/amongus.html">
-        <input type="submit" value="Play Now">
-      </form>
+      <button class="play-now-button" data-game-path="/play/amongus.html">Play Now</button>
     </dl>
   </div>
 
-  <div class="game">
+  <div class="game" id="game-Angry-Birds-Rio">
     <img src="https://www.mediafire.com/convkey/c4f2/oi2ca1yskdtra1m7g.jpg" alt="Angry Birds Rio">
     <dl>
       <dt>Angry Birds Rio</dt>
-      <form action="/play/rio.html">
-        <input type="submit" value="Play Now">
-      </form>
+      <button class="play-now-button" data-game-path="/play/rio.html">Play Now</button>
     </dl>
   </div>
 
-  <div class="game">
+  <div class="game" id="game-Angry-Birds-Stella">
     <img src="https://www.mediafire.com/convkey/a0a9/joybetmdtxzk6cm7g.jpg" alt="Angry Birds Stella">
     <dl>
       <dt>Angry Birds Stella</dt>
-      <form action="/play/stella.html">
-        <input type="submit" value="Play Now">
-      </form>
+      <button class="play-now-button" data-game-path="/play/stella.html">Play Now</button>
     </dl>
   </div>
 
-  <div class="game">
+  <div class="game" id="game-Basket-Bros">
     <img src="https://www.mediafire.com/convkey/f2cd/5pvv55vzgy80sq97g.jpg" alt="Basket Bros">
     <dl>
       <dt>Basket Bros</dt>
-      <form action="/play/basketbros.html">
-        <input type="submit" value="Play Now">
-      </form>
+      <button class="play-now-button" data-game-path="/play/basketbros.html">Play Now</button>
     </dl>
   </div>
 
-  <div class="game">
+  <div class="game" id="game-Battleship">
     <img src="https://www.mediafire.com/convkey/b985/jp96yg6v4dr8rzo7g.jpg" alt="Battleship">
     <dl>
       <dt>Battleship</dt>
-      <form action="/play/battleship.html">
-        <input type="submit" value="Play Now">
-      </form>
+      <button class="play-now-button" data-game-path="/play/battleship.html">Play Now</button>
     </dl>
   </div>
 
-  <div class="game">
+  <div class="game" id="game-BitLife">
     <img src="https://www.mediafire.com/convkey/00ec/vcpc59fot723szw7g.jpg" alt="BitLife">
     <dl>
       <dt>BitLife</dt>
-      <form action="/play/bitlife.html">
-        <input type="submit" value="Play Now">
-      </form>
+      <button class="play-now-button" data-game-path="/play/bitlife.html">Play Now</button>
     </dl>
   </div>
 
-  <div class="game">
+  <div class="game" id="game-Block-Blast">
     <img src="https://www.mediafire.com/convkey/acca/4izkblqrulevfn57g.jpg" alt="Block Blast">
     <dl>
-      <dt>Block Blast</dt>
-      <form action="/play/blockblast.html">
-        <input type="submit" value="Play Now">
-      </form>
+      <dt>Block Block</dt>
+      <button class="play-now-button" data-game-path="/play/blockblast.html">Play Now</button>
     </dl>
   </div>
 
-  <div class="game">
+  <div class="game" id="game-Bad-Piggies">
     <img src="https://www.mediafire.com/convkey/0866/vsh0682j2w9qxhl7g.jpg" alt="Bad Piggies">
     <dl>
       <dt>Bad Piggies</dt>
-      <form action="/play/badpiggies.html">
-        <input type="submit" value="Play Now">
-      </form>
+      <button class="play-now-button" data-game-path="/play/badpiggies.html">Play Now</button>
     </dl>
   </div>
 
-  <div class="game">
+  <div class="game" id="game-Call-of-Ops-2">
     <img src="https://www.mediafire.com/convkey/4a04/gs0b6crk0n5xzhv7g.jpg" alt="Call of Ops 2">
     <dl>
       <dt>Call of Ops 2</dt>
-      <form action="/play/callofops2.html">
-        <input type="submit" value="Play Now">
-      </form>
+      <button class="play-now-button" data-game-path="/play/callofops2.html">Play Now</button>
     </dl>
   </div>
 
-  <div class="game">
+  <div class="game" id="game-Call-of-Ops-3">
     <img src="https://www.mediafire.com/convkey/3adc/6czeo5tzxhx5hla7g.jpg" alt="Call of Ops 3">
     <dl>
       <dt>Call of Ops 3</dt>
-      <form action="/play/callofops3.html">
-        <input type="submit" value="Play Now">
-      </form>
+      <button class="play-now-button" data-game-path="/play/callofops3.html">Play Now</button>
     </dl>
   </div>
 
-  <div class="game">
+  <div class="game" id="game-Call-of-Ops-3-Zombies">
     <img src="https://www.mediafire.com/convkey/dc19/fyjm4208ciii1d37g.jpg" alt="Call of Ops 3 Zombies">
     <dl>
       <dt>Call of Ops 3 Zombies</dt>
-      <form action="/play/callofops3zombies.html">
-        <input type="submit" value="Play Now">
-      </form>
+      <button class="play-now-button" data-game-path="/play/callofops3zombies.html">Play Now</button>
     </dl>
   </div>
 
-  <div class="game">
+  <div class="game" id="game-Catac-io">
     <img src="https://www.mediafire.com/convkey/835b/2ap4blch50z33p27g.jpg" alt="Catac.io">
     <dl>
       <dt>Catac.io</dt>
-      <form action="/play/catacio.html">
-        <input type="submit" value="Play Now">
-      </form>
+      <button class="play-now-button" data-game-path="/play/catacio.html">Play Now</button>
     </dl>
   </div>
 
-  <div class="game">
+  <div class="game" id="game-Chess">
     <img src="https://www.mediafire.com/convkey/99a3/s5lxuivh0n6jdq47g.jpg" alt="Chess">
     <dl>
       <dt>Chess</dt>
-      <form action="/play/chess.html">
-        <input type="submit" value="Play Now">
-      </form>
+      <button class="play-now-button" data-game-path="/play/chess.html">Play Now</button>
     </dl>
   </div>
 
-  <div class="game">
+  <div class="game" id="game-Cookie-Clicker">
     <img src="https://www.mediafire.com/convkey/2e18/xf90vbqrawmret77g.jpg" alt="Cookie Clicker">
     <dl>
       <dt>Cookie Clicker</dt>
-      <form action="/play/cookieclicker.html">
-        <input type="submit" value="Play Now">
-      </form>
+      <button class="play-now-button" data-game-path="/play/cookieclicker.html">Play Now</button>
     </dl>
   </div>
 
-  <div class="game">
+  <div class="game" id="game-Cut-the-Rope">
     <img src="https://www.mediafire.com/convkey/1dc5/ep5lpbtg61zkb2a7g.jpg" alt="Cut the Rope">
     <dl>
       <dt>Cut the Rope</dt>
-      <form action="/play/cuttherope.html">
-        <input type="submit" value="Play Now">
-      </form>
+      <button class="play-now-button" data-game-path="/play/cuttherope.html">Play Now</button>
     </dl>
   </div>
 
-  <div class="game">
+  <div class="game" id="game-Cut-the-Rope-2">
     <img src="https://www.mediafire.com/convkey/9d7e/lcpz8u1t904dgfv7g.jpg" alt="Cut the Rope 2">
     <dl>
       <dt>Cut the Rope 2</dt>
-      <form action="/play/cuttherope2.html">
-        <input type="submit" value="Play Now">
-      </form>
+      <button class="play-now-button" data-game-path="/play/cuttherope2.html">Play Now</button>
     </dl>
   </div>
 
-  <div class="game">
+  <div class="game" id="game-Dodge-the-Bar">
     <img src="https://www.mediafire.com/convkey/c5ac/mr39ydydg5a22oi7g.jpg" alt="Dodge the Bar">
     <dl>
       <dt>Dodge the Bar</dt>
-      <form action="/play/dodgethebar.html">
-        <input type="submit" value="Play Now">
-      </form>
+      <button class="play-now-button" data-game-path="/play/dodgethebar.html">Play Now</button>
     </dl>
   </div>
 
-  <div class="game">
+  <div class="game" id="game-Drift-Boss">
     <img src="https://www.mediafire.com/convkey/e980/c6s9opnclguywbn7g.jpg" alt="Drift Boss">
     <dl>
       <dt>Drift Boss</dt>
-      <form action="/play/driftboss.html">
-        <input type="submit" value="Play Now">
-      </form>
+      <button class="play-now-button" data-game-path="/play/driftboss.html">Play Now</button>
     </dl>
   </div>
 
-  <div class="game">
+  <div class="game" id="game-Fireboy-and-Watergirl">
     <img src="https://www.mediafire.com/convkey/c29b/e3n575c8zvwoylj7g.jpg" alt="Fireboy and Watergirl">
     <dl>
       <dt>Fireboy and Watergirl</dt>
-      <form action="/play/fireboyandwatergirl.html">
-        <input type="submit" value="Play Now">
-      </form>
+      <button class="play-now-button" data-game-path="/play/fireboyandwatergirl.html">Play Now</button>
     </dl>
   </div>
 
-  <div class="game">
+  <div class="game" id="game-Flappy-Bird">
     <img src="https://www.mediafire.com/convkey/caa3/ch3tzgf6koc047e7g.jpg" alt="Flappy Bird">
     <dl>
       <dt>Flappy Bird</dt>
-      <form action="/play/flappybird.html">
-        <input type="submit" value="Play Now">
-      </form>
+      <button class="play-now-button" data-game-path="/play/flappybird.html">Play Now</button>
     </dl>
   </div>
 
-  <div class="game">
+  <div class="game" id="game-FNAF-1">
     <img src="https://www.mediafire.com/convkey/4d91/9bogsg5iuezz0a17g.jpg" alt="FNAF 1">
     <dl>
       <dt>FNAF 1</dt>
-      <form action="/play/fnaf1.html">
-        <input type="submit" value="Play Now">
-      </form>
+      <button class="play-now-button" data-game-path="/play/fnaf1.html">Play Now</button>
     </dl>
   </div>
 
-  <div class="game">
+  <div class="game" id="game-FNAF-2">
     <img src="https://www.mediafire.com/convkey/8bc3/5a09bjo1j67b9lt7g.jpg" alt="FNAF 2">
     <dl>
       <dt>FNAF 2</dt>
-      <form action="/play/fnaf2.html">
-        <input type="submit" value="Play Now">
-      </form>
+      <button class="play-now-button" data-game-path="/play/fnaf2.html">Play Now</button>
     </dl>
   </div>
 
-  <div class="game">
+  <div class="game" id="game-FNAF-3">
     <img src="https://www.mediafire.com/convkey/c20e/e2plb6ktp5mb8cg7g.jpg" alt="FNAF 3">
     <dl>
       <dt>FNAF 3</dt>
-      <form action="/play/fnaf3.html">
-        <input type="submit" value="Play Now">
-      </form>
+      <button class="play-now-button" data-game-path="/play/fnaf3.html">Play Now</button>
     </dl>
   </div>
 
-  <div class="game">
+  <div class="game" id="game-FNAF-4">
     <img src="https://www.mediafire.com/convkey/a18c/wrq22xj6bqzxaky7g.jpg" alt="FNAF 4">
     <dl>
       <dt>FNAF 4</dt>
-      <form action="/play/fnaf4.html">
-        <input type="submit" value="Play Now">
-      </form>
+      <button class="play-now-button" data-game-path="/play/fnaf4.html">Play Now</button>
     </dl>
   </div>
 
-  <div class="game">
+  <div class="game" id="game-Friday-Night-Funkin">
     <img src="https://www.mediafire.com/convkey/2692/q47l4ewzosd0ddc7g.jpg" alt="Friday Night Funkin">
     <dl>
       <dt>Friday Night Funkin</dt>
-      <form action="/play/fnf.html">
-        <input type="submit" value="Play Now">
-      </form>
+      <button class="play-now-button" data-game-path="/play/fnf.html">Play Now</button>
     </dl>
   </div>
 
-  <div class="game">
+  <div class="game" id="game-Fortnite">
     <img src="https://www.mediafire.com/convkey/7a48/lk2gegrck5l149r7g.jpg" alt="Fortnite">
     <dl>
       <dt>Fortnite</dt>
       <h2>SCRATCH version</h2>
-      <form action="/play/fortscratch.html">
-        <input type="submit" value="Play Now">
-      </form>
+      <button class="play-now-button" data-game-path="/play/fortscratch.html">Play Now</button>
     </dl>
   </div>
 
-  <div class="game">
+  <div class="game" id="game-Geometry-Dash">
     <img src="https://www.mediafire.com/convkey/7ae0/3mz9oz0hc63nu4v7g.jpg" alt="Geometry Dash">
     <dl>
       <dt>Geometry Dash</dt>
-      <form action="/play/geometrydash.html">
-        <input type="submit" value="Play Now">
-      </form>
+      <button class="play-now-button" data-game-path="/play/geometrydash.html">Play Now</button>
     </dl>
   </div>
 
-  <div class="game">
+  <div class="game" id="game-Glitch">
     <img src="https://www.mediafire.com/convkey/dd96/kl9qvz9qxvgf8ri7g.jpg" alt="Glitch">
     <dl>
       <dt>Glitch</dt>
-      <form action="/play/glitch.html">
-        <input type="submit" value="Play Now">
-      </form>
+      <button class="play-now-button" data-game-path="/play/glitch.html">Play Now</button>
     </dl>
   </div>
 
-  <div class="game">
+  <div class="game" id="game-Guess-their-Answer">
     <img src="https://www.mediafire.com/convkey/d3f6/51o2px2f4rauxvb7g.jpg" alt="Guess their Answer">
     <dl>
       <dt>Guess their Answer</dt>
-      <form action="/play/guesstheiranswer.html">
-        <input type="submit" value="Play Now">
-      </form>
+      <button class="play-now-button" data-game-path="/play/guesstheiranswer.html">Play Now</button>
     </dl>
   </div>
 
-  <div class="game">
+  <div class="game" id="game-Subway-Surfers">
     <img src="https://www.mediafire.com/convkey/d479/f0ijgipurbfrofo7g.jpg" alt="Subway Surfers">
     <dl>
       <dt>Subway Surfers</dt>
-      <form action="/play/subwaysurfers.html">
-        <input type="submit" value="Play Now">
-      </form>
+      <button class="play-now-button" data-game-path="/play/subwaysurfers.html">Play Now</button>
     </dl>
   </div>
 
-  <div class="game">
+  <div class="game" id="game-Super-Mario-Bros">
     <img src="https://www.mediafire.com/convkey/6456/rpuwycg2fp5wr987g.jpg" alt="Super Mario Bros">
     <dl>
       <dt>Super Mario Bros</dt>
-      <form action="/play/supermariobros.html">
-        <input type="submit" value="Play Now">
-      </form>
+      <button class="play-now-button" data-game-path="/play/supermariobros.html">Play Now</button>
     </dl>
   </div>
 
-  <div class="game">
+  <div class="game" id="game-Tiny-Fishing">
     <img src="https://www.mediafire.com/convkey/83b6/vdx1l7p7kbegnnu7g.jpg" alt="Tiny Fishing">
     <dl>
       <dt>Tiny Fishing</dt>
-      <form action="/play/tinyfishing.html">
-        <input type="submit" value="Play Now">
-      </form>
+      <button class="play-now-button" data-game-path="/play/tinyfishing.html">Play Now</button>
     </dl>
   </div>
 
-  <div class="game">
+  <div class="game" id="game-Fantasy-Avengers">
     <img src="https://www.mediafire.com/convkey/20b0/u146qzvpooa02ot7g.jpg" alt="Fantasy Avengers">
     <dl>
       <dt>Fantasy Avengers</dt>
-      <form action="/play/fantasyavengers.html">
-        <input type="submit" value="Play Now">
-      </form>
+      <button class="play-now-button" data-game-path="/play/fantasyavengers.html">Play Now</button>
     </dl>
   </div>
 
-  <div class="game">
+  <div class="game" id="game-Fantasy-Avengers-Stage-2">
     <img src="https://www.mediafire.com/convkey/20b0/u146qzvpooa02ot7g.jpg" alt="Fantasy Avengers Stage 2">
     <dl>
       <dt>Fantasy Avengers Stage 2</dt>
-      <form action="/play/fantasyavengers2.html">
-        <input type="submit" value="Play Now">
-      </form>
+      <button class="play-now-button" data-game-path="/play/fantasyavengers2.html">Play Now</button>
     </dl>
   </div>
 
-  <div class="game">
+  <div class="game" id="game-Fantasy-Avengers-Stage-3">
     <img src="https://www.mediafire.com/convkey/20b0/u146qzvpooa02ot7g.jpg" alt="Fantasy Avengers Stage 3">
     <dl>
       <dt>Fantasy Avengers Stage 3</dt>
-      <form action="/play/fantasyavengers3.html">
-        <input type="submit" value="Play Now">
-      </form>
+      <button class="play-now-button" data-game-path="/play/fantasyavengers3.html">Play Now</button>
     </dl>
   </div>
 
-  <div class="game">
+  <div class="game" id="game-Crazy-Cattle-3D">
     <img src="https://crazycattle-3d.com/thumbs/crazy-cattle-3d_1.webp" alt="Crazy Cattle 3D">
     <dl>
       <dt>Crazy Cattle 3D</dt>
-      <form action="/play/crazycattle.html">
-        <input type="submit" value="Play Now">
-      </form>
+      <button class="play-now-button" data-game-path="/play/crazycattle.html">Play Now</button>
     </dl>
   </div>
 
-  <div class="game">
+  <div class="game" id="game-Super-Mario-64-Web">
     <img src="https://i.ytimg.com/vi/95EpsdUjTQw/maxresdefault.jpg" alt="Super Mario 64 Web">
     <dl>
       <dt>Super Mario 64 Web</dt>
-      <form action="/play/64.html">
-        <input type="submit" value="Play Now">
-      </form>
+      <button class="play-now-button" data-game-path="/play/64.html">Play Now</button>
     </dl>
   </div>
 
 </div>
+
+<!-- Iframe Game Player Overlay -->
+<div id="gamePlayerOverlay" class="game-player-overlay">
+  <div class="game-iframe-container">
+    <iframe id="gameIframe" class="game-iframe" allowfullscreen></iframe>
+  </div>
+  <div class="game-controls-bar">
+    <button id="reloadGameButton">Reload</button>
+    <button id="switchUrlButton">Switch URL</button>
+    <button id="fullScreenButton">Full Screen</button>
+    <button id="exitGameButton">Exit</button>
+    <button id="copyLinkButton">Copy Link</button>
+  </div>
+</div>
+
+<script>
+  // Define the base URLs for the games
+  const GAME_BASE_URLS = [
+    'https://epix.pages.dev',
+    'https://birdmath.vercel.app',
+    'https://birdmath-yqlov.kinsta.page',
+    'https://birdmath-fidgetsetcs-projects.vercel.app',
+    'https://birdmath-git-main-fidgetsetcs-projects.vercel.app',
+    'https://lustrous-horse-7c8ec9.netlify.app',
+    'https://coolmathgames-4gyl5.kinsta.page',
+    'https://friend-b14n3.kinsta.page',
+    'https://a-c2tq2.kinsta.page'
+  ];
+
+  // Variable to store the currently active base URL
+  let currentBaseUrl = GAME_BASE_URLS[0]; // Default to the first URL in the list
+
+  // Get the color picker input element
+  const accentColorPicker = document.getElementById('accentColorPicker');
+
+  // Get the root element to modify CSS variables
+  const root = document.documentElement;
+
+  // Get elements for the game suggestion feature
+  const gamePromptTextarea = document.getElementById('gamePrompt');
+  const getSuggestionButton = document.getElementById('getSuggestionButton');
+  const gameSuggestionResult = document.getElementById('gameSuggestionResult');
+  const loadingSpinner = document.getElementById('loadingSpinner');
+
+  // Get elements for the search feature
+  const searchInput = document.getElementById('searchInput');
+  const searchButton = document.getElementById('searchButton');
+  const searchResultsDiv = document.getElementById('searchResults');
+  const similarGamesResultsDiv = document.getElementById('similarGamesResults');
+
+  // Get elements for the game player iframe
+  const gamePlayerOverlay = document.getElementById('gamePlayerOverlay');
+  const gameIframe = document.getElementById('gameIframe');
+  const reloadGameButton = document.getElementById('reloadGameButton');
+  const switchUrlButton = document.getElementById('switchUrlButton');
+  const fullScreenButton = document.getElementById('fullScreenButton');
+  const exitGameButton = document.getElementById('exitGameButton');
+  const copyLinkButton = document.getElementById('copyLinkButton');
+
+  // Variable to store the currently loaded game path (relative path)
+  let currentLoadedGamePath = '';
+
+  // Store all game data for easy lookup
+  const allGamesData = new Map(); // Map: gameTitle -> { id: 'game-title-id', path: '/play/game.html' }
+
+  // Helper function to convert hex to RGB
+  const hexToRgb = (hex) => {
+    const bigint = parseInt(hex.slice(1), 16);
+    const r = (bigint >> 16) & 255;
+    const g = (bigint >> 8) & 255;
+    const b = bigint & 255;
+    return [r, g, b];
+  };
+
+  // Helper function to convert RGB to hex
+  const rgbToHex = (r, g, b) => {
+    return '#' + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
+  };
+
+  // Helper function to darken a color by a percentage
+  const darkenColor = (hex, percent) => {
+    let [r, g, b] = hexToRgb(hex);
+    r = Math.max(0, r - Math.floor(r * percent));
+    g = Math.max(0, g - Math.floor(g * percent));
+    b = Math.max(0, b - Math.floor(b * percent));
+    return rgbToHex(r, g, b);
+  };
+
+  // Function to update all accent-related colors
+  function updateAccentColors(color) {
+    // Set the main accent color
+    root.style.setProperty('--accent-color', color);
+
+    // Calculate a slightly darker shade for button hover effects (20% darker)
+    const hoverColor = darkenColor(color, 0.2);
+    root.style.setProperty('--accent-hover-color', hoverColor);
+
+    // Apply the accent color to primary and secondary elements (titles, subtitles, image borders)
+    root.style.setProperty('--primary-color', color);
+    root.style.setProperty('--secondary-color', color);
+
+    // Calculate a significantly darker shade for the background (50% darker)
+    const darkBgColor = darkenColor(color, 0.5);
+    root.style.setProperty('--bg-color', darkBgColor);
+
+    // Save the chosen accent color to local storage for persistence
+    localStorage.setItem('epixgamesAccentColor', color);
+  }
+
+  // Function to open a game in the iframe
+  function openGameInIframe(gameRelativePath) {
+    currentLoadedGamePath = gameRelativePath; // Store the relative path
+    gameIframe.src = `${currentBaseUrl}${gameRelativePath}`; // Use the currentBaseUrl
+    gamePlayerOverlay.classList.add('active'); // Show the overlay
+  }
+
+  // Function to reload the game in the iframe
+  function reloadIframe() {
+    if (currentLoadedGamePath) {
+      gameIframe.src = `${currentBaseUrl}${currentLoadedGamePath}`; // Reload using the stored full path and currentBaseUrl
+    }
+  }
+
+  // Function to exit the iframe game player
+  function exitIframe() {
+    gameIframe.src = ''; // Clear the iframe source to stop the game
+    gamePlayerOverlay.classList.remove('active'); // Hide the overlay
+    currentLoadedGamePath = ''; // Clear the stored path
+    // Remove the game parameter from the URL if present
+    const url = new URL(window.location.href);
+    if (url.searchParams.has('game')) {
+      url.searchParams.delete('game');
+      window.history.pushState({}, '', url.toString());
+    }
+  }
+
+  // Function to copy the game link to clipboard
+  function copyGameLink() {
+    if (currentLoadedGamePath) {
+      // Construct the shareable URL using the current page's origin and the game parameter
+      const shareableUrl = `${window.location.origin}${window.location.pathname}?game=${encodeURIComponent(currentLoadedGamePath)}&base=${encodeURIComponent(currentBaseUrl)}`;
+      const tempInput = document.createElement('input');
+      tempInput.value = shareableUrl;
+      document.body.appendChild(tempInput);
+      tempInput.select();
+      document.execCommand('copy');
+      document.body.removeChild(tempInput);
+      alert('Game link copied to clipboard!'); // Using alert for simplicity, consider a custom modal
+    } else {
+      alert('No game is currently loaded to copy a link for.');
+    }
+  }
+
+  // Function to switch the base URL
+  function switchBaseUrl() {
+    let currentIndex = GAME_BASE_URLS.indexOf(currentBaseUrl);
+    let nextIndex = (currentIndex + 1) % GAME_BASE_URLS.length;
+    currentBaseUrl = GAME_BASE_URLS[nextIndex];
+
+    localStorage.setItem('epixgamesBaseUrl', currentBaseUrl); // Save to local storage
+    alert(`Switched game URL to: ${currentBaseUrl}`); // Inform user
+    if (currentLoadedGamePath && gamePlayerOverlay.classList.contains('active')) {
+      // If a game is currently open, reload it with the new base URL
+      reloadIframe();
+    }
+  }
+
+  // Function to toggle full screen for the iframe
+  function toggleFullScreen() {
+    if (!document.fullscreenElement) {
+      if (gameIframe.requestFullscreen) {
+        gameIframe.requestFullscreen();
+      } else if (gameIframe.mozRequestFullScreen) { /* Firefox */
+        gameIframe.mozRequestFullScreen();
+      } else if (gameIframe.webkitRequestFullscreen) { /* Chrome, Safari & Opera */
+        gameIframe.webkitRequestFullscreen();
+      } else if (gameIframe.msRequestFullscreen) { /* IE/Edge */
+        gameIframe.msRequestFullscreen();
+      }
+    } else {
+      if (document.exitFullscreen) {
+        document.exitFullscreen();
+      } else if (document.mozCancelFullScreen) { /* Firefox */
+        document.mozCancelFullScreen();
+      } else if (document.webkitExitFullscreen) { /* Chrome, Safari and Opera */
+        document.webkitExitFullscreen();
+      } else if (document.msExitFullscreen) { /* IE/Edge */
+        document.msExitFullscreen();
+      }
+    }
+  }
+
+  // Function to highlight and scroll to a game card
+  function highlightAndScrollGame(gameTitle) {
+    // Remove existing highlights
+    document.querySelectorAll('.highlighted-game').forEach(el => {
+      el.classList.remove('highlighted-game');
+    });
+
+    const gameData = allGamesData.get(gameTitle);
+    if (gameData && gameData.id) {
+      const gameElement = document.getElementById(gameData.id);
+      if (gameElement) {
+        gameElement.classList.add('highlighted-game');
+        gameElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    }
+  }
+
+  // Function to get game suggestion from Gemini API
+  async function getGameSuggestion() {
+    const prompt = gamePromptTextarea.value.trim();
+    if (!prompt) {
+      gameSuggestionResult.textContent = "Please enter your game preference!";
+      return;
+    }
+
+    const availableGames = Array.from(allGamesData.keys());
+    const gamesListString = availableGames.join(', ');
+
+    // Show loading spinner and clear previous result
+    loadingSpinner.style.display = 'block';
+    gameSuggestionResult.textContent = '';
+    getSuggestionButton.disabled = true;
+
+    try {
+      let chatHistory = [];
+      chatHistory.push({ role: "user", parts: [{ text: `Given the user's preference: '${prompt}', from the following list of games, pick ONE game that best fits the preference. If none fit perfectly, suggest the closest one. Just provide the name of the game, nothing else.
+
+Available Games: ${gamesListString}` }] });
+      const payload = { contents: chatHistory };
+      const apiKey = ""; // API key will be provided by the Canvas environment
+      const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+
+      const response = await fetch(apiUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+
+      const result = await response.json();
+
+      if (result.candidates && result.candidates.length > 0 &&
+          result.candidates[0].content && result.candidates[0].content.parts &&
+          result.candidates[0].content.parts.length > 0) {
+        const suggestedGameTitle = result.candidates[0].content.parts[0].text.trim();
+        gameSuggestionResult.textContent = `Suggested Game: ${suggestedGameTitle}`;
+        // Highlight and scroll to the suggested game
+        highlightAndScrollGame(suggestedGameTitle);
+      } else {
+        gameSuggestionResult.textContent = "Could not get a suggestion. Please try again!";
+        console.error("Gemini API response structure unexpected:", result);
+      }
+    } catch (error) {
+      gameSuggestionResult.textContent = "Error getting suggestion. Please try again later.";
+      console.error("Error calling Gemini API:", error);
+    } finally {
+      loadingSpinner.style.display = 'none';
+      getSuggestionButton.disabled = false;
+    }
+  }
+
+  // Function to perform search and get similar games
+  async function performSearch() {
+    const query = searchInput.value.trim().toLowerCase();
+    searchResultsDiv.innerHTML = ''; // Clear previous search results
+    similarGamesResultsDiv.innerHTML = ''; // Clear previous similar games
+
+    if (!query) {
+      searchResultsDiv.textContent = "Please enter a search term.";
+      return;
+    }
+
+    // Filter local games for direct matches
+    const matchingGames = Array.from(allGamesData.keys()).filter(title =>
+      title.toLowerCase().includes(query)
+    );
+
+    if (matchingGames.length > 0) {
+      const resultHeader = document.createElement('p');
+      resultHeader.innerHTML = `<strong>Direct Matches:</strong>`;
+      searchResultsDiv.appendChild(resultHeader);
+      matchingGames.forEach(title => {
+        const p = document.createElement('p');
+        p.textContent = title;
+        p.style.cursor = 'pointer';
+        p.onclick = () => highlightAndScrollGame(title);
+        searchResultsDiv.appendChild(p);
+      });
+    } else {
+      searchResultsDiv.textContent = "No direct matches found.";
+    }
+
+    // Get AI similar game suggestions
+    const availableGames = Array.from(allGamesData.keys());
+    const gamesListString = availableGames.join(', ');
+
+    const similarLoadingSpinner = document.createElement('div');
+    similarLoadingSpinner.className = 'loading-spinner';
+    similarGamesResultsDiv.appendChild(similarLoadingSpinner);
+    similarLoadingSpinner.style.display = 'block';
+
+    try {
+      let chatHistory = [];
+      chatHistory.push({ role: "user", parts: [{ text: `Given the search term: '${query}', from the following list of games, suggest up to 3 games that are similar in genre, style, or gameplay. Return only the names, comma-separated. Do not include any introductory or concluding remarks.
+
+Available Games: ${gamesListString}` }] });
+      const payload = { contents: chatHistory };
+      const apiKey = ""; // API key will be provided by the Canvas environment
+      const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+
+      const response = await fetch(apiUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+
+      const result = await response.json();
+
+      if (result.candidates && result.candidates.length > 0 &&
+          result.candidates[0].content && result.candidates[0].content.parts &&
+          result.candidates[0].content.parts.length > 0) {
+        const suggestedText = result.candidates[0].content.parts[0].text.trim();
+        const suggestedGames = suggestedText.split(',').map(game => game.trim()).filter(game => game !== '');
+
+        if (suggestedGames.length > 0) {
+            const similarHeader = document.createElement('p');
+            similarHeader.innerHTML = `<strong>Similar Games (AI):</strong>`;
+            similarGamesResultsDiv.appendChild(similarHeader);
+            suggestedGames.forEach(title => {
+                // Ensure the suggested game is actually in our list before displaying
+                if (allGamesData.has(title)) {
+                    const p = document.createElement('p');
+                    p.textContent = title;
+                    p.style.cursor = 'pointer';
+                    p.onclick = () => highlightAndScrollGame(title);
+                    similarGamesResultsDiv.appendChild(p);
+                }
+            });
+            if (similarGamesResultsDiv.children.length <= 1) { // Only header and no games
+                similarGamesResultsDiv.textContent = "No similar games found by AI from the list.";
+            }
+        } else {
+            similarGamesResultsDiv.textContent = "No similar games found by AI.";
+        }
+      } else {
+        similarGamesResultsDiv.textContent = "AI could not suggest similar games.";
+        console.error("Gemini API response for similar games unexpected:", result);
+      }
+    } catch (error) {
+      similarGamesResultsDiv.textContent = "Error getting AI similar games.";
+      console.error("Error calling Gemini API for similar games:", error);
+    } finally {
+      similarLoadingSpinner.style.display = 'none';
+    }
+  }
+
+
+  // Event listener for when the DOM is fully loaded
+  document.addEventListener('DOMContentLoaded', () => {
+    // Populate allGamesData Map
+    document.querySelectorAll('.game').forEach(gameDiv => {
+      const titleElement = gameDiv.querySelector('dt');
+      const buttonElement = gameDiv.querySelector('.play-now-button');
+      if (titleElement && buttonElement) {
+        const gameTitle = titleElement.textContent.trim();
+        const gamePath = buttonElement.dataset.gamePath;
+        const gameId = gameDiv.id; // Get the ID directly from the div
+        allGamesData.set(gameTitle, { id: gameId, path: gamePath });
+      }
+    });
+
+    // Load saved accent color
+    const savedAccentColor = localStorage.getItem('epixgamesAccentColor');
+    if (savedAccentColor) {
+      accentColorPicker.value = savedAccentColor;
+      updateAccentColors(savedAccentColor);
+    } else {
+      updateAccentColors(accentColorPicker.value);
+    }
+
+    // Load saved base URL
+    const savedBaseUrl = localStorage.getItem('epixgamesBaseUrl');
+    // Validate savedBaseUrl against the new array of valid URLs
+    if (savedBaseUrl && GAME_BASE_URLS.includes(savedBaseUrl)) {
+      currentBaseUrl = savedBaseUrl;
+    }
+
+    // Add event listener for accent color picker
+    accentColorPicker.addEventListener('input', (event) => {
+      updateAccentColors(event.target.value);
+    });
+
+    // Add event listener for the game suggestion button
+    getSuggestionButton.addEventListener('click', getGameSuggestion);
+
+    // Attach event listeners to all "Play Now" buttons
+    document.querySelectorAll('.play-now-button').forEach(button => {
+      button.addEventListener('click', (event) => {
+        const gamePath = event.target.dataset.gamePath;
+        openGameInIframe(gamePath);
+      });
+    });
+
+    // Attach event listeners to iframe control buttons
+    reloadGameButton.addEventListener('click', reloadIframe);
+    switchUrlButton.addEventListener('click', switchBaseUrl);
+    fullScreenButton.addEventListener('click', toggleFullScreen);
+    exitGameButton.addEventListener('click', exitIframe);
+    copyLinkButton.addEventListener('click', copyGameLink);
+
+    // Attach event listeners for search feature
+    searchButton.addEventListener('click', performSearch);
+    searchInput.addEventListener('keypress', (event) => {
+      if (event.key === 'Enter') {
+        performSearch();
+      }
+    });
+
+    // Check for game parameter in URL on page load
+    const urlParams = new URLSearchParams(window.location.search);
+    const gameToLoad = urlParams.get('game');
+    const baseToLoad = urlParams.get('base'); // Get base URL from URL parameter
+
+    // Validate baseToLoad against the new array of valid URLs
+    if (baseToLoad && GAME_BASE_URLS.includes(decodeURIComponent(baseToLoad))) {
+        currentBaseUrl = decodeURIComponent(baseToLoad);
+        localStorage.setItem('epixgamesBaseUrl', currentBaseUrl); // Save if loaded from URL
+    }
+
+    if (gameToLoad) {
+      openGameInIframe(decodeURIComponent(gameToLoad));
+    }
+  });
+</script>
 
 </body>
 </html>
