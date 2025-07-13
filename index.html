@@ -795,6 +795,16 @@
       transform: translateY(-2px);
     }
 
+    /* New styles for the Suggest tab iframe */
+    #suggest-tab iframe {
+      width: 100%;
+      height: 600px; /* Adjust height as needed for the form */
+      border: 2px solid var(--primary-color); /* Matches other elements */
+      border-radius: 12px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+      background-color: #fff; /* White background for the form content */
+    }
+
 
     /* Responsive adjustments */
     @media (max-width: 768px) {
@@ -859,6 +869,9 @@
         width: 95%; /* Make it wider on smaller screens */
         padding: 15px;
       }
+      #suggest-tab iframe {
+        height: 400px; /* Adjust height for smaller screens */
+      }
     }
 
     @media (max-width: 480px) {
@@ -896,8 +909,9 @@
 <nav id="tabs-container">
   <button class="tab-button active" data-tab="games-tab" data-i18n-key="tabGames">Games</button>
   <button class="tab-button" data-tab="store-tab" data-i18n-key="tabStore">Store</button>
-  <button class="tab-button" data-tab="settings-tab" data-i18n-key="tabSettings">Settings</button>
+  <button class="tab-button" data-tab="suggest-tab" data-i18n-key="tabSuggest">Suggest</button>
   <button class="tab-button" data-tab="more-tab" data-i18n-key="tabMore">More</button>
+  <button class="tab-button" data-tab="settings-tab" data-i18n-key="tabSettings">Settings</button>
 </nav>
 
 <!-- Tab Content -->
@@ -1259,6 +1273,40 @@
     </div>
   </div>
 
+  <!-- Suggest Tab -->
+  <div id="suggest-tab" class="tab-content">
+    <h2 data-i18n-key="suggestSectionTitle">Suggest a Game or Feature! 💡</h2>
+    <p data-i18n-key="suggestSubtitle">Got a lit idea for a new game or a feature that would make EPIXGAMES even more fire? Drop your suggestions here! 👇</p>
+    <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSffflitG4a27clWulopftjmuGF6o1Pbl_6HkPWOzf4B-oczXw/viewform?usp=dialog" frameborder="0" marginheight="0" marginwidth="0">Loading…</iframe>
+  </div>
+
+  <!-- More Tab -->
+  <div id="more-tab" class="tab-content">
+    <h2 data-i18n-key="moreSectionTitle">More EPIX Content ✨</h2>
+    <div class="more-links-container">
+      <div class="more-link-item">
+        <h3>BirdMath Classic (Before EPIXGAMES)</h3>
+        <p data-i18n-key="birdMathClassicDesc">Relive the OG days with the classic BirdMath site! It's where it all began. 🐦</p>
+        <a href="/play/classic/" target="_blank" data-i18n-key="visitLink">Visit Site</a>
+      </div>
+      <div class="more-link-item">
+        <h3>MultiScreen Animation</h3>
+        <p data-i18n-key="multiScreenAnimationDesc">Experience cool animations across multiple devices. Just press the number based on what order the device is in to have the illusion that something is moving across a screen. 📱➡️📱➡️📱</p>
+        <a href="/screen/" target="_blank" data-i18n-key="visitLink">Visit Site</a>
+      </div>
+      <div class="more-link-item">
+        <h3>BirdMath Local Minimal Browser</h3>
+        <p data-i18n-key="minimalBrowserDesc">A lightweight browser with a bunch of pr0x1es. Not really recommended to use as it isn't maintained, but it's there if you're feeling nostalgic! 💾</p>
+        <a href="/minilocal/" target="_blank" data-i18n-key="visitLink">Visit Site</a>
+      </div>
+      <div class="more-link-item">
+        <h3>Proxser</h3>
+        <p data-i18n-key="proxserDesc">A reliable pr0xy with tabs that works today. Get your browsing on! 🌐</p>
+        <a href="https://proxser.pages.dev" target="_blank" data-i18n-key="visitLink">Visit Site</a>
+      </div>
+    </div>
+  </div>
+
   <!-- Settings Tab -->
   <div id="settings-tab" class="tab-content">
     <h2 data-i18n-key="settingsSectionTitle">Settings ⚙️</h2>
@@ -1286,33 +1334,6 @@
       <label data-i18n-key="settingsReset">Reset All Data:</label>
       <button id="resetEverythingButton" class="reset-button" data-i18n-key="resetButton">Reset Everything</button>
       <p id="resetConfirmationMessage" class="confirmation-message"></p>
-    </div>
-  </div>
-
-  <!-- More Tab -->
-  <div id="more-tab" class="tab-content">
-    <h2 data-i18n-key="moreSectionTitle">More EPIX Content ✨</h2>
-    <div class="more-links-container">
-      <div class="more-link-item">
-        <h3>BirdMath Classic (Before EPIXGAMES)</h3>
-        <p data-i18n-key="birdMathClassicDesc">Relive the OG days with the classic BirdMath site! It's where it all began. 🐦</p>
-        <a href="/play/classic/" target="_blank" data-i18n-key="visitLink">Visit Site</a>
-      </div>
-      <div class="more-link-item">
-        <h3>MultiScreen Animation</h3>
-        <p data-i18n-key="multiScreenAnimationDesc">Experience cool animations across multiple devices. Just press the number based on what order the device is in to have the illusion that something is moving across a screen. 📱➡️📱➡️📱</p>
-        <a href="/screen/" target="_blank" data-i18n-key="visitLink">Visit Site</a>
-      </div>
-      <div class="more-link-item">
-        <h3>BirdMath Local Minimal Browser</h3>
-        <p data-i18n-key="minimalBrowserDesc">A lightweight browser with a bunch of pr0x1es. Not really recommended to use as it isn't maintained, but it's there if you're feeling nostalgic! 💾</p>
-        <a href="/minilocal/" target="_blank" data-i18n-key="visitLink">Visit Site</a>
-      </div>
-      <div class="more-link-item">
-        <h3>Proxser</h3>
-        <p data-i18n-key="proxserDesc">A reliable pr0xy with tabs that works today. Get your browsing on! 🌐</p>
-        <a href="https://proxser.pages.dev" target="_blank" data-i18n-key="visitLink">Visit Site</a>
-      </div>
     </div>
   </div>
 
@@ -1361,6 +1382,7 @@
       tabStore: "Store",
       tabSettings: "Settings",
       tabMore: "More", // New translation
+      tabSuggest: "Suggest", // New translation
       gamesSectionTitle: "EPIXGAMES Games",
       storeSectionTitle: "EPIXGAMES Store 🛍️",
       yourMoneyPrefix: "Money:", // New translation key for the prefix
@@ -1391,7 +1413,9 @@
       multiScreenAnimationDesc: "Experience cool animations across multiple devices. Just press the number based on what order the device is in to have the illusion that something is moving across a screen. 📱➡️📱➡️📱", // New translation
       minimalBrowserDesc: "A lightweight browser with a bunch of pr0x1es. Not really recommended to use as it isn't maintained, but it's there if you're feeling nostalgic! 💾", // New translation
       proxserDesc: "A reliable pr0xy with tabs that works today. Get your browsing on! 🌐", // New translation
-      visitLink: "Visit Site" // New translation
+      visitLink: "Visit Site", // New translation
+      suggestSectionTitle: "Suggest a Game or Feature! 💡", // New translation
+      suggestSubtitle: "Got a lit idea for a new game or a feature that would make EPIXGAMES even more fire? Drop your suggestions here! 👇" // New translation
     },
     es: {
       homeTitle: "EPIXJUEGOS Inicio 🎮",
@@ -1400,6 +1424,7 @@
       tabStore: "Tienda",
       tabSettings: "Ajustes",
       tabMore: "Más", // New translation
+      tabSuggest: "Sugerir", // New translation
       gamesSectionTitle: "Juegos EPIXGAMES",
       storeSectionTitle: "Tienda EPIXGAMES 🛍️",
       yourMoneyPrefix: "Dinero:", // New translation key for the prefix
@@ -1430,7 +1455,9 @@
       multiScreenAnimationDesc: "Experimenta animaciones geniales en múltiples dispositivos. Simplemente presiona el número según el orden del dispositivo para tener la ilusión de que algo se mueve por la pantalla. 📱➡️📱➡️📱", // New translation
       minimalBrowserDesc: "Un navegador ligero con varios proxies. No se recomienda mucho su uso ya que no se mantiene, ¡pero está ahí si sientes nostalgia! 💾", // New translation
       proxserDesc: "Un proxy fiable con pestañas que funciona hoy. ¡A navegar! 🌐", // New translation
-      visitLink: "Visitar Sitio" // New translation
+      visitLink: "Visitar Sitio", // New translation
+      suggestSectionTitle: "¡Sugiere un Juego o Característica! 💡", // New translation
+      suggestSubtitle: "¿Tienes una idea genial para un nuevo juego o una característica que haría EPIXGAMES aún más increíble? ¡Deja tus sugerencias aquí! 👇" // New translation
     },
     fr: {
       homeTitle: "EPIXJEUX Accueil 🎮",
@@ -1439,6 +1466,7 @@
       tabStore: "Boutique",
       tabSettings: "Paramètres",
       tabMore: "Plus", // New translation
+      tabSuggest: "Suggérer", // New translation
       gamesSectionTitle: "Jeux EPIXGAMES",
       storeSectionTitle: "Boutique EPIXGAMES 🛍️",
       yourMoneyPrefix: "Argent :", // New translation key for the prefix
@@ -1469,7 +1497,9 @@
       multiScreenAnimationDesc: "Découvrez des animations sympas sur plusieurs appareils. Appuyez simplement sur le numéro en fonction de l'ordre de l'appareil pour avoir l'illusion que quelque chose se déplace sur un écran. 📱➡️📱➡️📱", // New translation
       minimalBrowserDesc: "Un navigateur léger avec un tas de proxys. Il n'est pas vraiment recommandé de l'utiliser car il n'est pas maintenu, mais il est là si vous êtes nostalgique ! 💾", // New translation
       proxserDesc: "Un proxy fiable avec des onglets qui fonctionne aujourd'hui. Naviguez ! 🌐", // New translation
-      visitLink: "Visiter le Site" // New translation
+      visitLink: "Visiter le Site", // New translation
+      suggestSectionTitle: "Suggérer un Jeu ou une Fonctionnalité ! 💡", // New translation
+      suggestSubtitle: "Vous avez une idée géniale pour un nouveau jeu ou une fonctionnalité qui rendrait EPIXGAMES encore plus génial ? Laissez vos suggestions ici ! 👇" // New translation
     }
   };
 
