@@ -235,12 +235,12 @@
       top: 10px; /* Align to the top of the games tab content */
       right: 10px; /* Align to the right of the games tab content */
       display: flex;
-      flex-direction: column; /* Stack search bar and results vertically */
-      align-items: flex-end; /* Align items to the right within this container */
-      padding: 5px; /* Add some padding so it's not right on the edge */
-      width: 210px; /* Width of the search input + button + gap + padding */
-      box-sizing: border-box; /* Include padding in width */
-      z-index: 10; /* Ensure it's above other content if needed */
+      flex-direction: column;
+      align-items: flex-end;
+      padding: 5px;
+      width: 210px;
+      box-sizing: border-box;
+      z-index: 10;
     }
 
     /* Header Search Group (just the input and button) */
@@ -248,11 +248,11 @@
       display: flex;
       gap: 10px;
       align-items: center;
-      width: 100%; /* Take full width of its parent (.search-widget-container) */
+      width: 100%;
     }
 
     .header-search-group input[type="text"] {
-      flex-grow: 1; /* Allow input to take available space */
+      flex-grow: 1;
       padding: 8px 12px;
       border-radius: 8px;
       border: 2px solid var(--primary-color);
@@ -282,14 +282,14 @@
 
     /* Search Results now inside the widget container */
     #searchResults {
-      width: 100%; /* Take full width of its parent (.search-widget-container) */
-      max-height: 200px; /* Limit height for scrolling */
-      overflow-y: auto; /* Enable scrolling */
-      background-color: var(--card-bg); /* Use card background */
+      width: 100%;
+      max-height: 200px;
+      overflow-y: auto;
+      background-color: var(--card-bg);
       border-radius: 8px;
       border: 1px dashed var(--secondary-color);
       padding: 10px;
-      margin-top: 10px; /* Space between search bar and results */
+      margin-top: 10px;
       color: var(--text-color);
       text-align: left;
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
@@ -314,7 +314,7 @@
       width: 30px;
       height: 30px;
       animation: spin 1s linear infinite;
-      display: none; /* Hidden by default */
+      display: none;
     }
 
     @keyframes spin {
@@ -329,15 +329,15 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background-color: rgba(0, 0, 0, 0.9); /* Dark overlay */
+      background-color: rgba(0, 0, 0, 0.9);
       display: flex;
       flex-direction: column;
       justify-content: center;
       align-items: center;
-      z-index: 1000; /* Ensure it's on top */
+      z-index: 1000;
       padding: 10px;
       box-sizing: border-box;
-      opacity: 0; /* Hidden by default */
+      opacity: 0;
       visibility: hidden;
       transition: opacity 0.3s ease, visibility 0.3s ease;
     }
@@ -349,7 +349,7 @@
 
     .game-iframe-container {
       width: 95%;
-      height: calc(100% - 100px); /* Adjusted from 80px to 100px to cut off 20px more */
+      height: calc(100% - 100px);
       background-color: #000;
       border-radius: 12px;
       overflow: hidden;
@@ -367,7 +367,7 @@
 
     .game-controls-bar {
       width: 95%;
-      height: 60px; /* Height of the control bar */
+      height: 60px;
       background-color: var(--card-bg);
       border-radius: 12px;
       margin-top: 10px;
@@ -507,7 +507,7 @@
 
     .settings-section input[type="color"] {
       height: 40px;
-      width: 80px; /* Wider for easier selection */
+      width: 80px;
     }
 
     .settings-section button {
@@ -529,11 +529,11 @@
     }
 
     .reset-button {
-      background-color: #f44336 !important; /* Red color for reset */
+      background-color: #f44336 !important;
     }
 
     .reset-button:hover {
-      background-color: #d32f2f !important; /* Darker red on hover */
+      background-color: #d32f2f !important;
     }
 
     .confirmation-message {
@@ -554,7 +554,7 @@
       border-radius: 12px;
       box-shadow: 0 8px 16px rgba(0, 0, 0, 0.6);
       z-index: 1001;
-      display: none; /* Hidden by default */
+      display: none;
       text-align: center;
       font-family: 'Roboto', sans-serif;
       font-size: 1.1em;
@@ -581,27 +581,27 @@
     /* Responsive adjustments */
     @media (max-width: 768px) {
       header {
-        flex-direction: column; /* Stack header content and search on small screens */
-        align-items: center; /* Center items when stacked */
-        gap: 15px; /* Reduce gap for stacked layout */
-        padding-right: 20px; /* Reset padding for stacked layout */
+        flex-direction: column;
+        align-items: center;
+        gap: 15px;
+        padding-right: 20px;
       }
       .header-content {
-        text-align: center; /* Center text when stacked */
+        text-align: center;
       }
       .search-widget-container {
-        position: static; /* Revert to normal flow on small screens */
-        margin-top: 10px; /* Add some margin when stacked */
-        width: 100%; /* Full width for search input group */
-        align-items: center; /* Center search elements when static */
-        padding: 0; /* Remove padding when static */
+        position: static;
+        margin-top: 10px;
+        width: 100%;
+        align-items: center;
+        padding: 0;
       }
       .header-search-group {
-        justify-content: center; /* Center search bar and button when stacked */
+        justify-content: center;
       }
       .header-search-group input[type="text"] {
-        width: calc(100% - 100px); /* Adjust width to fit button */
-        max-width: 250px; /* Prevent it from getting too wide */
+        width: calc(100% - 100px);
+        max-width: 250px;
       }
 
       h1 {
@@ -617,16 +617,16 @@
         width: 180px;
       }
       #searchResults {
-        margin-top: 10px; /* Adjust margin for stacked layout */
+        margin-top: 10px;
       }
       .game-iframe-container {
-        height: calc(100% - 120px); /* Adjusted from 100px to 120px for mobile */
+        height: calc(100% - 120px);
         width: 98%;
       }
       .game-controls-bar {
         width: 98%;
-        height: 80px; /* Taller control bar */
-        flex-wrap: wrap; /* Allow buttons to wrap */
+        height: 80px;
+        flex-wrap: wrap;
         gap: 10px;
         padding: 10px;
       }
@@ -647,11 +647,11 @@
         font-size: 1.3em;
       }
       .game {
-        width: 100%; /* Full width on smaller screens */
-        max-width: 250px; /* Max width to prevent it from getting too wide if screen is very small */
+        width: 100%;
+        max-width: 250px;
       }
       .color-picker-container {
-        flex-direction: column; /* Stack elements on small screens */
+        flex-direction: column;
         align-items: flex-start;
         padding: 10px;
       }
@@ -1026,7 +1026,8 @@
   <!-- Store Tab -->
   <div id="store-tab" class="tab-content">
     <h2 data-i18n-key="storeSectionTitle">EPIXGAMES Store 🛍️</h2>
-    <div class="money-display" data-i18n-key="yourMoney">Your Money: <span id="currentMoney">0</span> 💰</div>
+    <!-- Changed data-i18n-key to a span inside the div -->
+    <div class="money-display"><span data-i18n-key="yourMoneyPrefix">Money:</span> <span id="currentMoney">0</span> 💰</div>
     <div id="storeItemsContainer" class="store-grid">
       <!-- Store items will be dynamically loaded here -->
     </div>
@@ -1068,7 +1069,7 @@
     <button id="switchUrlButton" data-i18n-key="switchUrlButton">Switch URL</button>
     <button id="fullScreenButton" data-i18n-key="fullScreenButton">Full Screen</button>
     <button id="exitGameButton" data-i18n-key="exitButton">Exit</button>
-    <button id="copyLinkButton" data-i18n-key="copyLinkButton">Copy Link</button>
+    <button id="copyLinkButton" data-i18n-key="copyLink보다">Copy Link</button>
   </div>
 </div>
 
@@ -1102,7 +1103,7 @@
       tabSettings: "Settings",
       gamesSectionTitle: "EPIXGAMES Games",
       storeSectionTitle: "EPIXGAMES Store 🛍️",
-      yourMoney: "Your Money:",
+      yourMoneyPrefix: "Money:", // New translation key for the prefix
       settingsSectionTitle: "Settings ⚙️",
       settingsAccentColor: "Choose Accent Color:",
       settingsLanguage: "Language:",
@@ -1134,7 +1135,7 @@
       tabSettings: "Ajustes",
       gamesSectionTitle: "Juegos EPIXGAMES",
       storeSectionTitle: "Tienda EPIXGAMES 🛍️",
-      yourMoney: "Tu Dinero:",
+      yourMoneyPrefix: "Dinero:", // New translation key for the prefix
       settingsSectionTitle: "Ajustes ⚙️",
       settingsAccentColor: "Elige Color de Acento:",
       settingsLanguage: "Idioma:",
@@ -1166,12 +1167,12 @@
       tabSettings: "Paramètres",
       gamesSectionTitle: "Jeux EPIXGAMES",
       storeSectionTitle: "Boutique EPIXGAMES 🛍️",
-      yourMoney: "Votre Argent :",
+      yourMoneyPrefix: "Argent :", // New translation key for the prefix
       settingsSectionTitle: "Paramètres ⚙️",
       settingsAccentColor: "Choisir la Couleur d'Accentuation :",
       settingsLanguage: "Langue :",
       langEnglish: "Anglais",
-      langSpanish: "Espagnol",
+      langSpanish: "Español",
       langFrench: "Français",
       settingsReset: "Réinitialiser Toutes les Données :",
       resetButton: "Tout Réinitialiser",
@@ -1214,11 +1215,13 @@
   let ownedAccessories = JSON.parse(localStorage.getItem('epixgamesOwnedAccessories') || '{}');
   let appliedAccessory = localStorage.getItem('epixgamesAppliedAccessory') || 'default-theme';
   let currentLanguage = localStorage.getItem('epixgamesLanguage') || 'en';
+  let totalPlaytimeSeconds = parseInt(localStorage.getItem('epixgamesTotalPlaytimeSeconds') || '0'); // New: total accumulated playtime
+  let sessionStartTime = 0; // New: timestamp for current session start
   let moneyInterval = null;
   let resetConfirmCount = 0;
   let resetConfirmTimeout = null;
 
-  // Get elements
+  // Get elements (these are safe to get globally as they exist from the start)
   const accentColorPicker = document.getElementById('accentColorPicker');
   const root = document.documentElement;
   const searchInput = document.getElementById('searchInput');
@@ -1233,7 +1236,7 @@
   const copyLinkButton = document.getElementById('copyLinkButton');
   const tabButtons = document.querySelectorAll('.tab-button');
   const tabContents = document.querySelectorAll('.tab-content');
-  const currentMoneySpan = document.getElementById('currentMoney');
+
   const storeItemsContainer = document.getElementById('storeItemsContainer');
   const languageSelect = document.getElementById('languageSelect');
   const resetEverythingButton = document.getElementById('resetEverythingButton');
@@ -1241,6 +1244,9 @@
   const messageBox = document.getElementById('messageBox');
   const messageBoxText = document.getElementById('messageBoxText');
   const messageBoxCloseButton = document.getElementById('messageBoxCloseButton');
+
+  // Declare currentMoneySpan globally, but assign it inside DOMContentLoaded
+  let currentMoneySpan;
 
 
   // Store all game data for easy lookup
@@ -1325,10 +1331,12 @@
   }
 
   function exitIframe() {
+    // Before exiting, update playtime and money
+    stopMoneyGranting(); // This will also handle the final money calculation for the session
     gameIframe.src = '';
     gamePlayerOverlay.classList.remove('active');
     currentLoadedGamePath = '';
-    stopMoneyGranting(); // Stop granting money when game exits
+
     const url = new URL(window.location.href);
     if (url.searchParams.has('game')) {
       url.searchParams.delete('game');
@@ -1437,45 +1445,63 @@
 
   // --- Money and Store Logic ---
   function updateMoneyDisplay() {
-    currentMoneySpan.textContent = money;
+    // Use the globally declared currentMoneySpan which is assigned in DOMContentLoaded
+    if (currentMoneySpan) {
+      console.log("Attempting to update money display. Money value:", money);
+      currentMoneySpan.textContent = money;
+      console.log("Money display updated to:", money);
+    } else {
+      console.error("Error: currentMoneySpan element not found during updateMoneyDisplay!");
+    }
   }
 
-  function checkAndGrantMoney() {
-    console.log("checkAndGrantMoney called. gamePlayerOverlay active:", gamePlayerOverlay.classList.contains('active'));
-    if (gamePlayerOverlay.classList.contains('active')) {
-      const now = Date.now();
-      const lastEarnTime = parseInt(localStorage.getItem('epixgamesLastEarnTime') || '0');
-      const timeElapsed = now - lastEarnTime; // in milliseconds
-      console.log(`  now: ${now}, lastEarnTime: ${lastEarnTime}, timeElapsed: ${timeElapsed}`);
-
-      // Grant money every minute (60,000 ms)
-      // Use a small buffer (e.g., 500ms) to account for setInterval inaccuracies
-      if (timeElapsed >= 60 * 1000 - 500) {
-        money += 5;
-        localStorage.setItem('epixgamesMoney', money);
-        localStorage.setItem('epixgamesLastEarnTime', now); // Update last earn time
-        updateMoneyDisplay();
-        console.log("  Earned 5 money! Total:", money);
-      } else {
-        console.log("  Not enough time elapsed to earn money.");
-      }
-    } else {
-      console.log("  Game player overlay is not active. Not earning money.");
+  function updatePlaytimeAndMoney() {
+    console.log("updatePlaytimeAndMoney called.");
+    if (!gamePlayerOverlay.classList.contains('active')) {
+      console.log("Game not active, stopping money granting.");
+      stopMoneyGranting();
+      return;
     }
+
+    const now = Date.now();
+    // Calculate elapsed seconds since the last update or session start
+    const elapsedSecondsInInterval = Math.floor((now - sessionStartTime) / 1000);
+
+    // Only proceed if at least one second has truly passed
+    if (elapsedSecondsInInterval < 1) {
+        console.log("Less than one second elapsed, skipping update.");
+        return;
+    }
+
+    const oldTotalPlaytimeSeconds = totalPlaytimeSeconds; // Store for comparison
+    totalPlaytimeSeconds += elapsedSecondsInInterval; // Accumulate playtime
+    localStorage.setItem('epixgamesTotalPlaytimeSeconds', totalPlaytimeSeconds);
+    console.log(`Accumulated playtime: ${totalPlaytimeSeconds} seconds.`);
+
+    const oldMinutesEarned = Math.floor(oldTotalPlaytimeSeconds / 60);
+    const newMinutesEarned = Math.floor(totalPlaytimeSeconds / 60);
+
+    if (newMinutesEarned > oldMinutesEarned) {
+      const minutesToAward = newMinutesEarned - oldMinutesEarned;
+      money += (minutesToAward * 5);
+      localStorage.setItem('epixgamesMoney', money);
+      updateMoneyDisplay(); // Call updateMoneyDisplay here to refresh the UI
+      console.log(`Earned ${minutesToAward * 5} money! Total: ${money}`);
+    }
+
+    // Reset sessionStartTime for the next interval calculation
+    sessionStartTime = now;
   }
 
   function startMoneyGranting() {
     if (moneyInterval) clearInterval(moneyInterval); // Clear any existing interval
 
-    // Set last earn time to now when game starts playing, to ensure accurate first interval
-    localStorage.setItem('epixgamesLastEarnTime', Date.now());
-    console.log("startMoneyGranting called. Initial lastEarnTime set to:", localStorage.getItem('epixgamesLastEarnTime'));
+    sessionStartTime = Date.now(); // Mark the beginning of this earning period
+    console.log("startMoneyGranting called. Session start time set to:", sessionStartTime);
 
-    // Start the interval to check and grant money every minute
-    moneyInterval = setInterval(() => {
-        checkAndGrantMoney();
-    }, 60 * 1000); // Check every minute (60,000 ms)
-    console.log("Money granting interval started.");
+    // Start the interval to update playtime and potentially grant money every second
+    moneyInterval = setInterval(updatePlaytimeAndMoney, 1000); // Check every second
+    console.log("Money granting interval started (checking every second).");
   }
 
   function stopMoneyGranting() {
@@ -1483,6 +1509,29 @@
       clearInterval(moneyInterval);
       moneyInterval = null;
       console.log("Money granting interval stopped.");
+
+      // Ensure any remaining partial seconds in the current session are accounted for
+      if (sessionStartTime > 0) {
+        const remainingSessionDurationSeconds = Math.floor((Date.now() - sessionStartTime) / 1000);
+        if (remainingSessionDurationSeconds > 0) {
+            const oldTotalPlaytimeSecondsBeforeExit = totalPlaytimeSeconds;
+            totalPlaytimeSeconds += remainingSessionDurationSeconds;
+            localStorage.setItem('epixgamesTotalPlaytimeSeconds', totalPlaytimeSeconds);
+            console.log(`(On exit) Added remaining ${remainingSessionDurationSeconds} seconds. New total playtime: ${totalPlaytimeSeconds}`);
+
+            const oldMinutesEarned = Math.floor(oldTotalPlaytimeSecondsBeforeExit / 60);
+            const newMinutesEarned = Math.floor(totalPlaytimeSeconds / 60);
+
+            if (newMinutesEarned > oldMinutesEarned) {
+                const minutesToAward = newMinutesEarned - oldMinutesEarned;
+                money += (minutesToAward * 5);
+                localStorage.setItem('epixgamesMoney', money);
+                updateMoneyDisplay(); // Call updateMoneyDisplay here to refresh the UI
+                console.log(`(On exit) Earned ${minutesToAward * 5} money! Total: ${money}`);
+            }
+        }
+        sessionStartTime = 0; // Reset session start
+      }
     }
   }
 
@@ -1610,6 +1659,11 @@
 
   // --- Initialization ---
   document.addEventListener('DOMContentLoaded', () => {
+    // Assign currentMoneySpan here, after the DOM is ready
+    currentMoneySpan = document.getElementById('currentMoney');
+    console.log("currentMoneySpan element found (inside DOMContentLoaded):", currentMoneySpan);
+
+
     // Populate allGamesData Map
     document.querySelectorAll('.game').forEach(gameDiv => {
       const titleElement = gameDiv.querySelector('dt');
