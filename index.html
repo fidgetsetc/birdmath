@@ -1388,7 +1388,7 @@
       searchPlaceholder: "Search games...",
       moreSectionTitle: "More EPIX Content ✨", // New translation
       birdMathClassicDesc: "Relive the OG days with the classic BirdMath site! It's where it all began. 🐦", // New translation
-      multiScreenAnimationDesc: "Experience cool animations across multiple devices. Just press the number based on what order the device is in to have the illusion that something is moving across a screen. 📱➡️📱➡️📱", // New translation
+      multiScreenAnimationDesc: "Experience cool animations across multiple devices. Just press the number based on what order the device is in to have the illusion that something is moving across a screen. 📱➡️📱➡️�", // New translation
       minimalBrowserDesc: "A lightweight browser with a bunch of pr0x1es. Not really recommended to use as it isn't maintained, but it's there if you're feeling nostalgic! 💾", // New translation
       proxserDesc: "A reliable pr0xy with tabs that works today. Get your browsing on! 🌐", // New translation
       visitLink: "Visit Site" // New translation
@@ -1433,7 +1433,7 @@
       visitLink: "Visitar Sitio" // New translation
     },
     fr: {
-      homeTitle: "EPIXJEUX Accueil �",
+      homeTitle: "EPIXJEUX Accueil 🎮",
       homeSubtitle: "On a fait une GROSSE mise a jour du site, la famille ! Préparez-vous pour des jeux épiques ! 😎",
       tabGames: "Jeux",
       tabStore: "Boutique",
@@ -2077,8 +2077,9 @@
     stopRgbEffect();
 
     // Determine if 3D animation should be enabled based on user setting and theme compatibility
+    // RGB theme is now compatible with 3D animation
     const userPrefers3D = JSON.parse(localStorage.getItem('epixgames3DAnimationEnabled') || 'false');
-    const isThemeCompatibleWith3D = !(itemId === 'classic-theme' || itemId === 'rgb-theme');
+    const isThemeCompatibleWith3D = (itemId !== 'classic-theme'); // Only classic-theme disables 3D
     isAnimationEnabled = userPrefers3D && isThemeCompatibleWith3D; // Update global isAnimationEnabled
 
     toggle3DAnimation(isAnimationEnabled); // Call toggle3DAnimation with the determined state
@@ -2175,7 +2176,7 @@
   }
 
   function toggleAccentColorPickerState() {
-      if (appliedAccessory === 'rgb-theme' || appliedAccessory === 'classic-theme') {
+      if (appliedAccessory === 'classic-theme') { // Only classic-theme disables the picker now
           accentColorPicker.disabled = true;
           accentColorPicker.style.opacity = 0.5;
           accentColorPicker.style.cursor = 'not-allowed';
