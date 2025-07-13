@@ -185,6 +185,29 @@
       transform: scale(1.05); /* Slightly larger when highlighted */
     }
 
+    /* Hidden Game Style */
+    .game.hidden {
+      display: none !important; /* Force hide */
+    }
+
+    /* Favorited Game Style */
+    .game.favorited {
+      border: 4px solid gold; /* Gold border for favorites */
+      box-shadow: 0 0 20px gold; /* Gold glow */
+      position: relative; /* For star icon positioning */
+    }
+
+    .favorite-icon {
+      position: absolute;
+      top: 5px;
+      right: 5px;
+      color: gold;
+      font-size: 1.5em;
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.7);
+      z-index: 1; /* Ensure it's above image */
+    }
+
+
     .game img {
       width: 100%;
       height: 150px; /* Fixed height for consistent look */
@@ -554,6 +577,53 @@
       margin-top: 10px;
     }
 
+    /* Settings Management List */
+    .management-list {
+      background-color: #3c4048;
+      border-radius: 8px;
+      padding: 10px;
+      max-height: 200px;
+      overflow-y: auto;
+      border: 1px solid var(--secondary-color);
+    }
+
+    .management-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 0;
+      border-bottom: 1px dashed rgba(255, 255, 255, 0.1);
+      color: var(--text-color);
+    }
+
+    .management-item:last-child {
+      border-bottom: none;
+    }
+
+    .management-item button {
+      padding: 5px 10px;
+      font-size: 0.8em;
+      border-radius: 5px;
+      margin-left: 10px;
+    }
+
+    .management-item .unhide-button {
+        background-color: #4CAF50; /* Green */
+        color: white;
+    }
+    .management-item .unhide-button:hover {
+        background-color: #45a049;
+    }
+
+    .management-item .unfavorite-button {
+        background-color: #f44336; /* Red */
+        color: white;
+    }
+    .management-item .unfavorite-button:hover {
+        background-color: #d32f2f;
+    }
+
+
     /* Custom Message Box Styles */
     #messageBox {
       position: fixed;
@@ -618,7 +688,10 @@
     body.classic-theme .game,
     body.classic-theme .store-item,
     body.classic-theme .settings-section,
-    body.classic-theme #messageBox {
+    body.classic-theme #messageBox,
+    body.classic-theme .context-menu, /* Classic theme for context menu */
+    body.classic-theme .management-list /* Classic theme for management lists */
+    {
       background-color: transparent !important; /* Make card backgrounds transparent */
       box-shadow: none !important; /* Remove shadows */
       border: none !important; /* Remove borders */
@@ -647,7 +720,9 @@
     body.classic-theme .header-search-group button,
     body.classic-theme .store-item button,
     body.classic-theme .settings-section button,
-    body.classic-theme #messageBox button {
+    body.classic-theme #messageBox button,
+    body.classic-theme .management-item button /* Classic theme for management buttons */
+    {
       background-color: #e0e0e0 !important; /* Generic light grey */
       color: #333 !important; /* Dark text for contrast */
       border: 1px solid #a0a0a0 !important; /* Generic border */
@@ -664,7 +739,9 @@
     body.classic-theme .header-search-group button:hover,
     body.classic-theme .store-item button:hover,
     body.classic-theme .settings-section button:hover,
-    body.classic-theme #messageBox button:hover {
+    body.classic-theme #messageBox button:hover,
+    body.classic-theme .management-item button:hover /* Classic theme for management buttons */
+    {
       background-color: #d0d0d0 !important; /* Darker grey on hover */
       transform: none !important; /* Remove translateY on hover */
     }
@@ -1084,6 +1161,20 @@
     </div>
 
     <div class="settings-section">
+      <label data-i18n-key="settingsManageHiddenGames">Manage Hidden Games:</label>
+      <div id="hiddenGamesList" class="management-list">
+        <!-- Hidden games will be rendered here -->
+      </div>
+    </div>
+
+    <div class="settings-section">
+      <label data-i18n-key="settingsManageFavoriteGames">Manage Favorite Games:</label>
+      <div id="favoriteGamesList" class="management-list">
+        <!-- Favorite games will be rendered here -->
+      </div>
+    </div>
+
+    <div class="settings-section">
       <label data-i18n-key="settingsReset">Reset All Data:</label>
       <button id="resetEverythingButton" class="reset-button" data-i18n-key="resetButton">Reset Everything</button>
       <p id="resetConfirmationMessage" class="confirmation-message"></p>
@@ -1110,6 +1201,12 @@
 <div id="messageBox">
   <p id="messageBoxText"></p>
   <button id="messageBoxCloseButton">OK</button>
+</div>
+
+<!-- Custom Right-Click Context Menu -->
+<div id="gameContextMenu" class="context-menu">
+  <div class="context-menu-item" id="contextMenuHide">Hide Game</div>
+  <div class="context-menu-item" id="contextMenuToggleFavorite">Favorite / Unfavorite</div>
 </div>
 
 <!-- Command Prompt Overlay -->
@@ -1164,7 +1261,7 @@
       fullScreenButton: "Full Screen",
       exitButton: "Exit",
       copyLinkButton: "Copy Link",
-      buyButton: "Buy for {cost} 💰",
+      buyButton: "Buy for {cost} �",
       applyButton: "Apply",
       appliedText: "Applied!",
       ownedText: "Owned",
@@ -1188,6 +1285,19 @@
         "Chrome 55 compatible?! That's retro cool! 🚀",
         "We just got a MAJOR upgrade to the site, fam! Get ready for some epic gaming! 😎" // Original subtitle added here
       ],
+      // New translations for hidden/favorite games
+      settingsManageHiddenGames: "Manage Hidden Games:",
+      settingsManageFavoriteGames: "Manage Favorite Games:",
+      hideGameText: "Hide Game",
+      unhideGameText: "Unhide",
+      favoriteGameText: "Favorite",
+      unfavoriteGameText: "Unfavorite",
+      gameHidden: "Game hidden!",
+      gameUnhidden: "Game unhidden!",
+      gameFavorited: "Game added to favorites! ⭐",
+      gameUnfavorited: "Game removed from favorites.",
+      playNowButton: "Play Now", // Added for consistency
+
       // Command prompt translations
       cmdHelp: `Available Commands:
   EXIT: Close the command prompt.
@@ -1302,6 +1412,18 @@
         "¿Compatible con Chrome 55? ¡Eso es genial! 🚀",
         "¡Acabamos de actualizar el sitio, familia! ¡Prepárense para juegos épicos! 😎"
       ],
+      settingsManageHiddenGames: "Administrar Juegos Ocultos:",
+      settingsManageFavoriteGames: "Administrar Juegos Favoritos:",
+      hideGameText: "Ocultar Juego",
+      unhideGameText: "Mostrar",
+      favoriteGameText: "Favorito",
+      unfavoriteGameText: "Quitar de Favoritos",
+      gameHidden: "¡Juego oculto!",
+      gameUnhidden: "¡Juego visible!",
+      gameFavorited: "¡Juego añadido a favoritos! ⭐",
+      gameUnfavorited: "Juego eliminado de favoritos.",
+      playNowButton: "Jugar Ahora",
+
       // Command prompt translations
       cmdHelp: `Comandos Disponibles:
   EXIT: Cerrar la consola de comandos.
@@ -1417,6 +1539,18 @@
         "Compatible Chrome 55 ?! C'est trop cool ! 🚀",
         "On a fait une GROSSE mise a jour du site, la famille ! Préparez-vous pour des jeux épiques ! 😎"
       ],
+      settingsManageHiddenGames: "Gérer les Jeux Cachés :",
+      settingsManageFavoriteGames: "Gérer les Jeux Favoris :",
+      hideGameText: "Cacher le Jeu",
+      unhideGameText: "Afficher",
+      favoriteGameText: "Favori",
+      unfavoriteGameText: "Retirer des Favoris",
+      gameHidden: "Jeu caché !",
+      gameUnhidden: "Jeu affiché !",
+      gameFavorited: "Jeu ajouté aux favoris ! ⭐",
+      gameUnfavorited: "Jeu retiré des favoris.",
+      playNowButton: "Jouer Maintenant",
+
       // Command prompt translations
       cmdHelp: `Commandes Disponibles :
   EXIT: Fermer l'invite de commande.
@@ -1479,12 +1613,13 @@
       cmdHtmlModifyExported: "HTML actuel exporté sous 'epixgames_site.html'.",
       cmdSettingsExported: "Tous les paramètres exportés sous 'epixgames_settings.json'.",
       cmdSettingsImportPrompt: "Sélectionnez un fichier JSON de paramètres à importer.",
-      cmdSettingsImported: "Paramètres importés avec succès ! Rechargement de la page...",
+      cmdSettingsImported: "Paramètres importés con éxito ! Rechargement de la page...",
       cmdSettingsImportError: "Échec de l'importation des paramètres : {error}",
       cmdFileReadError: "Erreur de lecture du fichier : {error}",
       cmdInvalidColor: "Format de couleur inválido. Veuillez utiliser l'hexadécimal (ex. #RRGGBB)."
     }
   };
+
 
   // Store items data
   const storeItems = [
@@ -1636,6 +1771,16 @@
 
   // Declare currentMoneySpan globally, but assign it inside DOMContentLoaded
   let currentMoneySpan;
+
+  // New global variables for hidden/favorite games and context menu
+  let hiddenGames = new Set(JSON.parse(localStorage.getItem('epixgamesHiddenGames') || '[]'));
+  let favoriteGames = new Set(JSON.parse(localStorage.getItem('epixgamesFavoriteGames') || '[]'));
+  let gameContextMenu;
+  let contextMenuHideButton;
+  let contextMenuToggleFavoriteButton;
+  let currentRightClickedGameElement = null; // Store the actual game div element
+  let hiddenGamesList;
+  let favoriteGamesList;
 
 
   // --- Helper Functions ---
@@ -1877,6 +2022,12 @@
     } else {
       if (searchWidget) searchWidget.style.display = 'flex'; // Or 'block' depending on its flex state
     }
+
+    // Re-render settings tab content when it becomes active
+    if (tabId === 'settings-tab') {
+        renderHiddenGamesSettings();
+        renderFavoriteGamesSettings();
+    }
   }
 
   // --- Game Player Functions ---
@@ -1972,6 +2123,7 @@
         if (!document.getElementById('games-tab').classList.contains('active')) {
           showTab('games-tab');
         }
+        renderAllGames(); // Re-render to ensure visibility if it was hidden
       }
     }
   }
@@ -2258,6 +2410,9 @@
     if (customGamesTitle) {
         customGamesTitle.textContent = translations[currentLanguage].customGamesSectionTitle;
     }
+    // Update hidden/favorite games settings lists
+    renderHiddenGamesSettings();
+    renderFavoriteGamesSettings();
   }
 
   function resetAllData() {
@@ -2267,6 +2422,14 @@
     if (resetConfirmCount >= 5) {
       showMessageBox(translations[currentLanguage].resetFinalConfirm);
       localStorage.clear(); // Clear all local storage data
+      // Also clear in-memory sets
+      hiddenGames.clear();
+      favoriteGames.clear();
+      sequences = {};
+      window.customGames = [];
+      window.customThemes = [];
+      htmlModifications = [];
+
       setTimeout(() => {
         window.location.reload(); // Reload the page to apply reset
       }, 1000);
@@ -2405,7 +2568,7 @@
                 window.customGames.push(newGame); // Use window.customGames
                 localStorage.setItem('epixgamesCustomGames', JSON.stringify(window.customGames)); // Use window.customGames
                 appendToConsoleOutput(translations[currentLanguage].cmdGameAdded.replace('{title}', newGame.name));
-                renderCustomGames(); // Re-render custom games to show new one
+                renderAllGames(); // Re-render all games to show new one
                 commandPromptState = { mode: 'normal', subMode: '', data: {} };
                 break;
         }
@@ -2616,7 +2779,7 @@
           customGamesContainer.style.display = isCustomVisible ? 'none' : 'flex';
           customGamesTitle.style.display = isCustomVisible ? 'none' : 'block';
           if (!isCustomVisible) {
-              renderCustomGames(); // Ensure custom games are rendered when shown
+              renderAllGames(); // Ensure custom games are rendered when shown
           }
           appendToConsoleOutput(translations[currentLanguage].cmdGameShowCustomToggled);
           break;
@@ -2700,7 +2863,9 @@
               epixgamesCustomGames: window.customGames, // Use window.customGames
               epixgamesCustomThemes: window.customThemes, // Use window.customThemes
               epixgamesHtmlModifications: htmlModifications,
-              epixgamesAccentColor: localStorage.getItem('epixgamesAccentColor')
+              epixgamesAccentColor: localStorage.getItem('epixgamesAccentColor'),
+              epixgamesHiddenGames: Array.from(hiddenGames), // Export hidden games
+              epixgamesFavoriteGames: Array.from(favoriteGames) // Export favorite games
           };
           const settingsBlob = new Blob([JSON.stringify(settingsToExport, null, 2)], { type: 'application/json' });
           const settingsA = document.createElement('a');
@@ -2724,14 +2889,21 @@
                               // Special handling for objects that need to be parsed from string
                               if (['epixgamesOwnedAccessories', 'epixgamesCommandSequences', 'epixgamesCustomGames', 'epixgamesCustomThemes', 'epixgamesHtmlModifications'].includes(key)) {
                                   localStorage.setItem(key, JSON.stringify(importedSettings[key]));
-                              } else {
+                              } else if (key === 'epixgamesHiddenGames') { // Handle Set for hidden games
+                                  localStorage.setItem(key, JSON.stringify(importedSettings[key]));
+                                  hiddenGames = new Set(importedSettings[key]);
+                              } else if (key === 'epixgamesFavoriteGames') { // Handle Set for favorite games
+                                  localStorage.setItem(key, JSON.stringify(importedSettings[key]));
+                                  favoriteGames = new Set(importedSettings[key]);
+                              }
+                              else {
                                   localStorage.setItem(key, importedSettings[key]);
                               }
                           }
                           appendToConsoleOutput(translations[currentLanguage].cmdSettingsImported);
                           setTimeout(() => window.location.reload(), 1000); // Reload to apply all settings
                       } catch (error) {
-                          appendToConsoleOutput(translations[currentLanguage].cmdSettingsImportError.replace('{error}', error.message));
+                          appendToConsoleOutput(translations[currentLanguag].cmdSettingsImportError.replace('{error}', error.message));
                       } finally {
                           fileInput.value = ''; // Clear the file input
                           fileInput.onchange = null; // Remove event listener
@@ -2771,21 +2943,28 @@
     }
   }
 
-  // Function to render static games
-  function renderStaticGames() {
-      // Ensure staticGamesContainer is not null before attempting to set innerHTML
-      if (staticGamesContainer) {
-          staticGamesContainer.innerHTML = ''; // Clear the container
-      } else {
-          console.error("staticGamesContainer is null. Cannot render static games.");
-          return;
-      }
+  // New function to render a list of games into a container
+  function renderGames(gamesArray, containerElement) {
+      containerElement.innerHTML = ''; // Clear the container
 
-
-      window.staticGameDefinitions.forEach(game => {
+      gamesArray.forEach(game => {
           const gameDiv = document.createElement('div');
           gameDiv.className = 'game';
-          gameDiv.id = game.id;
+          gameDiv.id = game.id; // Ensure game has a unique ID
+
+          // Check if game is hidden (this class is now applied by renderAllGames for filtering)
+          // if (hiddenGames.has(game.id)) {
+          //     gameDiv.classList.add('hidden');
+          // }
+
+          // Check if game is favorited
+          if (favoriteGames.has(game.id)) {
+              gameDiv.classList.add('favorited');
+              const favoriteIcon = document.createElement('span');
+              favoriteIcon.className = 'favorite-icon';
+              favoriteIcon.textContent = '⭐'; // Star emoji
+              gameDiv.appendChild(favoriteIcon);
+          }
 
           const img = document.createElement('img');
           img.src = game.img;
@@ -2797,7 +2976,6 @@
           dt.textContent = game.name;
           dl.appendChild(dt);
 
-          // Add h2 if it exists (e.g., for "SCRATCH version")
           if (game.h2) {
             const h2 = document.createElement('h2');
             h2.textContent = game.h2;
@@ -2806,64 +2984,186 @@
 
           const button = document.createElement('button');
           button.className = 'play-now-button';
-          // Use the translation for "Play Now" or a generic one if not available
-          button.textContent = translations[currentLanguage].playNowButton || 'Play Now';
+          button.textContent = translations[currentLanguage].playNowButton || 'Play Now'; // Ensure this translation key exists
           button.dataset.gamePath = game.path;
           button.onclick = () => openGameInIframe(game.path);
           dl.appendChild(button);
 
           gameDiv.appendChild(dl);
-          staticGamesContainer.appendChild(gameDiv);
-
-          // Add to allGamesData map
-          window.allGamesData.set(game.name, { id: game.id, path: game.path });
-      });
-  }
-
-  // Function to render custom games
-  function renderCustomGames() {
-      // Ensure customGamesContainer is not null before attempting to set innerHTML
-      if (customGamesContainer) {
-          customGamesContainer.innerHTML = ''; // Clear previous custom games
-      } else {
-          console.error("customGamesContainer is null. Cannot render custom games.");
-          return;
-      }
-
-
-      // Add custom games to the display and to allGamesData
-      window.customGames.forEach(game => { // Now uses window.customGames
-          const gameDiv = document.createElement('div');
-          gameDiv.className = 'game';
-          gameDiv.id = game.id; // Use the generated ID
-
-          const img = document.createElement('img');
-          img.src = game.img;
-          img.alt = game.name;
-          gameDiv.appendChild(img);
-
-          const dl = document.createElement('dl');
-          const dt = document.createElement('dt');
-          dt.textContent = game.name;
-          dl.appendChild(dt);
-
-          const button = document.createElement('button');
-          button.className = 'play-now-button';
-          // Use the translation for "Play Now" or a generic one if not available
-          button.textContent = translations[currentLanguage].playNowButton || 'Play Now';
-          button.dataset.gamePath = game.path;
-          button.onclick = () => openGameInIframe(game.path); // Attach event listener
-          dl.appendChild(button);
-
-          gameDiv.appendChild(dl);
-          customGamesContainer.appendChild(gameDiv);
+          containerElement.appendChild(gameDiv);
 
           // Add to allGamesData map for search functionality (if not already there)
           if (!window.allGamesData.has(game.name)) {
               window.allGamesData.set(game.name, { id: game.id, path: game.path });
           }
+
+          // Attach right-click listener to each game card
+          gameDiv.addEventListener('contextmenu', (event) => showContextMenu(event, gameDiv));
       });
   }
+
+  // New function to sort and render all games
+  function renderAllGames() {
+      // Combine static and custom games
+      let allDisplayableGames = [...window.staticGameDefinitions, ...window.customGames];
+
+      // Filter out hidden games
+      allDisplayableGames = allDisplayableGames.filter(game => !hiddenGames.has(game.id));
+
+      // Sort: favorited games first, then by name
+      allDisplayableGames.sort((a, b) => {
+          const aFav = favoriteGames.has(a.id);
+          const bFav = favoriteGames.has(b.id);
+
+          if (aFav && !bFav) return -1; // a is favorited, b is not - a comes first
+          if (!aFav && bFav) return 1;  // b is favorited, a is not - b comes first
+          return a.name.localeCompare(b.name); // Then sort alphabetically
+      });
+
+      // Clear existing containers before rendering
+      if (staticGamesContainer) staticGamesContainer.innerHTML = '';
+      if (customGamesContainer) customGamesContainer.innerHTML = '';
+
+      // Separate games into static and custom for rendering into their respective containers
+      const staticGamesToRender = allDisplayableGames.filter(game => window.staticGameDefinitions.some(staticGame => staticGame.id === game.id));
+      const customGamesToRender = allDisplayableGames.filter(game => window.customGames.some(customGame => customGame.id === game.id));
+
+      renderGames(staticGamesToRender, staticGamesContainer);
+
+      // Only show custom games title and container if there are custom games AND they are not hidden
+      if (customGamesToRender.length > 0) {
+          customGamesTitle.style.display = 'block';
+          customGamesContainer.style.display = 'flex'; // Use flex for the container
+          renderGames(customGamesToRender, customGamesContainer);
+      } else {
+          customGamesTitle.style.display = 'none';
+          customGamesContainer.style.display = 'none';
+      }
+  }
+
+  // Context Menu Functions
+  function showContextMenu(event, gameElement) {
+      event.preventDefault(); // Prevent default browser context menu
+      currentRightClickedGameElement = gameElement; // Store the element
+
+      // Update menu item text based on current state
+      if (hiddenGames.has(gameElement.id)) {
+          contextMenuHideButton.textContent = translations[currentLanguage].unhideGameText;
+      } else {
+          contextMenuHideButton.textContent = translations[currentLanguage].hideGameText;
+      }
+
+      if (favoriteGames.has(gameElement.id)) {
+          contextMenuToggleFavoriteButton.textContent = translations[currentLanguage].unfavoriteGameText;
+      } else {
+          contextMenuToggleFavoriteButton.textContent = translations[currentLanguage].favoriteGameText;
+      }
+
+      // Position the context menu
+      gameContextMenu.style.left = `${event.clientX}px`;
+      gameContextMenu.style.top = `${event.clientY}px`;
+      gameContextMenu.style.display = 'block';
+  }
+
+  function hideContextMenu() {
+      if (gameContextMenu) {
+          gameContextMenu.style.display = 'none';
+      }
+      currentRightClickedGameElement = null;
+  }
+
+  // Hide/Unhide Game Logic
+  function hideGame(gameId) {
+      // Remove from favorites if it was favorited
+      if (favoriteGames.has(gameId)) {
+          favoriteGames.delete(gameId);
+          localStorage.setItem('epixgamesFavoriteGames', JSON.stringify(Array.from(favoriteGames)));
+      }
+
+      hiddenGames.add(gameId);
+      localStorage.setItem('epixgamesHiddenGames', JSON.stringify(Array.from(hiddenGames)));
+      showMessageBox(translations[currentLanguage].gameHidden);
+      renderAllGames(); // Re-render all games to hide it
+      renderHiddenGamesSettings(); // Update settings list
+      renderFavoriteGamesSettings(); // Update favorite list (if it was removed)
+  }
+
+  function unhideGame(gameId) {
+      hiddenGames.delete(gameId);
+      localStorage.setItem('epixgamesHiddenGames', JSON.stringify(Array.from(hiddenGames)));
+      showMessageBox(translations[currentLanguage].gameUnhidden);
+      renderAllGames(); // Re-render all games to show it
+      renderHiddenGamesSettings(); // Update settings list
+  }
+
+  // Favorite/Unfavorite Game Logic
+  function toggleFavorite(gameId) {
+      if (favoriteGames.has(gameId)) {
+          favoriteGames.delete(gameId);
+          showMessageBox(translations[currentLanguage].gameUnfavorited);
+      } else {
+          // If a game is hidden, unhide it when favorited
+          if (hiddenGames.has(gameId)) {
+              hiddenGames.delete(gameId);
+              showMessageBox(translations[currentLanguage].gameUnhidden); // Inform user it's unhidden
+          }
+          favoriteGames.add(gameId);
+          showMessageBox(translations[currentLanguage].gameFavorited);
+      }
+      localStorage.setItem('epixgamesFavoriteGames', JSON.stringify(Array.from(favoriteGames)));
+      localStorage.setItem('epixgamesHiddenGames', JSON.stringify(Array.from(hiddenGames))); // Update hidden status if changed
+      renderAllGames(); // Re-render all games to apply sorting and visual indicator
+      renderFavoriteGamesSettings(); // Update settings list
+      renderHiddenGamesSettings(); // Update hidden list (if it was unhidden)
+  }
+
+  // Settings Render Functions
+  function renderHiddenGamesSettings() {
+      hiddenGamesList.innerHTML = '';
+      if (hiddenGames.size === 0) {
+          hiddenGamesList.textContent = "No hidden games."; // Add a message for empty list
+          return;
+      }
+      hiddenGames.forEach(gameId => {
+          // Find game data from either static or custom definitions
+          const gameData = [...window.staticGameDefinitions, ...window.customGames].find(g => g.id === gameId);
+          if (gameData) {
+              const itemDiv = document.createElement('div');
+              itemDiv.className = 'management-item';
+              itemDiv.textContent = gameData.name;
+              const unhideButton = document.createElement('button');
+              unhideButton.className = 'play-now-button unhide-button'; // Reusing play-now-button for styling
+              unhideButton.textContent = translations[currentLanguage].unhideGameText;
+              unhideButton.onclick = () => unhideGame(gameId);
+              itemDiv.appendChild(unhideButton);
+              hiddenGamesList.appendChild(itemDiv);
+          }
+      });
+  }
+
+  function renderFavoriteGamesSettings() {
+      favoriteGamesList.innerHTML = '';
+      if (favoriteGames.size === 0) {
+          favoriteGamesList.textContent = "No favorite games."; // Add a message for empty list
+          return;
+      }
+      favoriteGames.forEach(gameId => {
+          // Find game data from either static or custom definitions
+          const gameData = [...window.staticGameDefinitions, ...window.customGames].find(g => g.id === gameId);
+          if (gameData) {
+              const itemDiv = document.createElement('div');
+              itemDiv.className = 'management-item';
+              itemDiv.textContent = gameData.name;
+              const unfavoriteButton = document.createElement('button');
+              unfavoriteButton.className = 'play-now-button unfavorite-button'; // Reusing play-now-button for styling
+              unfavoriteButton.textContent = translations[currentLanguage].unfavoriteGameText;
+              unfavoriteButton.onclick = () => toggleFavorite(gameId); // Use toggleFavorite to unfavorite
+              itemDiv.appendChild(unfavoriteButton);
+              favoriteGamesList.appendChild(itemDiv);
+          }
+      });
+  }
+
 
   // Function to apply saved HTML modifications
   function applyHtmlModifications() {
@@ -2918,6 +3218,13 @@
     fileInput = document.getElementById('fileInput');
     currentMoneySpan = document.getElementById('currentMoney'); // Assign currentMoneySpan here
 
+    // New element assignments for context menu and settings lists
+    gameContextMenu = document.getElementById('gameContextMenu');
+    contextMenuHideButton = document.getElementById('contextMenuHide');
+    contextMenuToggleFavoriteButton = document.getElementById('contextMenuToggleFavorite');
+    hiddenGamesList = document.getElementById('hiddenGamesList');
+    favoriteGamesList = document.getElementById('favoriteGamesList');
+
 
     console.log("currentMoneySpan element found (inside DOMContentLoaded):", currentMoneySpan);
 
@@ -2969,8 +3276,7 @@
     // --- End URL Parameter Processing ---
 
     // NOW, render the games based on these definitions
-    renderStaticGames(); // This will clear and re-add based on staticGameDefinitions
-    renderCustomGames(); // This will clear and re-add custom games
+    renderAllGames(); // This will clear and re-add based on staticGameDefinitions and custom games
 
     // Load saved accent color
     const savedAccentColor = localStorage.getItem('epixgamesAccentColor');
@@ -3040,7 +3346,7 @@
       });
     });
 
-    // Play button listeners are now attached within renderStaticGames() and renderCustomGames()
+    // Play button listeners are now attached within renderGames()
 
     reloadGameButton.addEventListener('click', reloadIframe);
     switchUrlButton.addEventListener('click', switchBaseUrl);
@@ -3065,6 +3371,29 @@
     messageBoxCloseButton.addEventListener('click', () => {
       messageBox.style.display = 'none';
     });
+
+    // Event listener for context menu items
+    contextMenuHideButton.addEventListener('click', () => {
+        if (currentRightClickedGameElement) {
+            hideGame(currentRightClickedGameElement.id);
+            hideContextMenu();
+        }
+    });
+
+    contextMenuToggleFavoriteButton.addEventListener('click', () => {
+        if (currentRightClickedGameElement) {
+            toggleFavorite(currentRightClickedGameElement.id);
+            hideContextMenu();
+        }
+    });
+
+    // Hide context menu when clicking anywhere else
+    document.addEventListener('click', (event) => {
+        if (gameContextMenu && !gameContextMenu.contains(event.target)) {
+            hideContextMenu();
+        }
+    });
+
 
     // Check for game parameter in URL on page load
     const gameToLoad = urlParams.get('game');
@@ -3127,3 +3456,4 @@
 
 </body>
 </html>
+�
