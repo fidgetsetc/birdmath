@@ -25,6 +25,7 @@
 
     body {
       background: var(--home-background); /* Changed from background-color to background */
+      background-attachment: fixed; /* Added for parallax scrolling effect */
       color: var(--home-text-color); /* Now uses dynamic text color */
       font-family: 'Roboto', sans-serif;
       margin: 0;
@@ -1099,7 +1100,7 @@
   const translations = {
     en: {
       homeTitle: "EPIXGAMES Home 🎮",
-      homeSubtitle: "We just got a MAJOR upgrade to the site, fam! Get ready for some epic gaming! �",
+      homeSubtitle: "We just got a MAJOR upgrade to the site, fam! Get ready for some epic gaming! 😎",
       tabGames: "Games",
       tabStore: "Store",
       tabSettings: "Settings",
@@ -1207,7 +1208,8 @@
     { id: 'default-theme', name: 'Default Theme', type: 'full-theme', value: {
       '--home-background': '#282c34',
       '--home-text-color': '#ffffff'
-    }, cost: 0, default: true, img: 'https://placehold.co/100x100/282c34/FFFFFF?text=Default' }
+    }, cost: 0, default: true, img: 'https://placehold.co/100x100/282c34/FFFFFF?text=Default' },
+    { id: 'rgb-theme', name: 'RGB Theme', type: 'dynamic-theme', value: {}, cost: 70, default: false, img: 'https://placehold.co/100x100/FF00FF/00FFFF?text=RGB' }
   ];
 
 
@@ -1222,6 +1224,8 @@
   let moneyInterval = null;
   let resetConfirmCount = 0;
   let resetConfirmTimeout = null;
+  let rgbIntervalId = null; // New: for RGB theme interval
+  let currentHue = 0; // New: for RGB theme color cycling
 
   // Get elements (these are safe to get globally as they exist from the start)
   const accentColorPicker = document.getElementById('accentColorPicker');
@@ -1285,6 +1289,37 @@
     return rgbToHex(r, g, b);
   };
 
+  // HSL to RGB conversion (needed for RGB theme)
+  function hslToRgb(h, s, l) {
+    s /= 100;
+    l /= 100;
+    let c = (1 - Math.abs(2 * l - 1)) * s,
+        x = c * (1 - Math.abs((h / 60) % 2 - 1)),
+        m = l - c / 2,
+        r = 0,
+        g = 0,
+        b = 0;
+
+    if (0 <= h && h < 60) {
+      r = c; g = x; b = 0;
+    } else if (60 <= h && h < 120) {
+      r = x; g = c; b = 0;
+    } else if (120 <= h && h < 180) {
+      r = 0; g = c; b = x;
+    } else if (180 <= h && h < 240) {
+      r = 0; g = x; b = c;
+    } else if (240 <= h && h < 300) {
+      r = x; g = 0; b = c;
+    } else if (300 <= h && h < 360) {
+      r = c; g = 0; b = x;
+    }
+    r = Math.round((r + m) * 255);
+    g = Math.round((g + m) * 255);
+    b = Math.round((b + m) * 255);
+
+    return rgbToHex(r, g, b);
+  }
+
   // Update all accent-related colors
   function updateAccentColors(color) {
     root.style.setProperty('--accent-color', color);
@@ -1295,6 +1330,45 @@
     const darkBgColor = darkenColor(color, 0.5);
     root.style.setProperty('--bg-color', darkBgColor);
     localStorage.setItem('epixgamesAccentColor', color);
+  }
+
+  // --- RGB Theme Functions ---
+  function startRgbEffect() {
+    stopRgbEffect(); // Ensure any existing interval is cleared
+    currentHue = 0; // Start from red
+
+    rgbIntervalId = setInterval(() => {
+      currentHue = (currentHue + 1) % 360; // Cycle hue from 0 to 359
+      const newAccentColor = hslToRgb(currentHue, 100, 50); // Full saturation, medium lightness
+
+      // Apply the new accent color
+      root.style.setProperty('--accent-color', newAccentColor);
+      root.style.setProperty('--accent-hover-color', darkenColor(newAccentColor, 0.2));
+      root.style.setProperty('--primary-color', newAccentColor);
+      root.style.setProperty('--secondary-color', newAccentColor);
+
+      // Dynamically set the background to a darker version of the current accent color
+      const dynamicBgColor = darkenColor(newAccentColor, 0.5);
+      root.style.setProperty('--home-background', dynamicBgColor);
+      root.style.setProperty('--home-text-color', 'var(--text-color)'); // Keep text color default white
+    }, 50); // Update every 50ms for a smooth transition
+  }
+
+  function stopRgbEffect() {
+    if (rgbIntervalId) {
+      clearInterval(rgbIntervalId);
+      rgbIntervalId = null;
+      // Reset to default theme colors when RGB effect stops
+      const defaultTheme = storeItems.find(item => item.id === 'default-theme');
+      if (defaultTheme && defaultTheme.type === 'full-theme') {
+        for (const prop in defaultTheme.value) {
+          root.style.setProperty(prop, defaultTheme.value[prop]);
+        }
+      }
+      // Also reset accent color picker to its last saved value or default
+      const savedAccentColor = localStorage.getItem('epixgamesAccentColor');
+      updateAccentColors(savedAccentColor || accentColorPicker.value);
+    }
   }
 
   // --- Tab Switching Logic ---
@@ -1597,6 +1671,9 @@
     const item = storeItems.find(i => i.id === itemId);
     if (!item) return;
 
+    // Always stop RGB effect before applying any theme
+    stopRgbEffect();
+
     // Clear previous custom styles if any
     root.style.removeProperty('--home-background');
     root.style.removeProperty('--home-text-color');
@@ -1611,6 +1688,8 @@
       for (const prop in item.value) {
         root.style.setProperty(prop, item.value[prop]);
       }
+    } else if (item.type === 'dynamic-theme' && item.id === 'rgb-theme') {
+      startRgbEffect(); // Start the RGB cycling effect
     }
     appliedAccessory = itemId;
     localStorage.setItem('epixgamesAppliedAccessory', itemId);
@@ -1747,13 +1826,26 @@
     }
 
     // Apply saved accessory
-    applyAccessory(appliedAccessory);
+    // Check if the applied accessory is the RGB theme and start its effect
+    if (appliedAccessory === 'rgb-theme') {
+      startRgbEffect();
+    } else {
+      applyAccessory(appliedAccessory);
+    }
+
 
     // Initialize language
     applyLanguage(currentLanguage);
 
     // --- Event Listeners ---
     accentColorPicker.addEventListener('input', (event) => {
+      // If RGB theme is active, changing accent color should stop it
+      if (appliedAccessory === 'rgb-theme') {
+        stopRgbEffect();
+        // Set appliedAccessory back to default or a static theme
+        appliedAccessory = 'default-theme';
+        localStorage.setItem('epixgamesAppliedAccessory', appliedAccessory);
+      }
       updateAccentColors(event.target.value);
     });
 
