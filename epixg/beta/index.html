@@ -138,6 +138,8 @@
     /* Games Tab Specific Styles */
     #games-tab {
       padding-top: 80px; /* Make space for the search widget */
+      background-color: transparent; /* Make background transparent */
+      box-shadow: none; /* Remove box shadow for transparent effect */
     }
 
     .games-container {
@@ -204,7 +206,7 @@
       margin-top: auto; /* Pushes form to the bottom */
     }
 
-    .play-now-button { /* New button style */
+    .play-now-button {
       background-color: var(--button-bg);
       color: var(--bg-color);
       border: none;
@@ -215,13 +217,13 @@
       cursor: pointer;
       transition: background-color 0.3s ease, transform 0.2s ease;
       width: 100%;
-      box-sizing: border-box; /* Include padding in width */
-      -webkit-appearance: none; /* Remove default button styles for consistency */
+      box-sizing: border-box;
+      -webkit-appearance: none;
       -moz-appearance: none;
       appearance: none;
-      display: block; /* Ensure it takes full width */
+      display: block;
       text-align: center;
-      text-decoration: none; /* For potential future anchor tags */
+      text-decoration: none;
     }
 
     .play-now-button:hover {
@@ -231,9 +233,9 @@
 
     /* Search Widget Container (now inside #games-tab) */
     .search-widget-container {
-      position: absolute; /* Position absolutely within #games-tab */
-      top: 10px; /* Align to the top of the games tab content */
-      right: 10px; /* Align to the right of the games tab content */
+      position: absolute;
+      top: 10px;
+      right: 10px;
       display: flex;
       flex-direction: column;
       align-items: flex-end;
@@ -1097,7 +1099,7 @@
   const translations = {
     en: {
       homeTitle: "EPIXGAMES Home 🎮",
-      homeSubtitle: "We just got a MAJOR upgrade to the site, fam! Get ready for some epic gaming! 😎",
+      homeSubtitle: "We just got a MAJOR upgrade to the site, fam! Get ready for some epic gaming! �",
       tabGames: "Games",
       tabStore: "Store",
       tabSettings: "Settings",
@@ -1663,6 +1665,50 @@
     currentMoneySpan = document.getElementById('currentMoney');
     console.log("currentMoneySpan element found (inside DOMContentLoaded):", currentMoneySpan);
 
+    // --- URL Parameter Processing ---
+    const urlParams = new URLSearchParams(window.location.search);
+    let paramsProcessed = false;
+
+    // ?add_money=###
+    const addMoneyValue = urlParams.get('add_money');
+    if (addMoneyValue) {
+      const amount = parseInt(addMoneyValue);
+      if (!isNaN(amount) && amount > 0) {
+        money += amount;
+        localStorage.setItem('epixgamesMoney', money);
+        showMessageBox(`Added ${amount} money!`);
+        paramsProcessed = true;
+      }
+    }
+
+    // ?add_infinitemoney
+    if (urlParams.has('add_infinitemoney')) {
+      money = 999999999999; // A very large number
+      localStorage.setItem('epixgamesMoney', money);
+      showMessageBox('Infinite money unlocked! 🤑');
+      paramsProcessed = true;
+    }
+
+    // ?add_allitems
+    if (urlParams.has('add_allitems')) {
+      storeItems.forEach(item => {
+        ownedAccessories[item.id] = true;
+      });
+      localStorage.setItem('epixgamesOwnedAccessories', JSON.stringify(ownedAccessories));
+      showMessageBox('All store items unlocked! ✨');
+      paramsProcessed = true;
+    }
+
+    // Clean up URL parameters after processing
+    if (paramsProcessed) {
+      const newUrl = new URL(window.location.href);
+      newUrl.searchParams.delete('add_money');
+      newUrl.searchParams.delete('add_infinitemoney');
+      newUrl.searchParams.delete('add_allitems');
+      window.history.replaceState({}, document.title, newUrl.toString());
+    }
+    // --- End URL Parameter Processing ---
+
 
     // Populate allGamesData Map
     document.querySelectorAll('.game').forEach(gameDiv => {
@@ -1749,7 +1795,6 @@
     });
 
     // Check for game parameter in URL on page load
-    const urlParams = new URLSearchParams(window.location.search);
     const gameToLoad = urlParams.get('game');
     const baseToLoad = urlParams.get('base');
 
