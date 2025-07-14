@@ -372,14 +372,14 @@
       z-index: 1000;
       padding: 10px;
       box-sizing: border-box;
-      opacity: 0;
-      visibility: hidden;
-      transition: opacity 0.3s ease, visibility 0.3s ease;
+      opacity: 0; /* Managed by animation now */
+      visibility: hidden; /* Managed by animation now */
+      /* transition: opacity 0.3s ease, visibility 0.3s ease; Removed for animation control */
     }
 
     .game-player-overlay.active {
-      opacity: 1;
-      visibility: visible;
+      /* opacity: 1; */ /* Managed by animation now */
+      /* visibility: visible; */ /* Managed by animation now */
     }
 
     .game-iframe-container {
@@ -642,6 +642,8 @@
       font-size: 1.1em;
       max-width: 300px;
       box-sizing: border-box;
+      opacity: 0; /* Managed by animation now */
+      visibility: hidden; /* Managed by animation now */
     }
 
     #messageBox button {
@@ -897,6 +899,8 @@
       align-items: center;
       z-index: 2000; /* Above everything else */
       display: none; /* Hidden by default */
+      opacity: 0; /* Managed by animation now */
+      visibility: hidden; /* Managed by animation now */
     }
 
     #console {
@@ -948,6 +952,8 @@
       z-index: 1000; /* Ensure it's above other content but below message box/command prompt */
       display: none; /* Hidden by default */
       min-width: 150px;
+      opacity: 0; /* Managed by animation now */
+      visibility: hidden; /* Managed by animation now */
     }
 
     .context-menu-item {
@@ -960,6 +966,124 @@
 
     .context-menu-item:hover {
       background-color: rgba(255, 255, 255, 0.1);
+    }
+
+    /* --- New Animation Styles for Overlays (explicit show/hide) --- */
+    /* Enter Animations */
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes zoomIn {
+      from {
+        opacity: 0;
+        transform: scale(0.9);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    /* Exit Animations (reversed) */
+    @keyframes fadeOutDown {
+      from {
+        opacity: 1;
+        transform: translateY(0);
+      }
+      to {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+    }
+
+    @keyframes zoomOut {
+      from {
+        opacity: 1;
+        transform: scale(1);
+      }
+      to {
+        opacity: 0;
+        transform: scale(0.9);
+      }
+    }
+
+    /* Base animation classes for explicit show/hide elements */
+    .animated-enter {
+      animation-duration: 0.5s;
+      animation-fill-mode: forwards;
+      animation-timing-function: ease-out;
+      opacity: 0; /* Start hidden for enter animations */
+      visibility: hidden; /* Start hidden for enter animations */
+    }
+
+    .animated-exit {
+      animation-duration: 0.5s;
+      animation-fill-mode: forwards;
+      animation-timing-function: ease-in;
+      opacity: 1; /* Start visible for exit animations */
+      visibility: visible; /* Start visible for exit animations */
+    }
+
+    /* Specific animation types for explicit show/hide elements */
+    .fade-in-up-animation {
+      animation-name: fadeInUp;
+    }
+
+    .fade-out-down-animation {
+      animation-name: fadeOutDown;
+    }
+
+    .zoom-in-animation {
+      animation-name: zoomIn;
+    }
+
+    .zoom-out-animation {
+      animation-name: zoomOut;
+    }
+
+    /* Ensure elements are visible during animation for overlays */
+    .game-player-overlay.animated-enter,
+    .game-player-overlay.animated-exit,
+    #messageBox.animated-enter,
+    #messageBox.animated-exit,
+    #commandPromptOverlay.animated-enter,
+    #commandPromptOverlay.animated-exit,
+    .context-menu.animated-enter,
+    .context-menu.animated-exit {
+        visibility: visible;
+    }
+
+    /* --- New Scroll Animation Styles --- */
+    /* Base style for elements that will animate on scroll */
+    .animate-on-scroll {
+      opacity: 0;
+      transform: translateY(20px); /* Initial hidden state for slide-up effect */
+      transition: opacity 0.6s ease-out, transform 0.6s ease-out; /* Smooth transition for enter */
+      /* Elements should maintain their natural display type (block, flex, grid item)
+         so they occupy space even when hidden by opacity/transform. */
+    }
+
+    /* Class added when element is visible in viewport */
+    .animate-on-scroll.is-visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Optional: For elements that should zoom in/out on scroll */
+    .animate-on-scroll.zoom-on-scroll {
+      transform: scale(0.9);
+    }
+
+    .animate-on-scroll.zoom-on-scroll.is-visible {
+      transform: scale(1);
     }
 
 
@@ -1107,12 +1231,12 @@
       <div id="searchResults" class="search-results"></div>
     </div>
 
-    <h2 data-i18n-key="gamesSectionTitle">EPIXGAMES Games</h2>
+    <h2 data-i18n-key="gamesSectionTitle" class="animate-on-scroll">EPIXGAMES Games</h2>
     <div id="staticGamesContainer" class="games-container">
       <!-- Static games will be dynamically added by JavaScript here -->
     </div>
 
-    <h2 id="customGamesTitle" style="display: none;">Custom Games ✨</h2>
+    <h2 id="customGamesTitle" style="display: none;" class="animate-on-scroll">Custom Games ✨</h2>
     <div id="customGamesContainer" class="games-container" style="display: none;">
       <!-- Custom games will be dynamically loaded here -->
     </div>
@@ -1121,9 +1245,9 @@
 
   <!-- Store Tab -->
   <div id="store-tab" class="tab-content">
-    <h2 data-i18n-key="storeSectionTitle">EPIXGAMES Store 🛍️</h2>
+    <h2 data-i18n-key="storeSectionTitle" class="animate-on-scroll">EPIXGAMES Store 🛍️</h2>
     <!-- Changed data-i18n-key to a span inside the div -->
-    <div class="money-display"><span data-i18n-key="yourMoneyPrefix">Money:</span> <span id="currentMoney">0</span> 💰</div>
+    <div class="money-display animate-on-scroll"><span data-i18n-key="yourMoneyPrefix">Money:</span> <span id="currentMoney">0</span> 💰</div>
     <div id="storeItemsContainer" class="store-grid">
       <!-- Store items will be dynamically loaded here -->
     </div>
@@ -1131,48 +1255,29 @@
 
   <!-- Suggest Tab -->
   <div id="suggest-tab" class="tab-content">
-    <h2 data-i18n-key="suggestSectionTitle">Suggest a Game or Feature! 💡</h2>
-    <p data-i18n-key="suggestSubtitle">Got a lit idea for a new game or a feature that would make EPIXGAMES even more fire? Drop your suggestions here! 👇</p>
-    <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSffflitG4a27clWulopftjmuGF6o1Pbl_6HkPWOzf4B-oczXw/viewform?usp=dialog" frameborder="0" marginheight="0" marginwidth="0">Loading…</iframe>
+    <h2 data-i18n-key="suggestSectionTitle" class="animate-on-scroll">Suggest a Game or Feature! 💡</h2>
+    <p data-i18n-key="suggestSubtitle" class="animate-on-scroll">Got a lit idea for a new game or a feature that would make EPIXGAMES even more fire? Drop your suggestions here! 👇</p>
+    <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSffflitG4a27clWulopftjmuGF6o1Pbl_6HkPWOzf4B-oczXw/viewform?usp=dialog" frameborder="0" marginheight="0" marginwidth="0" class="animate-on-scroll">Loading…</iframe>
   </div>
 
   <!-- More Tab -->
   <div id="more-tab" class="tab-content">
-    <h2 data-i18n-key="moreSectionTitle">More EPIX Content ✨</h2>
-    <div class="more-links-container">
-      <div class="more-link-item">
-        <h3>BirdMath Classic (Before EPIXGAMES)</h3>
-        <p data-i18n-key="birdMathClassicDesc">Relive the OG days with the classic BirdMath site! It's where it all began. 🐦</p>
-        <a href="/play/classic/" target="_blank" data-i18n-key="visitLink">Visit Site</a>
-      </div>
-      <div class="more-link-item">
-        <h3>MultiScreen Animation</h3>
-        <p data-i18n-key="multiScreenAnimationDesc">Experience cool animations across multiple devices. Just press the number based on what order the device is in to have the illusion that something is moving across a screen. 📱➡️📱➡️📱</p>
-        <a href="/screen/" target="_blank" data-i18n-key="visitLink">Visit Site</a>
-      </div>
-      <div class="more-link-item">
-        <h3>BirdMath Local Minimal Browser</h3>
-        <p data-i18n-key="minimalBrowserDesc">A lightweight browser with a bunch of pr0x1es. Not really recommended to use as it isn't maintained, but it's there if you're feeling nostalgic! 💾</p>
-        <a href="/minilocal/" target="_blank" data-i18n-key="visitLink">Visit Site</a>
-      </div>
-      <div class="more-link-item">
-        <h3>Proxser</h3>
-        <p data-i18n-key="proxserDesc">A reliable pr0xy with tabs that works today. Get your browsing on! 🌐</p>
-        <a href="https://proxser.pages.dev" target="_blank" data-i18n-key="visitLink">Visit Site</a>
-      </div>
+    <h2 data-i18n-key="moreSectionTitle" class="animate-on-scroll">More EPIX Content ✨</h2>
+    <div class="more-links-container" id="moreLinksContainer">
+      <!-- More links will be dynamically loaded here -->
     </div>
   </div>
 
   <!-- Settings Tab -->
   <div id="settings-tab" class="tab-content">
-    <h2 data-i18n-key="settingsSectionTitle">Settings ⚙️</h2>
+    <h2 data-i18n-key="settingsSectionTitle" class="animate-on-scroll">Settings ⚙️</h2>
 
-    <div class="settings-section">
+    <div class="settings-section animate-on-scroll">
       <label for="accentColorPicker" data-i18n-key="settingsAccentColor">Choose Accent Color:</label>
       <input type="color" id="accentColorPicker" value="#61dafb">
     </div>
 
-    <div class="settings-section">
+    <div class="settings-section animate-on-scroll">
       <label for="languageSelect" data-i18n-key="settingsLanguage">Language:</label>
       <select id="languageSelect">
         <option value="en" data-i18n-key="langEnglish">English</option>
@@ -1181,26 +1286,26 @@
       </select>
     </div>
 
-    <div class="settings-section">
+    <div class="settings-section animate-on-scroll">
       <label for="enable3DAnimation">Enable 3D Background Animation:</label>
       <input type="checkbox" id="enable3DAnimation">
     </div>
 
-    <div class="settings-section">
+    <div class="settings-section animate-on-scroll">
       <label data-i18n-key="settingsManageHiddenGames">Manage Hidden Games:</label>
       <div id="hiddenGamesList" class="management-list">
         <!-- Hidden games will be rendered here -->
       </div>
     </div>
 
-    <div class="settings-section">
+    <div class="settings-section animate-on-scroll">
       <label data-i18n-key="settingsManageFavoriteGames">Manage Favorite Games:</label>
       <div id="favoriteGamesList" class="management-list">
         <!-- Favorite games will be rendered here -->
       </div>
     </div>
 
-    <div class="settings-section">
+    <div class="settings-section animate-on-scroll">
       <label data-i18n-key="settingsReset">Reset All Data:</label>
       <button id="resetEverythingButton" class="reset-button" data-i18n-key="resetButton">Reset Everything</button>
       <p id="resetConfirmationMessage" class="confirmation-message"></p>
@@ -1305,7 +1410,7 @@
       suggestSectionTitle: "Suggest a Game or Feature! 💡",
       suggestSubtitle: "Got a lit idea for a new game or a feature that would make EPIXGAMES even more fire? Drop your suggestions here! 👇",
       bannerTexts: [ // These texts will now cycle in the subtitle area
-        "Play games, earn money! 💰",
+        "Play games, earn money! �",
         "Customize your vibe! Shop themes now! ✨",
         "Unlock 3D animations & custom colors in Settings! ⚙️",
         "Chrome 55 compatible?! That's retro cool! 🚀",
@@ -1425,7 +1530,7 @@
       fullScreenButton: "Pantalla Completa",
       exitButton: "Salir",
       copyLinkButton: "Copiar Enlace",
-      buyButton: "Comprar por {cost} �",
+      buyButton: "Comprar por {cost} 💰",
       applyButton: "Aplicar",
       ownedText: "Poseído",
       insufficientFunds: "¡Dinero insuficiente!",
@@ -1810,6 +1915,30 @@
     'game-Tiny-Fishing'
   ]);
 
+  // More Links Data
+  const moreLinksData = [
+      {
+          title: "BirdMath Classic (Before EPIXGAMES)",
+          descriptionKey: "birdMathClassicDesc",
+          url: "/play/classic/"
+      },
+      {
+          title: "MultiScreen Animation",
+          descriptionKey: "multiScreenAnimationDesc",
+          url: "/screen/"
+      },
+      {
+          title: "BirdMath Local Minimal Browser",
+          descriptionKey: "minimalBrowserDesc",
+          url: "/minilocal/"
+      },
+      {
+          title: "Proxser",
+          descriptionKey: "proxserDesc",
+          url: "https://proxser.pages.dev"
+      }
+  ];
+
 
   // Store all game data for easy lookup
   window.allGamesData = new Map(); // Map: gameTitle -> { id: 'game-title-id', path: '/play/game.html' }
@@ -1849,6 +1978,7 @@
   let consoleOutput;
   let commandInput;
   let fileInput;
+  let moreLinksContainer; // New element for More tab
 
   // Declare currentMoneySpan globally, but assign it inside DOMContentLoaded
   let currentMoneySpan;
@@ -1863,13 +1993,17 @@
   let hiddenGamesList;
   let favoriteGamesList;
 
+  // Intersection Observer for scroll animations
+  let animationObserver;
+
 
   // --- Helper Functions ---
 
   // Custom Message Box
   function showMessageBox(message) {
     messageBoxText.innerHTML = message; // Changed to innerHTML to support links
-    messageBox.style.display = 'block';
+    // Apply animation
+    applyAnimation(messageBox, 'zoom-in-animation', null, 'block');
   }
 
   // User Agent Detection Functions
@@ -2102,9 +2236,76 @@
       }
   }
 
+  // --- New Animation Helper Function ---
+  // This function applies an animation class and handles cleanup after animation ends.
+  // It also manages the display property for elements that need to be hidden/shown.
+  function applyAnimation(element, enterAnimationClass, exitAnimationClass, displayStyle = 'block', onCompleteCallback) {
+    // Clear any existing animation classes and inline animation styles
+    element.classList.remove('fade-in-up-animation', 'fade-out-down-animation', 'zoom-in-animation', 'zoom-out-animation', 'animated-enter', 'animated-exit');
+    element.style.animation = '';
+    element.style.opacity = ''; // Clear opacity set by animation-fill-mode
+
+    const animationDuration = 500; // Match CSS animation-duration in milliseconds
+
+    const handleAnimationEnd = () => {
+      element.removeEventListener('animationend', handleAnimationEnd);
+      element.classList.remove('animated-enter', 'animated-exit', enterAnimationClass, exitAnimationClass);
+      element.style.animation = ''; // Clear animation property
+
+      if (exitAnimationClass) {
+        element.style.display = 'none'; // Hide after exit animation
+        element.style.visibility = 'hidden'; // Ensure visibility is hidden
+      } else if (enterAnimationClass) {
+        element.style.visibility = 'visible'; // Ensure visibility is visible after enter
+        element.style.opacity = '1'; // Ensure opacity is 1 after enter
+      }
+
+      if (onCompleteCallback) {
+        onCompleteCallback();
+      }
+    };
+
+    // Add event listener for animation end
+    element.addEventListener('animationend', handleAnimationEnd);
+
+    if (enterAnimationClass) {
+      element.style.display = displayStyle; // Make visible with correct display type
+      element.style.visibility = 'visible'; // Ensure visibility is set for enter animation
+      // Force reflow to ensure animation starts from initial state
+      void element.offsetWidth;
+      element.classList.add('animated-enter', enterAnimationClass);
+    } else if (exitAnimationClass) {
+      element.classList.add('animated-exit', exitAnimationClass);
+      // Fallback for browsers that might not fire 'animationend' or for very short animations
+      setTimeout(() => {
+        if (element.classList.contains('animated-exit')) { // Check if animation is still active
+          handleAnimationEnd();
+        }
+      }, animationDuration + 50); // A small buffer
+    }
+  }
+
 
   // --- Tab Switching Logic ---
   function showTab(tabId) {
+    const activeTabContent = document.querySelector('.tab-content.active');
+    const newTabContent = document.getElementById(tabId);
+    const newTabButton = document.querySelector(`.tab-button[data-tab="${tabId}"]`);
+
+    // If the new tab is already active, do nothing
+    if (newTabContent.classList.contains('active')) {
+        return;
+    }
+
+    // Stop observing elements in the old tab to prevent unwanted animations
+    if (activeTabContent) {
+        activeTabContent.querySelectorAll('.animate-on-scroll').forEach(el => {
+            animationObserver.unobserve(el);
+            el.classList.remove('is-visible'); // Reset state for when it might become visible again
+        });
+    }
+
+    // Remove active class from all tab contents and buttons
     tabContents.forEach(content => {
       content.classList.remove('active');
     });
@@ -2112,8 +2313,15 @@
       button.classList.remove('active');
     });
 
-    document.getElementById(tabId).classList.add('active');
-    document.querySelector(`.tab-button[data-tab="${tabId}"]`).classList.add('active');
+    // Add active class to the new tab content and button
+    newTabContent.classList.add('active');
+    newTabButton.classList.add('active');
+
+    // Re-observe elements in the newly active tab
+    newTabContent.querySelectorAll('.animate-on-scroll').forEach(el => {
+        animationObserver.observe(el);
+    });
+
 
     // Hide search widget if not on games tab
     const searchWidget = document.querySelector('.search-widget-container');
@@ -2134,7 +2342,8 @@
   function openGameInIframe(gameRelativePath) {
     currentLoadedGamePath = gameRelativePath;
     gameIframe.src = `${currentBaseUrl}${gameRelativePath}`;
-    gamePlayerOverlay.classList.add('active');
+    // Apply animation to game player overlay
+    applyAnimation(gamePlayerOverlay, 'zoom-in-animation', null, 'flex');
     startMoneyGranting(); // Start granting money when game starts
   }
 
@@ -2148,7 +2357,10 @@
     // Before exiting, update playtime and money
     stopMoneyGranting(); // This will also handle the final money calculation for the session
     gameIframe.src = '';
-    gamePlayerOverlay.classList.remove('active');
+    // Apply animation to game player overlay
+    applyAnimation(gamePlayerOverlay, null, 'zoom-out-animation', 'flex', () => {
+        gamePlayerOverlay.classList.remove('active');
+    });
     currentLoadedGamePath = '';
 
     const url = new URL(window.location.href);
@@ -2366,7 +2578,7 @@
 
     allStoreItems.forEach(item => {
       const itemDiv = document.createElement('div');
-      itemDiv.className = 'store-item';
+      itemDiv.className = 'store-item animate-on-scroll'; // Add animate-on-scroll class
 
       const img = document.createElement('img');
       img.src = item.img || 'https://placehold.co/100x100/3c4048/FFFFFF?text=Item'; // Placeholder if no img
@@ -2400,6 +2612,9 @@
       itemDiv.appendChild(statusText);
       itemDiv.appendChild(buyApplyButton);
       storeItemsContainer.appendChild(itemDiv);
+
+      // Observe the newly added item for scroll animation
+      animationObserver.observe(itemDiv);
     });
   }
 
@@ -2589,16 +2804,19 @@
   function toggleCommandPrompt() {
     isCommandPromptOpen = !isCommandPromptOpen;
     if (isCommandPromptOpen) {
-      commandPromptOverlay.style.display = 'flex';
+      // Show with animation
+      applyAnimation(commandPromptOverlay, 'zoom-in-animation', null, 'flex');
       commandInput.focus();
       appendToConsoleOutput("EPIXGAMES Command Prompt v1.0");
       appendToConsoleOutput("Type 'HELP' for commands.");
     } else {
-      commandPromptOverlay.style.display = 'none';
-      commandInput.value = '';
-      consoleOutput.innerHTML = ''; // Clear console output on close
-      document.activeElement.blur(); // Remove focus from input
-      commandPromptState = { mode: 'normal', subMode: '', data: {} }; // Reset state
+      // Hide with animation
+      applyAnimation(commandPromptOverlay, null, 'zoom-out-animation', 'flex', () => {
+        commandInput.value = '';
+        consoleOutput.innerHTML = ''; // Clear console output on close
+        document.activeElement.blur(); // Remove focus from input
+        commandPromptState = { mode: 'normal', subMode: '', data: {} }; // Reset state
+      });
     }
   }
 
@@ -2911,7 +3129,7 @@
           new URL(url); // Validate URL format
           openGameInIframe(url);
           appendToConsoleOutput(translations[currentLanguage].cmdIframeOpened.replace('{url}', url));
-          toggleCommandPrompt(); // Close prompt after opening iframe
+          // toggleCommandPrompt(); // Close prompt after opening iframe (handled by openGameInIframe now)
         } catch (e) {
           appendToConsoleOutput(translations[currentLanguage].cmdInvalidUrl);
         }
@@ -3131,17 +3349,17 @@
 
   // New function to render a list of games into a container
   function renderGames(gamesArray, containerElement) {
+      // Before clearing, unobserve all elements currently in the container
+      containerElement.querySelectorAll('.game').forEach(gameDiv => {
+          animationObserver.unobserve(gameDiv);
+          gameDiv.classList.remove('is-visible'); // Reset state
+      });
       containerElement.innerHTML = ''; // Clear the container
 
       gamesArray.forEach(game => {
           const gameDiv = document.createElement('div');
-          gameDiv.className = 'game';
+          gameDiv.className = 'game animate-on-scroll'; // Add animate-on-scroll class
           gameDiv.id = game.id; // Ensure game has a unique ID
-
-          // Check if game is hidden (this class is now applied by renderAllGames for filtering)
-          // if (hiddenGames.has(game.id)) {
-          //     gameDiv.classList.add('hidden');
-          // }
 
           // Check if game is favorited
           if (favoriteGames.has(game.id)) {
@@ -3185,6 +3403,9 @@
 
           // Attach right-click listener to each game card
           gameDiv.addEventListener('contextmenu', (event) => showContextMenu(event, gameDiv));
+
+          // Observe the newly added game card for scroll animation
+          animationObserver.observe(gameDiv);
       });
   }
 
@@ -3210,11 +3431,8 @@
           return a.name.localeCompare(b.name); // Then sort alphabetically
       });
 
-      // Clear existing containers before rendering
-      if (staticGamesContainer) staticGamesContainer.innerHTML = '';
-      if (customGamesContainer) customGamesContainer.innerHTML = '';
-
-      // Separate games into static and custom for rendering into their respective containers
+      // Render into their respective containers
+      // This will automatically handle unobserving old elements and observing new ones
       const staticGamesToRender = allDisplayableGames.filter(game => window.staticGameDefinitions.some(staticGame => staticGame.id === game.id));
       const customGamesToRender = allDisplayableGames.filter(game => window.customGames.some(customGame => customGame.id === game.id));
 
@@ -3225,11 +3443,44 @@
           customGamesTitle.style.display = 'block';
           customGamesContainer.style.display = 'flex'; // Use flex for the container
           renderGames(customGamesToRender, customGamesContainer);
+          animationObserver.observe(customGamesTitle); // Observe custom games title
       } else {
           customGamesTitle.style.display = 'none';
           customGamesContainer.style.display = 'none';
+          animationObserver.unobserve(customGamesTitle); // Stop observing if hidden
+          customGamesContainer.querySelectorAll('.game').forEach(gameDiv => { // Unobserve games in hidden custom container
+              animationObserver.unobserve(gameDiv);
+              gameDiv.classList.remove('is-visible');
+          });
       }
   }
+
+  // New function to render "More" links
+  function renderMoreLinks() {
+      moreLinksContainer.innerHTML = ''; // Clear previous items
+      moreLinksData.forEach(link => {
+          const itemDiv = document.createElement('div');
+          itemDiv.className = 'more-link-item animate-on-scroll'; // Add animate-on-scroll class
+
+          const title = document.createElement('h3');
+          title.textContent = link.title;
+          itemDiv.appendChild(title);
+
+          const description = document.createElement('p');
+          description.textContent = translations[currentLanguage][link.descriptionKey] || link.descriptionKey;
+          itemDiv.appendChild(description);
+
+          const anchor = document.createElement('a');
+          anchor.href = link.url;
+          anchor.target = "_blank";
+          anchor.textContent = translations[currentLanguage].visitLink;
+          itemDiv.appendChild(anchor);
+
+          moreLinksContainer.appendChild(itemDiv);
+          animationObserver.observe(itemDiv); // Observe for scroll animation
+      });
+  }
+
 
   // Context Menu Functions
   function showContextMenu(event, gameElement) {
@@ -3250,7 +3501,9 @@
       }
 
       // Display the menu first to get its dimensions
-      gameContextMenu.style.display = 'block';
+      // gameContextMenu.style.display = 'block'; // Handled by applyAnimation
+      applyAnimation(gameContextMenu, 'zoom-in-animation', null, 'block');
+
 
       // Calculate position to keep it within viewport
       let x = event.clientX;
@@ -3281,7 +3534,9 @@
 
   function hideContextMenu() {
       if (gameContextMenu) {
-          gameContextMenu.style.display = 'none';
+          applyAnimation(gameContextMenu, null, 'zoom-out-animation', 'block', () => {
+              // gameContextMenu.style.display = 'none'; // Handled by applyAnimation callback
+          });
       }
       currentRightClickedGameElement = null;
   }
@@ -3297,9 +3552,20 @@
       hiddenGames.add(gameId);
       localStorage.setItem('epixgamesHiddenGames', JSON.stringify(Array.from(hiddenGames)));
       showMessageBox(translations[currentLanguage].gameHidden);
-      renderAllGames(); // Re-render all games to hide it
-      renderHiddenGamesSettings(); // Update settings list
-      renderFavoriteGamesSettings(); // Update favorite list (if it was removed)
+
+      // Animate out the specific game element
+      const gameElementToHide = document.getElementById(gameId);
+      if (gameElementToHide) {
+          applyAnimation(gameElementToHide, null, 'fade-out-down-animation', 'flex', () => {
+              renderAllGames(); // Re-render all games to hide it after animation
+              renderHiddenGamesSettings(); // Update settings list
+              renderFavoriteGamesSettings(); // Update favorite list (if it was removed)
+          });
+      } else {
+          renderAllGames(); // Fallback if element not found (shouldn't happen)
+          renderHiddenGamesSettings();
+          renderFavoriteGamesSettings();
+      }
   }
 
   function unhideGame(gameId) {
@@ -3351,6 +3617,7 @@
               unhideButton.onclick = () => unhideGame(gameId);
               itemDiv.appendChild(unhideButton);
               hiddenGamesList.appendChild(itemDiv);
+              // No animation for settings list items as they are static once rendered
           }
       });
   }
@@ -3374,6 +3641,7 @@
               unfavoriteButton.onclick = () => toggleFavorite(gameId); // Use toggleFavorite to unfavorite
               itemDiv.appendChild(unfavoriteButton);
               favoriteGamesList.appendChild(itemDiv);
+              // No animation for settings list items as they are static once rendered
           }
       });
   }
@@ -3391,6 +3659,26 @@
               console.error(`Error applying HTML modification for selector "${mod.selector}":`, e);
           }
       });
+  }
+
+  // Setup Intersection Observer
+  function setupIntersectionObserver() {
+      const options = {
+          root: null, // viewport
+          rootMargin: '0px',
+          threshold: 0.1 // Trigger when 10% of the item is visible
+      };
+
+      animationObserver = new IntersectionObserver((entries, observer) => {
+          entries.forEach(entry => {
+              if (entry.isIntersecting) {
+                  entry.target.classList.add('is-visible');
+              } else {
+                  // Animate out when scrolling away
+                  entry.target.classList.remove('is-visible');
+              }
+          });
+      }, options);
   }
 
 
@@ -3431,6 +3719,7 @@
     commandInput = document.getElementById('commandInput');
     fileInput = document.getElementById('fileInput');
     currentMoneySpan = document.getElementById('currentMoney'); // Assign currentMoneySpan here
+    moreLinksContainer = document.getElementById('moreLinksContainer'); // Assign More links container
 
     // New element assignments for context menu and settings lists
     gameContextMenu = document.getElementById('gameContextMenu');
@@ -3438,6 +3727,9 @@
     contextMenuToggleFavoriteButton = document.getElementById('contextMenuToggleFavorite');
     hiddenGamesList = document.getElementById('hiddenGamesList');
     favoriteGamesList = document.getElementById('favoriteGamesList');
+
+    // Setup the Intersection Observer
+    setupIntersectionObserver();
 
 
     console.log("currentMoneySpan element found (inside DOMContentLoaded):", currentMoneySpan);
@@ -3583,7 +3875,10 @@
 
     // Message box close button listener
     messageBoxCloseButton.addEventListener('click', () => {
-      messageBox.style.display = 'none';
+      // Apply animation to message box
+      applyAnimation(messageBox, null, 'zoom-out-animation', 'block', () => {
+          // messageBox.style.display = 'none'; // Handled by applyAnimation callback
+      });
     });
 
     // Event listener for context menu items
@@ -3617,11 +3912,34 @@
       openGameInIframe(decodeURIComponent(gameToLoad));
       showTab('games-tab'); // Ensure games tab is active if a game is loaded via URL
     } else {
-      showTab('games-tab'); // Default to Games tab on initial load
+      // Default to Games tab on initial load, and observe its elements
+      document.getElementById('games-tab').classList.add('active');
+      document.querySelector(`.tab-button[data-tab="games-tab"]`).classList.add('active');
+      // Observe elements in the initially active tab (Games tab)
+      document.getElementById('games-tab').querySelectorAll('.animate-on-scroll').forEach(el => {
+          animationObserver.observe(el);
+      });
+      // Ensure search widget is visible
+      const searchWidget = document.querySelector('.search-widget-container');
+      if (searchWidget) searchWidget.style.display = 'flex';
     }
 
     // Render store items initially
     renderStore();
+    // Render more links initially
+    renderMoreLinks();
+    // Render settings sections initially (they are part of the static HTML but need observing)
+    document.querySelectorAll('#settings-tab .settings-section').forEach(el => {
+        animationObserver.observe(el);
+    });
+    // Observe the money display as well
+    animationObserver.observe(document.querySelector('.money-display'));
+    // Observe the suggest tab elements
+    animationObserver.observe(document.querySelector('#suggest-tab h2'));
+    animationObserver.observe(document.querySelector('#suggest-tab p'));
+    animationObserver.observe(document.querySelector('#suggest-tab iframe'));
+
+
     toggleAccentColorPickerState(); // Initial state for picker
 
     // Start banner text cycling
@@ -3677,6 +3995,6 @@
   });
 </script>
 
+<h4>2025 EPIX - EPIXGAMES is not to be confused with Epic Games. We do not own any of the games here EXCEPT Dodge the Bar and Fantasy Avengers. Please note many parts of this site are made by Google Gemini AI.</h4>
 </body>
 </html>
-�
