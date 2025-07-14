@@ -1,0 +1,1130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Desktop App</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            overflow: hidden; /* Prevent body scroll */
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            width: 100vw;
+            display: flex;
+            flex-direction: column;
+            background-color: #1a202c; /* Default dark background */
+        }
+
+        #desktop {
+            flex-grow: 1;
+            position: relative;
+            overflow: hidden; /* Hide scrollbars within desktop */
+            background-size: cover;
+            background-position: center;
+            transition: background-image 0.3s ease-in-out, background-color 0.3s ease-in-out;
+        }
+
+        .window {
+            position: absolute;
+            background-color: rgba(255, 255, 255, 0.95);
+            border-radius: 0.75rem; /* rounded-xl */
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); /* shadow-xl */
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            resize: both; /* Enable native resizing for testing, but JS will override */
+            min-width: 200px;
+            min-height: 150px;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            transition: box-shadow 0.1s ease-in-out;
+        }
+
+        .window.active {
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2), 0 10px 10px -5px rgba(0, 0, 0, 0.08); /* shadow-2xl */
+            z-index: 1000; /* Bring active window to front */
+        }
+
+        .window-header {
+            cursor: grab;
+            background-color: #4a5568; /* gray-700 */
+            color: white;
+            padding: 0.5rem 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top-left-radius: 0.75rem;
+            border-top-right-radius: 0.75rem;
+            user-select: none; /* Prevent text selection during drag */
+        }
+
+        .window-header h3 {
+            font-weight: 600; /* font-semibold */
+            font-size: 0.875rem; /* text-sm */
+            flex-grow: 1;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .window-controls button {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1rem;
+            cursor: pointer;
+            margin-left: 0.5rem;
+            padding: 0.25rem;
+            border-radius: 0.25rem;
+            transition: background-color 0.2s ease-in-out;
+        }
+
+        .window-controls button:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .window-content {
+            flex-grow: 1;
+            display: flex;
+            overflow: hidden;
+            border-bottom-left-radius: 0.75rem;
+            border-bottom-right-radius: 0.75rem;
+        }
+
+        .window-content iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            background-color: white; /* Ensure iframe background is white */
+        }
+
+        .shortcut {
+            position: absolute;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+            transition: background-color 0.2s ease-in-out, transform 0.1s ease-in-out;
+            user-select: none;
+            width: 80px; /* Fixed width for better alignment */
+            height: 90px; /* Fixed height for better alignment */
+            justify-content: center;
+            color: white;
+            font-size: 0.75rem; /* text-xs */
+        }
+
+        .shortcut:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .shortcut-icon {
+            font-size: 2.5rem; /* text-4xl */
+            margin-bottom: 0.25rem;
+        }
+
+        /* Modal styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+        }
+
+        .modal-content {
+            background-color: #2d3748; /* gray-800 */
+            padding: 2rem;
+            border-radius: 0.75rem;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2), 0 10px 10px -5px rgba(0, 0, 0, 0.08);
+            width: 90%;
+            max-width: 500px;
+            color: white;
+        }
+
+        .modal-content input[type="text"],
+        .modal-content input[type="password"],
+        .modal-content input[type="url"] {
+            width: 100%;
+            padding: 0.75rem;
+            margin-bottom: 1rem;
+            border-radius: 0.5rem;
+            border: 1px solid #4a5568; /* gray-700 */
+            background-color: #1a202c; /* gray-900 */
+            color: white;
+        }
+
+        .modal-content button {
+            background-color: #4299e1; /* blue-500 */
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.2s ease-in-out;
+        }
+
+        .modal-content button:hover {
+            background-color: #3182ce; /* blue-600 */
+        }
+
+        .modal-content .close-button {
+            background-color: #e53e3e; /* red-600 */
+        }
+
+        .modal-content .close-button:hover {
+            background-color: #c53030; /* red-700 */
+        }
+
+        /* Context menu styles */
+        .context-menu {
+            position: absolute;
+            background-color: #2d3748; /* gray-800 */
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            z-index: 2000;
+            padding: 0.5rem 0;
+            color: white;
+        }
+
+        .context-menu-item {
+            padding: 0.75rem 1rem;
+            cursor: pointer;
+            transition: background-color 0.2s ease-in-out;
+        }
+
+        .context-menu-item:hover {
+            background-color: #4a5568; /* gray-700 */
+        }
+
+        /* Message box styles */
+        #messageBox {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            background-color: #2d3748;
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            z-index: 3000;
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out;
+        }
+
+        #messageBox.show {
+            opacity: 1;
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-white">
+    <!-- Top Bar -->
+    <div class="bg-gray-800 p-2 flex justify-between items-center shadow-md z-10">
+        <div class="flex items-center space-x-2">
+            <i class="fas fa-desktop text-blue-400 text-xl"></i>
+            <span class="text-lg font-semibold">My Desktop</span>
+        </div>
+        <div class="flex items-center space-x-4">
+            <span id="userIdDisplay" class="text-sm text-gray-400"></span>
+            <button id="settingsButton" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition duration-200 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-75">
+                <i class="fas fa-cog mr-2"></i>Settings
+            </button>
+        </div>
+    </div>
+
+    <!-- Desktop Area -->
+    <div id="desktop" class="relative flex-grow bg-gray-900">
+        <!-- Shortcuts will be dynamically added here -->
+    </div>
+
+    <!-- Settings Modal -->
+    <div id="settingsModal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <h2 class="text-2xl font-bold mb-4">Settings</h2>
+            <div id="settingsContent">
+                <h3 class="text-xl font-semibold mb-3">Background</h3>
+                <label for="backgroundInput" class="block text-sm font-medium mb-1">Background Color or Image URL:</label>
+                <input type="text" id="backgroundInput" placeholder="e.g., #334155 or url(https://example.com/image.jpg)" class="mb-4">
+                <button id="applyBackgroundButton" class="bg-green-500 hover:bg-green-600 mb-6">Apply Background</button>
+
+                <h3 class="text-xl font-semibold mb-3">Password Lock</h3>
+                <label for="setPasswordInput" class="block text-sm font-medium mb-1">Set/Change Password (leave blank to remove):</label>
+                <input type="password" id="setPasswordInput" placeholder="Enter new password" class="mb-4">
+                <button id="setSettingsPasswordButton" class="bg-purple-500 hover:bg-purple-600 mb-6">Set Password</button>
+
+                <h3 class="text-xl font-semibold mb-3">Manage Shortcuts</h3>
+                <div id="shortcutList" class="mb-4 max-h-48 overflow-y-auto border border-gray-700 rounded-md p-2">
+                    <!-- Shortcuts will be listed here -->
+                </div>
+                <button id="addShortcutButton" class="bg-blue-500 hover:bg-blue-600">Add New Shortcut</button>
+            </div>
+            <div id="passwordLockContent" class="hidden">
+                <h3 class="text-xl font-semibold mb-3">Settings Locked</h3>
+                <label for="unlockPasswordInput" class="block text-sm font-medium mb-1">Enter Password to Unlock:</label>
+                <input type="password" id="unlockPasswordInput" placeholder="Enter password" class="mb-4">
+                <button id="unlockSettingsButton" class="bg-blue-500 hover:bg-blue-600">Unlock Settings</button>
+            </div>
+            <button id="closeSettingsModal" class="close-button mt-6 w-full">Close</button>
+        </div>
+    </div>
+
+    <!-- Add/Edit Shortcut Modal -->
+    <div id="shortcutFormModal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <h2 class="text-2xl font-bold mb-4" id="shortcutFormTitle">Add New Shortcut</h2>
+            <label for="shortcutNameInput" class="block text-sm font-medium mb-1">Name:</label>
+            <input type="text" id="shortcutNameInput" placeholder="e.g., Google" class="mb-4">
+            <label for="shortcutUrlInput" class="block text-sm font-medium mb-1">URL:</label>
+            <input type="url" id="shortcutUrlInput" placeholder="e.g., https://www.google.com" class="mb-4">
+            <label for="shortcutIconInput" class="block text-sm font-medium mb-1">Icon (Font Awesome class or Emoji):</label>
+            <input type="text" id="shortcutIconInput" placeholder="e.g., fas fa-globe or 🌐" class="mb-4">
+            <button id="saveShortcutButton" class="bg-green-500 hover:bg-green-600">Save Shortcut</button>
+            <button id="deleteShortcutButton" class="bg-red-500 hover:bg-red-600 hidden mt-4">Delete Shortcut</button>
+            <button id="cancelShortcutButton" class="close-button mt-4 w-full">Cancel</button>
+        </div>
+    </div>
+
+    <!-- Message Box -->
+    <div id="messageBox" class="hidden"></div>
+
+    <!-- Firebase SDKs -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, getDoc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // Global variables for Firebase config and app ID
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        const firebaseConfig = JSON.parse(typeof __firebase_config !== 'undefined' ? __firebase_config : '{}');
+        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const auth = getAuth(app);
+
+        let currentUserId = null;
+        let desktopDataRef = null; // Firestore document reference
+
+        // State variables
+        let windows = [];
+        let shortcuts = [];
+        let background = '#1a202c'; // Default background color
+        let settingsPassword = ''; // Stored password (plain text for demo, hash in production)
+        let isSettingsLocked = true; // Initial state: settings are locked
+        let activeWindowId = null;
+        let highestZIndex = 100; // Starting z-index for windows
+
+        // Constants for shortcut layout
+        const SHORTCUT_WIDTH = 80;
+        const SHORTCUT_HEIGHT = 90;
+        const PADDING_X = 20; // Horizontal padding between shortcuts and from edges
+        const PADDING_Y = 20; // Vertical padding between shortcuts and from edges
+
+        // DOM Elements
+        const desktopEl = document.getElementById('desktop');
+        const settingsButton = document.getElementById('settingsButton');
+        const settingsModal = document.getElementById('settingsModal');
+        const closeSettingsModal = document.getElementById('closeSettingsModal');
+        const settingsContent = document.getElementById('settingsContent');
+        const passwordLockContent = document.getElementById('passwordLockContent');
+        const backgroundInput = document.getElementById('backgroundInput');
+        const applyBackgroundButton = document.getElementById('applyBackgroundButton');
+        const setPasswordInput = document.getElementById('setPasswordInput');
+        const setSettingsPasswordButton = document.getElementById('setSettingsPasswordButton');
+        const unlockPasswordInput = document.getElementById('unlockPasswordInput');
+        const unlockSettingsButton = document.getElementById('unlockSettingsButton');
+        const shortcutListEl = document.getElementById('shortcutList');
+        const addShortcutButton = document.getElementById('addShortcutButton');
+        const shortcutFormModal = document.getElementById('shortcutFormModal');
+        const shortcutFormTitle = document.getElementById('shortcutFormTitle');
+        const shortcutNameInput = document.getElementById('shortcutNameInput');
+        const shortcutUrlInput = document.getElementById('shortcutUrlInput');
+        const shortcutIconInput = document.getElementById('shortcutIconInput');
+        const saveShortcutButton = document.getElementById('saveShortcutButton');
+        const deleteShortcutButton = document.getElementById('deleteShortcutButton');
+        const cancelShortcutButton = document.getElementById('cancelShortcutButton');
+        const userIdDisplay = document.getElementById('userIdDisplay');
+        const messageBox = document.getElementById('messageBox');
+
+        let editingShortcutId = null; // To track which shortcut is being edited
+
+        // --- Utility Functions ---
+
+        /**
+         * Displays a temporary message box.
+         * @param {string} message - The message to display.
+         * @param {string} type - 'success', 'error', 'info'.
+         */
+        function showMessage(message, type = 'info') {
+            messageBox.textContent = message;
+            messageBox.className = 'show'; // Reset classes
+            if (type === 'success') {
+                messageBox.classList.add('bg-green-500');
+            } else if (type === 'error') {
+                messageBox.classList.add('bg-red-500');
+            } else {
+                messageBox.classList.add('bg-blue-500');
+            }
+            setTimeout(() => {
+                messageBox.classList.remove('show');
+                messageBox.className = 'hidden'; // Hide after transition
+            }, 3000);
+        }
+
+        /**
+         * Generates a unique ID.
+         * @returns {string} A unique ID.
+         */
+        function generateId() {
+            return crypto.randomUUID();
+        }
+
+        /**
+         * Debounces a function call.
+         * @param {function} func - The function to debounce.
+         * @param {number} delay - The delay in milliseconds.
+         * @returns {function} The debounced function.
+         */
+        function debounce(func, delay) {
+            let timeout;
+            return function(...args) {
+                const context = this;
+                clearTimeout(timeout);
+                timeout = setTimeout(() => func.apply(context, args), delay);
+            };
+        }
+
+        /**
+         * Saves the current desktop state to Firestore.
+         * Debounced to prevent excessive writes during drag/resize.
+         */
+        const saveDesktopState = debounce(async () => {
+            if (!desktopDataRef) {
+                console.warn("Firestore reference not ready, cannot save state.");
+                return;
+            }
+            try {
+                const dataToSave = {
+                    windows: windows.map(w => ({
+                        id: w.id,
+                        url: w.url,
+                        name: w.name,
+                        x: w.x,
+                        y: w.y,
+                        width: w.width,
+                        height: w.height,
+                        zIndex: w.zIndex
+                    })),
+                    shortcuts: shortcuts.map(s => ({
+                        id: s.id,
+                        name: s.name,
+                        url: s.url,
+                        icon: s.icon,
+                        x: s.x, // Save calculated x
+                        y: s.y  // Save calculated y
+                    })),
+                    background: background,
+                    settingsPassword: settingsPassword // Store plain password for demo. In production, hash this!
+                };
+                await setDoc(desktopDataRef, dataToSave, { merge: true });
+                console.log("Desktop state saved to Firestore.");
+            } catch (error) {
+                console.error("Error saving desktop state:", error);
+                showMessage("Error saving desktop state! 😭", 'error');
+            }
+        }, 500); // Save every 500ms if changes are frequent
+
+        /**
+         * Loads desktop state from Firestore.
+         */
+        async function loadDesktopState() {
+            if (!desktopDataRef) {
+                console.warn("Firestore reference not ready, cannot load state.");
+                return;
+            }
+            try {
+                const docSnap = await getDoc(desktopDataRef);
+                if (docSnap.exists()) {
+                    const data = docSnap.data();
+                    windows = data.windows || [];
+                    shortcuts = data.shortcuts || [];
+                    background = data.background || '#1a202c';
+                    settingsPassword = data.settingsPassword || '';
+                    isSettingsLocked = settingsPassword !== ''; // Lock if a password exists
+                    console.log("Desktop state loaded from Firestore:", data);
+                } else {
+                    console.log("No desktop state found, initializing with defaults.");
+                    // Add some default shortcuts if none exist
+                    if (shortcuts.length === 0) {
+                        shortcuts.push(
+                            { id: generateId(), name: 'Google', url: 'https://www.google.com', icon: 'fab fa-google' },
+                            { id: generateId(), name: 'Wikipedia', url: 'https://en.wikipedia.org/wiki/Main_Page', icon: 'fas fa-book' },
+                            { id: generateId(), name: 'Youtube', url: 'https://www.youtube.com', icon: 'fab fa-youtube' }
+                        );
+                    }
+                }
+                applyBackground();
+                layoutShortcuts(); // Layout shortcuts before rendering
+                renderShortcuts();
+                renderWindows();
+                updateSettingsModalVisibility();
+            } catch (error) {
+                console.error("Error loading desktop state:", error);
+                showMessage("Error loading desktop state! 😱", 'error');
+            }
+        }
+
+        /**
+         * Applies the current background setting to the desktop.
+         */
+        function applyBackground() {
+            if (background.startsWith('url(') || background.startsWith('https://') || background.startsWith('http://')) {
+                desktopEl.style.backgroundImage = `url('${background.replace(/url\(|\)/g, '')}')`;
+                desktopEl.style.backgroundColor = 'transparent'; // Ensure background color doesn't override image
+            } else {
+                desktopEl.style.backgroundImage = 'none';
+                desktopEl.style.backgroundColor = background;
+            }
+            backgroundInput.value = background;
+        }
+
+        /**
+         * Calculates and assigns positions for all shortcuts based on a grid layout.
+         */
+        function layoutShortcuts() {
+            const desktopWidth = desktopEl.offsetWidth;
+            const columns = Math.floor(desktopWidth / (SHORTCUT_WIDTH + PADDING_X));
+            let changed = false;
+
+            shortcuts.forEach((s, index) => {
+                const col = index % columns;
+                const row = Math.floor(index / columns);
+
+                const newX = PADDING_X + col * (SHORTCUT_WIDTH + PADDING_X);
+                const newY = PADDING_Y + row * (SHORTCUT_HEIGHT + PADDING_Y);
+
+                // Only update if position has significantly changed to avoid unnecessary saves
+                if (s.x !== newX || s.y !== newY) {
+                    s.x = newX;
+                    s.y = newY;
+                    changed = true;
+                }
+            });
+
+            if (changed) {
+                saveDesktopState(); // Save the new layout
+            }
+        }
+
+        /**
+         * Renders all shortcuts on the desktop.
+         */
+        function renderShortcuts() {
+            // Clear existing shortcuts
+            Array.from(desktopEl.children).forEach(child => {
+                if (child.classList.contains('shortcut')) {
+                    child.remove();
+                }
+            });
+
+            shortcuts.forEach(s => {
+                const shortcutEl = document.createElement('div');
+                shortcutEl.id = `shortcut-${s.id}`;
+                shortcutEl.classList.add('shortcut');
+                shortcutEl.style.left = `${s.x}px`;
+                shortcutEl.style.top = `${s.y}px`;
+
+                const iconEl = document.createElement('div');
+                iconEl.classList.add('shortcut-icon');
+                if (s.icon.startsWith('fa')) { // Font Awesome icon
+                    const iEl = document.createElement('i');
+                    iEl.className = s.icon;
+                    iconEl.appendChild(iEl);
+                } else { // Emoji
+                    iconEl.textContent = s.icon;
+                }
+
+                const nameEl = document.createElement('div');
+                nameEl.textContent = s.name;
+
+                shortcutEl.appendChild(iconEl);
+                shortcutEl.appendChild(nameEl);
+
+                shortcutEl.addEventListener('click', () => openWindow(s.url, s.name));
+                desktopEl.appendChild(shortcutEl);
+            });
+            renderShortcutListInSettings();
+        }
+
+        /**
+         * Renders the list of shortcuts within the settings modal.
+         */
+        function renderShortcutListInSettings() {
+            shortcutListEl.innerHTML = '';
+            if (shortcuts.length === 0) {
+                shortcutListEl.innerHTML = '<p class="text-gray-400">No shortcuts yet. Add one! ➕</p>';
+                return;
+            }
+            shortcuts.forEach(s => {
+                const item = document.createElement('div');
+                item.classList.add('flex', 'items-center', 'justify-between', 'py-2', 'px-3', 'border-b', 'border-gray-700', 'last:border-b-0');
+                item.innerHTML = `
+                    <span class="text-sm">${s.name}</span>
+                    <button class="edit-shortcut-btn text-blue-400 hover:text-blue-300 text-xs px-2 py-1 rounded-md" data-id="${s.id}">Edit</button>
+                `;
+                shortcutListEl.appendChild(item);
+            });
+
+            shortcutListEl.querySelectorAll('.edit-shortcut-btn').forEach(button => {
+                button.addEventListener('click', (e) => {
+                    if (isSettingsLocked) return; // Prevent editing if locked
+                    const id = e.target.dataset.id;
+                    editShortcut(id);
+                });
+            });
+        }
+
+        /**
+         * Opens a new window or brings an existing one to front.
+         * @param {string} url - The URL for the iframe.
+         * @param {string} name - The name of the window.
+         * @param {string} [id] - Optional ID for an existing window.
+         * @param {number} [x] - Initial X position.
+         * @param {number} [y] - Initial Y position.
+         * @param {number} [width] - Initial width.
+         * @param {number} [height] - Initial height.
+         */
+        function openWindow(url, name, id = generateId(), x, y, width, height) {
+            let windowData = windows.find(w => w.id === id);
+
+            if (windowData) {
+                // If window exists, bring to front and focus
+                focusWindow(windowData.id);
+                // If minimized, unhide it
+                const existingEl = document.getElementById(`window-${windowData.id}`);
+                if (existingEl && existingEl.classList.contains('hidden')) {
+                    existingEl.classList.remove('hidden');
+                }
+                return;
+            }
+
+            // Create new window data
+            highestZIndex++;
+            windowData = {
+                id: id,
+                url: url,
+                name: name,
+                x: x || Math.max(0, (desktopEl.offsetWidth / 2) - 300 + Math.random() * 50),
+                y: y || Math.max(0, (desktopEl.offsetHeight / 2) - 200 + Math.random() * 50),
+                width: width || 600,
+                height: height || 400,
+                zIndex: highestZIndex
+            };
+            windows.push(windowData);
+            renderWindow(windowData);
+            focusWindow(windowData.id);
+            saveDesktopState();
+        }
+
+        /**
+         * Renders a single window element on the desktop.
+         * @param {object} windowData - The window data object.
+         */
+        function renderWindow(windowData) {
+            const existingEl = document.getElementById(`window-${windowData.id}`);
+            if (existingEl) {
+                // Update existing window properties
+                existingEl.style.left = `${windowData.x}px`;
+                existingEl.style.top = `${windowData.y}px`;
+                existingEl.style.width = `${windowData.width}px`;
+                existingEl.style.height = `${windowData.height}px`;
+                existingEl.style.zIndex = windowData.zIndex;
+                existingEl.querySelector('h3').textContent = windowData.name;
+                existingEl.querySelector('iframe').src = windowData.url;
+                return;
+            }
+
+            const windowEl = document.createElement('div');
+            windowEl.id = `window-${windowData.id}`;
+            windowEl.classList.add('window');
+            windowEl.style.left = `${windowData.x}px`;
+            windowEl.style.top = `${windowData.y}px`;
+            windowEl.style.width = `${windowData.width}px`;
+            windowEl.style.height = `${windowData.height}px`;
+            windowEl.style.zIndex = windowData.zIndex;
+
+            windowEl.innerHTML = `
+                <div class="window-header">
+                    <h3>${windowData.name}</h3>
+                    <div class="window-controls">
+                        <button class="minimize-btn" title="Minimize"><i class="fas fa-minus"></i></button>
+                        <button class="maximize-btn" title="Maximize"><i class="fas fa-expand"></i></button>
+                        <button class="close-btn" title="Close"><i class="fas fa-times"></i></button>
+                    </div>
+                </div>
+                <div class="window-content">
+                    <iframe src="${windowData.url}" frameborder="0"></iframe>
+                </div>
+            `;
+
+            desktopEl.appendChild(windowEl);
+            setupWindowInteractions(windowEl, windowData);
+        }
+
+        /**
+         * Renders all existing windows.
+         */
+        function renderWindows() {
+            // Clear existing window elements
+            Array.from(desktopEl.children).forEach(child => {
+                if (child.classList.contains('window')) {
+                    child.remove();
+                }
+            });
+            windows.forEach(win => renderWindow(win));
+        }
+
+        /**
+         * Sets up drag, resize, and control interactions for a given window element.
+         * @param {HTMLElement} windowEl - The window DOM element.
+         * @param {object} windowData - The corresponding window data object.
+         */
+        function setupWindowInteractions(windowEl, windowData) {
+            const header = windowEl.querySelector('.window-header');
+            const closeBtn = windowEl.querySelector('.close-btn');
+            const minimizeBtn = windowEl.querySelector('.minimize-btn');
+            const maximizeBtn = windowEl.querySelector('.maximize-btn');
+            const iframe = windowEl.querySelector('iframe');
+
+            let isDragging = false;
+            let isResizing = false;
+            let dragOffsetX, dragOffsetY;
+            let resizeStartX, resizeStartY, resizeStartWidth, resizeStartHeight;
+
+            // Focus window on click anywhere
+            windowEl.addEventListener('mousedown', (e) => {
+                focusWindow(windowData.id);
+            });
+
+            // Dragging
+            header.addEventListener('mousedown', (e) => {
+                if (e.target.closest('.window-controls')) return; // Don't drag if clicking controls
+                isDragging = true;
+                dragOffsetX = e.clientX - windowEl.getBoundingClientRect().left;
+                dragOffsetY = e.clientY - windowEl.getBoundingClientRect().top;
+                windowEl.style.cursor = 'grabbing';
+                iframe.style.pointerEvents = 'none'; // Disable iframe interaction during drag
+                e.preventDefault(); // Prevent text selection etc.
+            });
+
+            desktopEl.addEventListener('mousemove', (e) => {
+                if (isDragging) {
+                    let newX = e.clientX - dragOffsetX;
+                    let newY = e.clientY - dragOffsetY;
+
+                    // Keep window within desktop bounds
+                    newX = Math.max(0, Math.min(newX, desktopEl.offsetWidth - windowEl.offsetWidth));
+                    newY = Math.max(0, Math.min(newY, desktopEl.offsetHeight - windowEl.offsetHeight));
+
+                    windowEl.style.left = `${newX}px`;
+                    windowEl.style.top = `${newY}px`;
+                    windowData.x = newX;
+                    windowData.y = newY;
+                    saveDesktopState();
+                } else if (isResizing) {
+                    let newWidth = resizeStartWidth + (e.clientX - resizeStartX);
+                    let newHeight = resizeStartHeight + (e.clientY - resizeStartY);
+
+                    // Ensure minimum size and stay within desktop bounds
+                    newWidth = Math.max(200, Math.min(newWidth, desktopEl.offsetWidth - windowData.x));
+                    newHeight = Math.max(150, Math.min(newHeight, desktopEl.offsetHeight - windowData.y));
+
+                    windowEl.style.width = `${newWidth}px`;
+                    windowEl.style.height = `${newHeight}px`;
+                    windowData.width = newWidth;
+                    windowData.height = newHeight;
+                    saveDesktopState();
+                }
+            });
+
+            desktopEl.addEventListener('mouseup', () => {
+                isDragging = false;
+                isResizing = false;
+                windowEl.style.cursor = 'default';
+                iframe.style.pointerEvents = 'auto'; // Re-enable iframe interaction
+            });
+
+            // Resizing (using native resize for simplicity, but can implement custom handles)
+            // Note: The 'resize: both' CSS property handles visual resizing.
+            // We need to capture the new dimensions after resize ends.
+            // A more robust solution would involve custom resize handles and mouse events.
+            // For now, we'll listen for mouseup on the window itself to capture final size.
+            let resizeObserver = new ResizeObserver(entries => {
+                for (let entry of entries) {
+                    const { width, height } = entry.contentRect;
+                    if (windowData.width !== width || windowData.height !== height) {
+                        windowData.width = width;
+                        windowData.height = height;
+                        saveDesktopState();
+                    }
+                }
+            });
+            resizeObserver.observe(windowEl);
+
+
+            // Controls
+            closeBtn.addEventListener('click', () => closeWindow(windowData.id));
+            minimizeBtn.addEventListener('click', () => {
+                // For simplicity, minimize will just hide the window.
+                // A more complex implementation would move it to a taskbar.
+                windowEl.classList.add('hidden');
+                showMessage(`${windowData.name} minimized. 📉`, 'info');
+            });
+            maximizeBtn.addEventListener('click', () => {
+                // Toggle maximize state
+                if (windowEl.classList.contains('maximized')) {
+                    // Restore
+                    windowEl.style.left = `${windowData.x}px`;
+                    windowEl.style.top = `${windowData.y}px`;
+                    windowEl.style.width = `${windowData.width}px`;
+                    windowEl.style.height = `${windowData.height}px`;
+                    windowEl.classList.remove('maximized');
+                } else {
+                    // Maximize
+                    windowData.x = windowEl.getBoundingClientRect().left; // Save current position
+                    windowData.y = windowEl.getBoundingClientRect().top;
+                    windowData.width = windowEl.offsetWidth;
+                    windowData.height = windowEl.offsetHeight;
+
+                    windowEl.style.left = '0px';
+                    windowEl.style.top = '0px';
+                    windowEl.style.width = '100%';
+                    windowEl.style.height = '100%';
+                    windowEl.classList.add('maximized');
+                }
+                saveDesktopState();
+            });
+        }
+
+        /**
+         * Brings a window to the front by updating its z-index.
+         * @param {string} id - The ID of the window to focus.
+         */
+        function focusWindow(id) {
+            highestZIndex++;
+            windows.forEach(w => {
+                const el = document.getElementById(`window-${w.id}`);
+                if (el) {
+                    el.classList.remove('active');
+                    if (w.id === id) {
+                        w.zIndex = highestZIndex;
+                        el.style.zIndex = highestZIndex;
+                        el.classList.add('active');
+                        activeWindowId = id;
+                    }
+                }
+            });
+            saveDesktopState(); // Save z-index changes
+        }
+
+        /**
+         * Closes a window.
+         * @param {string} id - The ID of the window to close.
+         */
+        function closeWindow(id) {
+            windows = windows.filter(w => w.id !== id);
+            const windowEl = document.getElementById(`window-${id}`);
+            if (windowEl) {
+                windowEl.remove();
+            }
+            saveDesktopState();
+            showMessage("Window closed! 👋", 'info');
+        }
+
+        /**
+         * Shows the settings modal, handling password lock.
+         */
+        function showSettingsModal() {
+            settingsModal.classList.remove('hidden');
+            updateSettingsModalVisibility();
+        }
+
+        /**
+         * Updates the visibility of settings content based on lock status.
+         */
+        function updateSettingsModalVisibility() {
+            if (isSettingsLocked && settingsPassword !== '') {
+                settingsContent.classList.add('hidden');
+                passwordLockContent.classList.remove('hidden');
+                unlockPasswordInput.value = ''; // Clear password input
+            } else {
+                settingsContent.classList.remove('hidden');
+                passwordLockContent.classList.add('hidden');
+                backgroundInput.value = background;
+                setPasswordInput.value = ''; // Clear set password input
+                renderShortcutListInSettings();
+            }
+        }
+
+        /**
+         * Handles the "Set Password" button click.
+         */
+        function handleSetPassword() {
+            const newPassword = setPasswordInput.value;
+            if (newPassword) {
+                settingsPassword = newPassword;
+                isSettingsLocked = true;
+                showMessage("Password set! Settings are now locked. 🔒", 'success');
+            } else {
+                settingsPassword = '';
+                isSettingsLocked = false;
+                showMessage("Password removed! Settings are now unlocked. 🔓", 'info');
+            }
+            setPasswordInput.value = '';
+            saveDesktopState();
+            updateSettingsModalVisibility();
+        }
+
+        /**
+         * Handles the "Unlock Settings" button click.
+         */
+        function handleUnlockSettings() {
+            const enteredPassword = unlockPasswordInput.value;
+            if (enteredPassword === settingsPassword) {
+                isSettingsLocked = false;
+                showMessage("Settings unlocked! 🎉", 'success');
+                updateSettingsModalVisibility();
+            } else {
+                showMessage("Incorrect password. Try again! 🧐", 'error');
+            }
+            unlockPasswordInput.value = '';
+        }
+
+        /**
+         * Shows the add/edit shortcut form.
+         * @param {object} [shortcut] - Optional shortcut object to pre-fill for editing.
+         */
+        function showShortcutForm(shortcut = null) {
+            editingShortcutId = shortcut ? shortcut.id : null;
+            shortcutFormTitle.textContent = shortcut ? 'Edit Shortcut' : 'Add New Shortcut';
+            shortcutNameInput.value = shortcut ? shortcut.name : '';
+            shortcutUrlInput.value = shortcut ? shortcut.url : '';
+            shortcutIconInput.value = shortcut ? shortcut.icon : '';
+            deleteShortcutButton.classList.toggle('hidden', !shortcut); // Show delete button only for editing
+            shortcutFormModal.classList.remove('hidden');
+        }
+
+        /**
+         * Handles saving a new or edited shortcut.
+         */
+        function saveShortcut() {
+            const name = shortcutNameInput.value.trim();
+            const url = shortcutUrlInput.value.trim();
+            const icon = shortcutIconInput.value.trim();
+
+            if (!name || !url || !icon) {
+                showMessage("Please fill all shortcut fields! 📝", 'error');
+                return;
+            }
+
+            if (editingShortcutId) {
+                // Edit existing shortcut
+                const index = shortcuts.findIndex(s => s.id === editingShortcutId);
+                if (index !== -1) {
+                    shortcuts[index] = { ...shortcuts[index], name, url, icon };
+                    showMessage("Shortcut updated! ✨", 'success');
+                }
+            } else {
+                // Add new shortcut
+                shortcuts.push({ id: generateId(), name, url, icon });
+                showMessage("Shortcut added! 🚀", 'success');
+            }
+            layoutShortcuts(); // Re-layout all shortcuts after adding/editing
+            renderShortcuts();
+            saveDesktopState();
+            shortcutFormModal.classList.add('hidden');
+        }
+
+        /**
+         * Edits an existing shortcut.
+         * @param {string} id - The ID of the shortcut to edit.
+         */
+        function editShortcut(id) {
+            const shortcutToEdit = shortcuts.find(s => s.id === id);
+            if (shortcutToEdit) {
+                showShortcutForm(shortcutToEdit);
+            }
+        }
+
+        /**
+         * Deletes a shortcut.
+         */
+        function deleteShortcut() {
+            if (editingShortcutId) {
+                shortcuts = shortcuts.filter(s => s.id !== editingShortcutId);
+                layoutShortcuts(); // Re-layout all shortcuts after deleting
+                renderShortcuts();
+                saveDesktopState();
+                shortcutFormModal.classList.add('hidden');
+                showMessage("Shortcut deleted! 🗑️", 'success');
+            }
+        }
+
+        // --- Event Listeners ---
+
+        settingsButton.addEventListener('click', showSettingsModal);
+        closeSettingsModal.addEventListener('click', () => settingsModal.classList.add('hidden'));
+        applyBackgroundButton.addEventListener('click', () => {
+            if (isSettingsLocked) { showMessage("Unlock settings to change background! 🔓", 'error'); return; }
+            background = backgroundInput.value;
+            applyBackground();
+            saveDesktopState();
+            showMessage("Background applied! 🎨", 'success');
+        });
+        setSettingsPasswordButton.addEventListener('click', handleSetPassword);
+        unlockSettingsButton.addEventListener('click', handleUnlockSettings);
+        addShortcutButton.addEventListener('click', () => {
+            if (isSettingsLocked) { showMessage("Unlock settings to add shortcuts! 🔓", 'error'); return; }
+            showShortcutForm();
+        });
+        saveShortcutButton.addEventListener('click', saveShortcut);
+        deleteShortcutButton.addEventListener('click', deleteShortcut);
+        cancelShortcutButton.addEventListener('click', () => shortcutFormModal.classList.add('hidden'));
+
+        // Close modals if clicking outside content
+        settingsModal.addEventListener('click', (e) => {
+            if (e.target === settingsModal) {
+                settingsModal.classList.add('hidden');
+            }
+        });
+        shortcutFormModal.addEventListener('click', (e) => {
+            if (e.target === shortcutFormModal) {
+                shortcutFormModal.classList.add('hidden');
+            }
+        });
+
+        // --- Firebase Authentication and Data Loading ---
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                currentUserId = user.uid;
+                userIdDisplay.textContent = `User ID: ${currentUserId}`;
+                desktopDataRef = doc(db, `artifacts/${appId}/users/${currentUserId}/desktop_data`, 'user_desktop_settings');
+                console.log("Firebase authenticated. User ID:", currentUserId);
+
+                // Set up real-time listener for desktop data
+                onSnapshot(desktopDataRef, (docSnap) => {
+                    if (docSnap.exists()) {
+                        const data = docSnap.data();
+                        // Only update if data has actually changed to avoid re-rendering loops
+                        const newWindows = data.windows || [];
+                        const newShortcuts = data.shortcuts || [];
+                        const newBackground = data.background || '#1a202c';
+                        const newSettingsPassword = data.settingsPassword || '';
+
+                        let needsRender = false;
+                        if (JSON.stringify(windows) !== JSON.stringify(newWindows)) {
+                            windows = newWindows;
+                            renderWindows(); // Windows are rendered directly
+                            needsRender = true;
+                        }
+                        if (JSON.stringify(shortcuts) !== JSON.stringify(newShortcuts)) {
+                            shortcuts = newShortcuts;
+                            layoutShortcuts(); // Layout new shortcuts
+                            renderShortcuts(); // Render shortcuts after layout
+                            needsRender = true;
+                        }
+                        if (background !== newBackground) {
+                            background = newBackground;
+                            applyBackground();
+                            needsRender = true;
+                        }
+                        if (settingsPassword !== newSettingsPassword) {
+                            settingsPassword = newSettingsPassword;
+                            isSettingsLocked = settingsPassword !== '';
+                            updateSettingsModalVisibility();
+                            needsRender = true;
+                        }
+
+                        if (needsRender) {
+                            console.log("Desktop state updated from Firestore snapshot.");
+                        }
+                    } else {
+                        console.log("No desktop state found in snapshot. Initializing defaults.");
+                        // If document doesn't exist, ensure local state is default and save it.
+                        if (windows.length === 0 && shortcuts.length === 0 && background === '#1a202c' && settingsPassword === '') {
+                             // Add some default shortcuts if none exist and it's a fresh start
+                            if (shortcuts.length === 0) {
+                                shortcuts.push(
+                                    { id: generateId(), name: 'Google', url: 'https://www.google.com', icon: 'fab fa-google' },
+                                    { id: generateId(), name: 'Wikipedia', url: 'https://en.wikipedia.org/wiki/Main_Page', icon: 'fas fa-book' },
+                                    { id: generateId(), name: 'Youtube', url: 'https://www.youtube.com', icon: 'fab fa-youtube' }
+                                );
+                            }
+                            layoutShortcuts(); // Layout initial default shortcuts
+                            saveDesktopState(); // Save initial state
+                        }
+                    }
+                }, (error) => {
+                    console.error("Error listening to desktop state:", error);
+                    showMessage("Error loading real-time data! 😩", 'error');
+                });
+
+                // Initial load after auth
+                await loadDesktopState();
+
+            } else {
+                // Not signed in, attempt anonymous sign-in
+                try {
+                    if (initialAuthToken) {
+                        await signInWithCustomToken(auth, initialAuthToken);
+                    } else {
+                        await signInAnonymously(auth);
+                    }
+                } catch (error) {
+                    console.error("Error during authentication:", error);
+                    showMessage("Failed to authenticate! 😭 Please refresh.", 'error');
+                }
+            }
+        });
+
+        // Ensure initial background is applied even before data loads fully
+        applyBackground();
+
+        // Handle window resize to adjust positions if they go off screen
+        window.addEventListener('resize', debounce(() => {
+            windows.forEach(win => {
+                const windowEl = document.getElementById(`window-${win.id}`);
+                if (windowEl) {
+                    let newX = Math.max(0, Math.min(win.x, desktopEl.offsetWidth - win.width));
+                    let newY = Math.max(0, Math.min(win.y, desktopEl.offsetHeight - win.height));
+                    if (newX !== win.x || newY !== win.y) {
+                        win.x = newX;
+                        win.y = newY;
+                        windowEl.style.left = `${newX}px`;
+                        windowEl.style.top = `${newY}px`;
+                        saveDesktopState();
+                    }
+                }
+            });
+            layoutShortcuts(); // Re-layout shortcuts on desktop resize
+            renderShortcuts(); // Re-render shortcuts to apply new positions
+        }, 200));
+
+    </script>
+</body>
+</html>
