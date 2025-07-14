@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Watterson Family Chaos! 😜</title>
+<style>
+  body {
+    overflow: hidden; /* Hide scrollbars if images go off-screen */
+    background-color: #f0f8ff; /* A light, cartoon-ish background */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+    position: relative;
+  }
+
+  .watterson {
+    position: absolute;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+    transform-origin: center;
+  }
+
+  img {
+    width: 150px; /* Make them a good size */
+    height: auto;
+    display: block; /* Remove extra space below image */
+  }
+
+  /* Gumball's crazy moves */
+  #gumball {
+    animation: gumballMove 5s infinite alternate, gumballSpin 2s infinite linear;
+    left: 10%;
+    top: 20%;
+  }
+
+  @keyframes gumballMove {
+    0% { transform: translate(0, 0); }
+    25% { transform: translate(100px, 50px); }
+    50% { transform: translate(-150px, 100px); }
+    75% { transform: translate(50px, -80px); }
+    100% { transform: translate(0, 0); }
+  }
+
+  @keyframes gumballSpin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+
+  /* Darwin's bouncy adventures */
+  #darwin {
+    animation: darwinBounce 3s infinite ease-in-out, darwinScale 2s infinite alternate;
+    left: 70%;
+    top: 50%;
+  }
+
+  @keyframes darwinBounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-100px); }
+  }
+
+  @keyframes darwinScale {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.2); }
+  }
+
+  /* Anais's calculated chaos */
+  #anais {
+    animation: anaisZigZag 6s infinite alternate, anaisFade 4s infinite alternate;
+    left: 30%;
+    top: 70%;
+  }
+
+  @keyframes anaisZigZag {
+    0% { transform: translateX(0) rotate(0deg); }
+    25% { transform: translateX(150px) rotate(45deg); }
+    50% { transform: translateX(0) rotate(0deg); }
+    75% { transform: translateX(-100px) rotate(-45deg); }
+    100% { transform: translateX(0) rotate(0deg); }
+  }
+
+  @keyframes anaisFade {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+
+  /* Nicole's super speed */
+  #nicole {
+    animation: nicoleDash 4s infinite linear;
+    left: -20%; /* Start off-screen */
+    top: 10%;
+  }
+
+  @keyframes nicoleDash {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(150vw); /* Go across the whole screen */ }
+  }
+
+  /* Richard's random wiggles */
+  #richard {
+    animation: richardWobble 7s infinite ease-in-out, richardRotate 3s infinite linear;
+    left: 50%;
+    top: 80%;
+  }
+
+  @keyframes richardWobble {
+    0%, 100% { transform: translate(0, 0); }
+    25% { transform: translate(30px, -20px); }
+    50% { transform: translate(-40px, 10px); }
+    75% { transform: translate(20px, 30px); }
+  }
+
+  @keyframes richardRotate {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(720deg); /* Two full spins! */ }
+  }
+</style>
+</head>
+<body>
+
+  <div id="gumball" class="watterson">
+    <img src="https://static.wikia.nocookie.net/theamazingworldofgumball/images/c/c0/Season_3_Gumball.png/revision/latest/scale-to-width-down/200?cb=20221106204632" alt="Gumball">
+  </div>
+
+  <div id="darwin" class="watterson">
+    <img src="https://static.wikia.nocookie.net/fcs-vs-battle/images/5/58/Season_3_Darwin_Watterson_Vector.png/revision/latest?cb=20200507150835" alt="Darwin">
+  </div>
+
+  <div id="anais" class="watterson">
+    <img src="https://static.wikia.nocookie.net/warner-bros-entertainment/images/1/10/Season_3_Anais.png/revision/latest?cb=20171004232508" alt="Anais">
+  </div>
+
+  <div id="nicole" class="watterson">
+    <img src="https://static.wikia.nocookie.net/warner-bros-entertainment/images/7/7b/Season_3_Nicole.png/revision/latest?cb=20171004232616" alt="Nicole">
+  </div>
+
+  <div id="richard" class="watterson">
+    <img src="https://static.wikia.nocookie.net/theamazingworldofgumball/images/5/5a/Season_3_Richard.png/revision/latest/scale-to-width-down/1200?cb=20161108234438" alt="Richard">
+  </div>
+
+</body>
+</html>
