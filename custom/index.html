@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fullscreen Iframe Loader</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            overflow: hidden; /* Hide scrollbars if iframe is truly fullscreen */
+            width: 100%;
+            height: 100%;
+            background-color: #000; /* Just in case there's a flicker */
+        }
+        iframe {
+            border: none;
+            width: 100%;
+            height: 100%;
+            display: block; /* Remove extra space below iframe */
+        }
+    </style>
+</head>
+<body>
+    <iframe id="fullscreenIframe" src="" allowfullscreen></iframe>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Get the full URL, including the query string
+            const fullUrl = window.location.href;
+
+            // Find the index of the first '?' to separate the base URL from parameters
+            const queryStringIndex = fullUrl.indexOf('?');
+
+            let targetUrl = '';
+
+            if (queryStringIndex !== -1 && queryStringIndex < fullUrl.length - 1) {
+                // Extract everything after the first '?' as the potential URL to load
+                targetUrl = fullUrl.substring(queryStringIndex + 1);
+
+                // Basic check to see if it looks like a URL
+                if (!targetUrl.startsWith('http://') && !targetUrl.startsWith('https://')) {
+                    console.warn('The extracted parameter does not seem to be a valid URL (missing http:// or https://).');
+                    // You might want to handle this case, e.g., show an error or a default page
+                }
+            } else {
+                console.warn('No URL parameter found in the query string.');
+                // Handle cases where no URL is provided, maybe load a default page or show a message
+                document.getElementById('fullscreenIframe').style.display = 'none'; // Hide iframe if no URL
+                document.body.innerHTML += '<p style="color: white; text-align: center; margin-top: 50px;">No URL provided in the query string. 🙁</p>';
+                return; // Stop execution if no URL
+            }
+
+            const iframe = document.getElementById('fullscreenIframe');
+            if (targetUrl) {
+                iframe.src = targetUrl;
+            }
+        });
+    </script>
+</body>
+</html>
