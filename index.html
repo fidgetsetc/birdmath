@@ -753,7 +753,7 @@
     body.classic-theme .header-search-group input[type="text"] {
       background-color: #ffffff !important; /* White background for input */
       color: #000000 !important; /* Black text for input */
-      border: 1px solid #ccc !important; /* Light border */
+      border: 1px solid #ccc !important;
       border-radius: 5px !important;
     }
 
@@ -1264,7 +1264,7 @@
   // Translations for internationalization
   const translations = {
     en: {
-      homeTitle: "EPIXGAMES Home �",
+      homeTitle: "EPIXGAMES Home 🎮",
       tabGames: "Games",
       tabStore: "Store",
       tabSettings: "Settings",
@@ -1425,7 +1425,7 @@
       fullScreenButton: "Pantalla Completa",
       exitButton: "Salir",
       copyLinkButton: "Copiar Enlace",
-      buyButton: "Comprar por {cost} 💰",
+      buyButton: "Comprar por {cost} �",
       applyButton: "Aplicar",
       ownedText: "Poseído",
       insufficientFunds: "¡Dinero insuficiente!",
@@ -1562,7 +1562,6 @@
       copyLinkButton: "Copier le Lien",
       buyButton: "Acheter pour {cost} 💰",
       applyButton: "Appliquer",
-      appliedText: "Appliqué !",
       ownedText: "Possédé",
       insufficientFunds: "Pas assez d'argent !",
       resetConfirm: "Êtes-vous sûr ? Cliquez {count} fois de plus para confirmer !",
@@ -1665,7 +1664,7 @@
       cmdSettingsImportError: "Échec de l'importation des paramètres : {error}",
       cmdFileReadError: "Erreur de lecture du fichier : {error}",
       cmdInvalidColor: "Format de couleur inválido. Veuillez utiliser l'hexadécimal (ex. #RRGGBB).",
-      cmdCustomSettingsMoneyPrompt: "Entrez le montant d'argent désiré (nombre) :",
+      cmdCustomSettingsMoneyPrompt: "Entrez le montant d'argent désiré (número) :",
       cmdCustomSettingsLanguagePrompt: "Entrez la langue désirée (en, es, fr) :",
       cmdCustomSettings3DAnimationPrompt: "Activer l'animation de fond 3D ? (true/false) :",
       cmdInvalidLanguage: "Langue invalide. Veuillez entrer 'en', 'es' ou 'fr'.",
@@ -1784,6 +1783,34 @@
     { id: 'game-The-Origin-of-Darwin', name: 'The Origin of Darwin', img: 'https://cn.i.cdn.ti-platform.com/cnemea/content/17043/game/TheOriginOfDarwin-GB-Cover-EN.jpg', path: '/play/darwinorigin.html' }
   ];
 
+  // List of game IDs to show only on mobile
+  const mobileGameIds = new Set([
+    'game-Among-Us',
+    'game-Angry-Birds',
+    'game-Angry-Birds-Epic',
+    'game-Angry-Birds-Rio',
+    'game-Angry-Birds-Stella',
+    'game-Bad-Piggies',
+    'game-Basket-Bros',
+    'game-Battleship',
+    'game-BitLife',
+    'game-Block-Blast',
+    'game-Catac-io',
+    'game-Chess',
+    'game-Cookie-Clicker',
+    'game-Cut-the-Rope',
+    'game-Cut-the-Rope-2',
+    'game-Drift-Boss',
+    'game-Flappy-Bird',
+    'game-Geometry-Dash',
+    'game-Glitch',
+    'game-Guess-their-Answer',
+    'game-Subway-Surfers',
+    'game-The-Origin-of-Darwin',
+    'game-Tiny-Fishing'
+  ]);
+
+
   // Store all game data for easy lookup
   window.allGamesData = new Map(); // Map: gameTitle -> { id: 'game-title-id', path: '/play/game.html' }
 
@@ -1841,9 +1868,28 @@
 
   // Custom Message Box
   function showMessageBox(message) {
-    messageBoxText.textContent = message;
+    messageBoxText.innerHTML = message; // Changed to innerHTML to support links
     messageBox.style.display = 'block';
   }
+
+  // User Agent Detection Functions
+  function isMobileUserAgent() {
+    const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+    // Regex for common mobile devices (smartphones and tablets)
+    // Fixed: Escaped the forward slash in the regex to prevent SyntaxError.
+    return /(android|bb\d+|meego).+mobile|avantgo|bada\/|blackberry|blazer|compal|elaine|fennec|hiptop|iemobile|ip(hone|od)|iris|kindle|lge |maemo|midp|mmp|mobile.+firefox|netfront|opera m(ob|in)i|palm( os)?|phone|p(ixi|rim)|plucker|pocket|psp|series(4|6)0|symbian|treo|up\.(browser|link)|vodafone|wap|windows ce|xda|xiino/i.test(userAgent) || /1207|6310|6590|3gso|4thp|50[1-6]i|770s|802s|a wa|abac|ac(er|oo|s\-82|er)|ai(ko|rf)|al(av|ca|co)|amoi|an(ex|ny|yw)|aptu|ar(ch|go)|as(te|us)|attw|au(di|\-m|r |s )|avan|be(ck|ko|si)|bi(lb|rd)|bl(ac|az)|br(e|v)w|bumb|bw\-(n|u)|c55\/|capi|ccwa|cdm\-|cell|chtm|cldc|cmd\-|co(mp|nd)|craw|da(is|eo)|dc\-s|devi|dica|dmob|do(c|p)o|ds(12|\-d)|el(eg|em)|epi(x|op)|eq(l|to)|esca|et(e|v)|ez(0x|np|tw)|ez-ce|ezup|fly(\-|_)|g\-mo|g1 u|g560|gi(g|on)|gk\-v|gl(on|sl)|gr(lg|vl)|gt u|gwap|hadi|haie|hcit|hd\-(m|p|t)|hei\-|hi(pt|ta)|hp( i|ip)|hs\-c|ht(c(|ht|tp)|o mo |t\-g |unite)|keji|kgt|klon|kpt |kwc\-|kyo(c|k)|le(no|xi)|lg( g|\/(k|l|u)|50|54|\-[a-w])|libw|lynx|m1\-w|m3ga|m50\/|ma(te|ui|xo)|mc(01|cd|ev)|me(rc|ri)|mi(o8|oa|ts)|mmef|mo(0d|ob|pn|tp)|owg1|p800|pan(a|d|t)|pdxg|pg(13|\-([1-8]|c))|phil|pire|pl(ay|uc)|pn\-up|po(ck|rt|se)|prox|psio|pt\-g|qa\-a|qc(07|12|21|32|60|\-[2-7]|i\-)|qtek|r380|r600|raks|rim9|ro(ve|zo)|s55\/|sa(ge|mark|bl)|sc(01|h\-|oo|p\-)|sdk\/|se(c(|4|6|\/|l)|on|ui)|sens|te(kt|sl)|tkwa|tfm|ts(70|mp|ra)|t\-wap|un(01|lc)|vach|vk(40|5[0-3]|\-v)|vm40|voda|vulc|vx(52|53|60|61|70|80|81|83|85|98)|w3c(|sm)|wap(n|u)|wi(aim|tel)|wonu|x700|yas\-|your|zeto|zte\-/i.test(userAgent.substr(0, 4));
+  }
+
+  function isAndroidUserAgent() {
+    const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+    return /android/i.test(userAgent);
+  }
+
+  function isEpixGamesMobileApp() {
+    const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+    return /EPIXGAMESMobile/i.test(userAgent);
+  }
+
 
   // Convert hex to RGB
   const hexToRgb = (hex) => {
@@ -3144,8 +3190,12 @@
 
   // New function to sort and render all games
   function renderAllGames() {
-      // Combine static and custom games
       let allDisplayableGames = [...window.staticGameDefinitions, ...window.customGames];
+
+      // Apply mobile filtering if on a mobile user agent
+      if (isMobileUserAgent()) {
+          allDisplayableGames = allDisplayableGames.filter(game => mobileGameIds.has(game.id));
+      }
 
       // Filter out hidden games
       allDisplayableGames = allDisplayableGames.filter(game => !hiddenGames.has(game.id));
@@ -3615,6 +3665,15 @@
 
     // Apply any saved HTML modifications on load
     applyHtmlModifications();
+
+    // Android App Download Prompt on page load
+    if (isAndroidUserAgent() && !isEpixGamesMobileApp()) {
+        showMessageBox(
+            "Hey Android fam! 🤖 Wanna level up your EPIXGAMES experience? " +
+            "Download our app for exclusive features and a smoother ride! " +
+            "<a href='https://sites.google.com/view/downloadepixgamesmobile' target='_blank' style='color: var(--primary-color); text-decoration: underline;'>Download Now!</a>"
+        );
+    }
   });
 </script>
 
