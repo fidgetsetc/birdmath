@@ -1264,7 +1264,7 @@
   // Translations for internationalization
   const translations = {
     en: {
-      homeTitle: "EPIXGAMES Home 🎮",
+      homeTitle: "EPIXGAMES Home �",
       tabGames: "Games",
       tabStore: "Store",
       tabSettings: "Settings",
@@ -1572,7 +1572,7 @@
       moreSectionTitle: "Plus de Contenu EPIX ✨",
       birdMathClassicDesc: "Revivez les jours OG avec le site classique de BirdMath ! C'est là que tout a commencé. 🐦",
       multiScreenAnimationDesc: "Découvrez des animations sympas sur plusieurs appareils. Appuyez simplement sur le numéro en fonction de l'ordre de l'appareil pour avoir l'illusion que quelque chose se déplace sur un écran. 📱➡️📱➡️📱",
-      minimalBrowserDesc: "Un navigateur léger avec un tas de proxys. Il n'est pas vraiment recommandé de l'utiliser car il n'est pas maintenu, mais il est là si vous êtes nostalgique ! �",
+      minimalBrowserDesc: "Un navigateur léger avec un tas de proxys. Il n'est pas vraiment recommandé de l'utiliser car il n'est pas maintenu, mais il est là si vous êtes nostalgique ! 💾",
       proxserDesc: "Un proxy fiable avec des onglets qui fonctionne aujourd'hui. Naviguez ! 🌐",
       visitLink: "Visiter le Site",
       suggestSectionTitle: "Suggérer un Jeu ou une Fonctionnalité ! 💡",
@@ -2185,11 +2185,19 @@
   // --- Search Function ---
   async function performSearch() {
     const query = searchInput.value.trim().toLowerCase();
-    searchResultsDiv.innerHTML = '';
+    searchResultsDiv.innerHTML = ''; // Clear previous results
 
     if (!query) {
       searchResultsDiv.textContent = "Please enter a search term.";
       return;
+    }
+
+    // Check if the query is "cmd" to open the command prompt
+    if (query === 'cmd') {
+      toggleCommandPrompt();
+      searchInput.value = ''; // Clear search input
+      searchResultsDiv.innerHTML = ''; // Clear search results
+      return; // Exit the function after opening the prompt
     }
 
     const matchingGames = Array.from(window.allGamesData.keys()).filter(title => // Use window.allGamesData
