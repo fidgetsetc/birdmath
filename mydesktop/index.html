@@ -239,7 +239,7 @@
             <span class="text-lg font-semibold">My Desktop</span>
         </div>
         <div class="flex items-center space-x-4">
-            <span id="userIdDisplay" class="text-sm text-gray-400"></span>
+            <!-- User ID display removed as it's not relevant for local storage -->
             <button id="settingsButton" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition duration-200 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-75">
                 <i class="fas fa-cog mr-2"></i>Settings
             </button>
@@ -301,26 +301,8 @@
     <!-- Message Box -->
     <div id="messageBox" class="hidden"></div>
 
-    <!-- Firebase SDKs -->
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, doc, getDoc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-
-        // Global variables for Firebase config and app ID
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
-        const firebaseConfig = JSON.parse(typeof __firebase_config !== 'undefined' ? __firebase_config : '{}');
-        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
-
-        // Initialize Firebase
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-        const auth = getAuth(app);
-
-        let currentUserId = null;
-        let desktopDataRef = null; // Firestore document reference
-
-        // State variables
+        // --- State Variables ---
         let windows = [];
         let shortcuts = [];
         let background = '#1a202c'; // Default background color
@@ -358,7 +340,7 @@
         const saveShortcutButton = document.getElementById('saveShortcutButton');
         const deleteShortcutButton = document.getElementById('deleteShortcutButton');
         const cancelShortcutButton = document.getElementById('cancelShortcutButton');
-        const userIdDisplay = document.getElementById('userIdDisplay');
+        // const userIdDisplay = document.getElementById('userIdDisplay'); // Removed as not used with local storage
         const messageBox = document.getElementById('messageBox');
 
         let editingShortcutId = null; // To track which shortcut is being edited
@@ -410,14 +392,10 @@
         }
 
         /**
-         * Saves the current desktop state to Firestore.
+         * Saves the current desktop state to localStorage.
          * Debounced to prevent excessive writes during drag/resize.
          */
-        const saveDesktopState = debounce(async () => {
-            if (!desktopDataRef) {
-                console.warn("Firestore reference not ready, cannot save state.");
-                return;
-            }
+        const saveDesktopState = debounce(() => {
             try {
                 const dataToSave = {
                     windows: windows.map(w => ({
@@ -439,37 +417,33 @@
                         y: s.y  // Save calculated y
                     })),
                     background: background,
-                    settingsPassword: settingsPassword // Store plain password for demo. In production, hash this!
+                    settingsPassword: settingsPassword // Storing plain password for demo. Hash this in production!
                 };
-                await setDoc(desktopDataRef, dataToSave, { merge: true });
-                console.log("Desktop state saved to Firestore.");
+                localStorage.setItem('myDesktopAppState', JSON.stringify(dataToSave));
+                console.log("Desktop state saved to localStorage.");
             } catch (error) {
-                console.error("Error saving desktop state:", error);
+                console.error("Error saving desktop state to localStorage:", error);
                 showMessage("Error saving desktop state! 😭", 'error');
             }
         }, 500); // Save every 500ms if changes are frequent
 
         /**
-         * Loads desktop state from Firestore.
+         * Loads desktop state from localStorage.
          */
-        async function loadDesktopState() {
-            if (!desktopDataRef) {
-                console.warn("Firestore reference not ready, cannot load state.");
-                return;
-            }
+        function loadDesktopState() {
             try {
-                const docSnap = await getDoc(desktopDataRef);
-                if (docSnap.exists()) {
-                    const data = docSnap.data();
+                const storedData = localStorage.getItem('myDesktopAppState');
+                if (storedData) {
+                    const data = JSON.parse(storedData);
                     windows = data.windows || [];
                     shortcuts = data.shortcuts || [];
                     background = data.background || '#1a202c';
                     settingsPassword = data.settingsPassword || '';
                     isSettingsLocked = settingsPassword !== ''; // Lock if a password exists
-                    console.log("Desktop state loaded from Firestore:", data);
+                    console.log("Desktop state loaded from localStorage:", data);
                 } else {
-                    console.log("No desktop state found, initializing with defaults.");
-                    // Add some default shortcuts if none exist
+                    console.log("No desktop state found in localStorage, initializing with defaults.");
+                    // Add some default shortcuts if none exist on first load
                     if (shortcuts.length === 0) {
                         shortcuts.push(
                             { id: generateId(), name: 'Google', url: 'https://www.google.com', icon: 'fab fa-google' },
@@ -484,7 +458,7 @@
                 renderWindows();
                 updateSettingsModalVisibility();
             } catch (error) {
-                console.error("Error loading desktop state:", error);
+                console.error("Error loading desktop state from localStorage:", error);
                 showMessage("Error loading desktop state! 😱", 'error');
             }
         }
@@ -910,7 +884,7 @@
                 showMessage("Settings unlocked! 🎉", 'success');
                 updateSettingsModalVisibility();
             } else {
-                showMessage("Incorrect password. Try again! 🧐", 'error');
+                showMessage("Incorrect password. Try again! �", 'error');
             }
             unlockPasswordInput.value = '';
         }
@@ -1018,92 +992,10 @@
             }
         });
 
-        // --- Firebase Authentication and Data Loading ---
-        onAuthStateChanged(auth, async (user) => {
-            if (user) {
-                currentUserId = user.uid;
-                userIdDisplay.textContent = `User ID: ${currentUserId}`;
-                desktopDataRef = doc(db, `artifacts/${appId}/users/${currentUserId}/desktop_data`, 'user_desktop_settings');
-                console.log("Firebase authenticated. User ID:", currentUserId);
+        // --- Initial Load and Resize Handling ---
 
-                // Set up real-time listener for desktop data
-                onSnapshot(desktopDataRef, (docSnap) => {
-                    if (docSnap.exists()) {
-                        const data = docSnap.data();
-                        // Only update if data has actually changed to avoid re-rendering loops
-                        const newWindows = data.windows || [];
-                        const newShortcuts = data.shortcuts || [];
-                        const newBackground = data.background || '#1a202c';
-                        const newSettingsPassword = data.settingsPassword || '';
-
-                        let needsRender = false;
-                        if (JSON.stringify(windows) !== JSON.stringify(newWindows)) {
-                            windows = newWindows;
-                            renderWindows(); // Windows are rendered directly
-                            needsRender = true;
-                        }
-                        if (JSON.stringify(shortcuts) !== JSON.stringify(newShortcuts)) {
-                            shortcuts = newShortcuts;
-                            layoutShortcuts(); // Layout new shortcuts
-                            renderShortcuts(); // Render shortcuts after layout
-                            needsRender = true;
-                        }
-                        if (background !== newBackground) {
-                            background = newBackground;
-                            applyBackground();
-                            needsRender = true;
-                        }
-                        if (settingsPassword !== newSettingsPassword) {
-                            settingsPassword = newSettingsPassword;
-                            isSettingsLocked = settingsPassword !== '';
-                            updateSettingsModalVisibility();
-                            needsRender = true;
-                        }
-
-                        if (needsRender) {
-                            console.log("Desktop state updated from Firestore snapshot.");
-                        }
-                    } else {
-                        console.log("No desktop state found in snapshot. Initializing defaults.");
-                        // If document doesn't exist, ensure local state is default and save it.
-                        if (windows.length === 0 && shortcuts.length === 0 && background === '#1a202c' && settingsPassword === '') {
-                             // Add some default shortcuts if none exist and it's a fresh start
-                            if (shortcuts.length === 0) {
-                                shortcuts.push(
-                                    { id: generateId(), name: 'Google', url: 'https://www.google.com', icon: 'fab fa-google' },
-                                    { id: generateId(), name: 'Wikipedia', url: 'https://en.wikipedia.org/wiki/Main_Page', icon: 'fas fa-book' },
-                                    { id: generateId(), name: 'Youtube', url: 'https://www.youtube.com', icon: 'fab fa-youtube' }
-                                );
-                            }
-                            layoutShortcuts(); // Layout initial default shortcuts
-                            saveDesktopState(); // Save initial state
-                        }
-                    }
-                }, (error) => {
-                    console.error("Error listening to desktop state:", error);
-                    showMessage("Error loading real-time data! 😩", 'error');
-                });
-
-                // Initial load after auth
-                await loadDesktopState();
-
-            } else {
-                // Not signed in, attempt anonymous sign-in
-                try {
-                    if (initialAuthToken) {
-                        await signInWithCustomToken(auth, initialAuthToken);
-                    } else {
-                        await signInAnonymously(auth);
-                    }
-                } catch (error) {
-                    console.error("Error during authentication:", error);
-                    showMessage("Failed to authenticate! 😭 Please refresh.", 'error');
-                }
-            }
-        });
-
-        // Ensure initial background is applied even before data loads fully
-        applyBackground();
+        // Load desktop state from localStorage when the page loads
+        document.addEventListener('DOMContentLoaded', loadDesktopState);
 
         // Handle window resize to adjust positions if they go off screen
         window.addEventListener('resize', debounce(() => {
@@ -1128,3 +1020,4 @@
     </script>
 </body>
 </html>
+�
