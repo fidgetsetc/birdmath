@@ -7,7 +7,7 @@
       "bundleIdentifier": "com.turner.gumball2018",
       "developer": "Cartoon Network",
       "version": "1.0.8",
-      "versionDate": "2020-12-07",
+      "versionDate": "2025-08-17",
       "versionDescription": "The game is an endless runner, played by tapping to make the character skip on somebody's head to get extra air. Using the sprint bar, the character can run on multiple people's heads in a row to rack up points, but the player must watch out for how much the bar has left. Throughout the game, the player can gather coins to unlock new minigames, power-ups, costumes or even other playable characters. The game is lost if the character falls onto the ground or hits an obstacle.",
       "downloadURL": "https://archive.org/download/four-delisted-iOS-cartoon-network-games-64-bit-ipa/com.turner.gumball2018-iOS9.0-%28Clutch-2.0.4%29.ipa",
       "localizedDescription": "",
@@ -19,7 +19,7 @@
       "bundleIdentifier": "com.turner.skystreaker",
       "developer": "Cartoon Network",
       "version": "4.3",
-      "versionDate": "2015-3-19",
+      "versionDate": "2025-08-17",
       "versionDescription": "The player controls Richard as he climbs a pole to collect coins. If the Richard touches the floating clothing or gets caught by Gumball and Darwin, he will fall off the pole.",
       "downloadURL": "https://archive.org/download/four-delisted-iOS-cartoon-network-games-64-bit-ipa/com.turner.skystreaker-iOS10.0-%28Clutch-2.0.4%29.ipa",
       "localizedDescription": "",
@@ -36,6 +36,18 @@
       "downloadURL": "https://fake.url/notan.ipa",
       "localizedDescription": "",
       "iconURL": "https://fake.url/notan.png",
+      "tintColor": "018084"
+    },
+	{
+      "name": "Angry Birds Classic",
+      "bundleIdentifier": "com.rovio.angrybirds",
+      "developer": "Rovio",
+      "version": "5.2.0",
+      "versionDate": "2025-08-17",
+      "versionDescription": "Angry Birds is a game where you fling birds to pop the pigs, because them pigs be stealing the bird's eggs.",
+      "downloadURL": "https://s3cdn.dbservices.to/ipas/2fd3f32bc58b359609065e5848783424f52484f8.ipa?verify=1755448887-g9yzj76GbO5rBP60O%2FJ3CEUvM8j4i3IU%2FWQDKBbZFFQ%3D",
+      "localizedDescription": "",
+      "iconURL": "https://static.wikia.nocookie.net/angrybirds/images/c/c5/AB_ICON_%282013-2019%29.png/",
       "tintColor": "018084"
     }
   ]
