@@ -10,8 +10,32 @@
       "versionDate": "2020-12-07",
       "versionDescription": "The game is an endless runner, played by tapping to make the character skip on somebody's head to get extra air. Using the sprint bar, the character can run on multiple people's heads in a row to rack up points, but the player must watch out for how much the bar has left. Throughout the game, the player can gather coins to unlock new minigames, power-ups, costumes or even other playable characters. The game is lost if the character falls onto the ground or hits an obstacle.",
       "downloadURL": "https://archive.org/download/four-delisted-iOS-cartoon-network-games-64-bit-ipa/com.turner.gumball2018-iOS9.0-%28Clutch-2.0.4%29.ipa",
-      "localizedDescription": "The game is an endless runner, played by tapping to make the character skip on somebody's head to get extra air. Using the sprint bar, the character can run on multiple people's heads in a row to rack up points, but the player must watch out for how much the bar has left. Throughout the game, the player can gather coins to unlock new minigames, power-ups, costumes or even other playable characters. The game is lost if the character falls onto the ground or hits an obstacle.",
+      "localizedDescription": "",
       "iconURL": "https://archive.org/download/four-delisted-iOS-cartoon-network-games-64-bit-ipa/com.turner.gumball2018-iOS9.0-%28Clutch-2.0.4%29.png",
+      "tintColor": "018084"
+    },
+	{
+      "name": "Gumball Sky Streaker",
+      "bundleIdentifier": "com.turner.skystreaker",
+      "developer": "Cartoon Network",
+      "version": "4.3",
+      "versionDate": "2015-3-19",
+      "versionDescription": "The player controls Richard as he climbs a pole to collect coins. If the Richard touches the floating clothing or gets caught by Gumball and Darwin, he will fall off the pole.",
+      "downloadURL": "https://archive.org/download/four-delisted-iOS-cartoon-network-games-64-bit-ipa/com.turner.skystreaker-iOS10.0-%28Clutch-2.0.4%29.ipa",
+      "localizedDescription": "",
+      "iconURL": "https://archive.org/download/four-delisted-iOS-cartoon-network-games-64-bit-ipa/com.turner.skystreaker-iOS10.0-%28Clutch-2.0.4%29.png",
+      "tintColor": "018084"
+    },
+	{
+      "name": "Placeholder",
+      "bundleIdentifier": "p.k.g",
+      "developer": "developer",
+      "version": "0.0",
+      "versionDate": "0000-01-01",
+      "versionDescription": "description",
+      "downloadURL": "https://fake.url/notan.ipa",
+      "localizedDescription": "",
+      "iconURL": "https://fake.url/notan.png",
       "tintColor": "018084"
     }
   ]
