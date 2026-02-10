@@ -28,7 +28,7 @@
                     const partNum = (i + 1).toString().padStart(3, '0');
                     status.innerText = `Loading part ${i + 1}/${total}...`;
                     
-                    const partRes = await fetch('split/part' + partNum);
+                    const partRes = await fetch('/play/among/split/part' + partNum);
                     if (!partRes.ok) throw new Error(`Part ${partNum} missing`);
                     fullContent += await partRes.text();
                 }
