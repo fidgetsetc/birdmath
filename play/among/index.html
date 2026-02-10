@@ -17,7 +17,7 @@
         async function init() {
             const status = document.getElementById('status');
             try {
-                const configRes = await fetch('./split/config.json');
+                const configRes = await fetch('/play/among/split/config.json');
                 if (!configRes.ok) throw new Error("Config not found");
                 const config = await configRes.json();
                 
