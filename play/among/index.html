@@ -1,49 +1,61 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Loading Content...</title>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Loading...</title>
     <style>
-        body { background: #000; color: white; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; font-family: monospace; margin: 0; }
-        .loader { border: 4px solid #333; border-top: 4px solid #3498db; border-radius: 50%; width: 50px; height: 50px; animation: spin 1s linear infinite; margin-bottom: 20px; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        #status { font-size: 1.2rem; color: #aaa; }
+        body, html { margin: 0; padding: 0; width: 100%; height: 100%; background: #000; overflow: hidden; font-family: sans-serif; }
+        .wrap { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; color: #666; }
+        .bar-bg { width: 200px; height: 4px; background: #222; border-radius: 10px; margin-top: 20px; overflow: hidden; }
+        .bar-fill { width: 0%; height: 100%; background: #0088ff; transition: width 0.2s; }
+        #status { font-size: 12px; margin-top: 10px; text-transform: uppercase; letter-spacing: 1px; }
+        iframe { border: none; width: 100vw; height: 100vh; display: none; }
     </style>
 </head>
 <body>
-    <div class="loader"></div>
-    <div id="status">Initializing...</div>
+    <div class="wrap" id="loader">
+        <div class="bar-bg"><div class="bar-fill" id="fill"></div></div>
+        <div id="status">Waking up Skips...</div>
+    </div>
+    <iframe id="gameFrame"></iframe>
+
     <script>
-        async function init() {
+        async function launch() {
             const status = document.getElementById('status');
+            const fill = document.getElementById('fill');
+            const frame = document.getElementById('gameFrame');
+            const loader = document.getElementById('loader');
+
             try {
                 const configRes = await fetch('/play/among/split/config.json');
-                if (!configRes.ok) throw new Error("Config not found");
                 const config = await configRes.json();
-                
-                let fullContent = "";
                 const total = config.totalParts;
                 
-                for (let i = 0; i < total; i++) {
-                    const partNum = (i + 1).toString().padStart(3, '0');
-                    status.innerText = `Loading part ${i + 1}/${total}...`;
+                let chunks = [];
+                for (let i = 1; i <= total; i++) {
+                    status.innerText = "Loading Part " + i + "/" + total;
+                    fill.style.width = ((i / total) * 100) + "%";
                     
-                    const partRes = await fetch('/play/among/split/part' + partNum);
-                    if (!partRes.ok) throw new Error(`Part ${partNum} missing`);
-                    fullContent += await partRes.text();
+                    const res = await fetch('/play/among/split/part' + i.toString().padStart(3, '0'));
+                    if (!res.ok) throw new Error("Missing part " + i);
+                    // Use arrayBuffer to keep binary integrity
+                    chunks.push(await res.arrayBuffer());
                 }
 
-                status.innerText = "Rendering...";
-                document.open();
-                document.write(fullContent);
-                document.close();
+                status.innerText = "Finalizing...";
+                const blob = new Blob(chunks, { type: 'text/html' });
+                const blobUrl = URL.createObjectURL(blob);
+                
+                loader.style.display = 'none';
+                frame.style.display = 'block';
+                frame.src = blobUrl;
             } catch (e) {
-                status.innerText = "Error: " + e.message;
-                status.style.color = "#ff5555";
-                console.error(e);
+                status.innerText = "FAIL: " + e.message;
+                status.style.color = "red";
             }
         }
-        init();
+        window.onload = launch;
     </script>
 </body>
 </html>
