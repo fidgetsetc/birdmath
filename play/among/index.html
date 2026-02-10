@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Loading Content...</title>
+    <meta charset="UTF-8">
+    <style>
+        body { background: #000; color: white; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; font-family: monospace; margin: 0; }
+        .loader { border: 4px solid #333; border-top: 4px solid #3498db; border-radius: 50%; width: 50px; height: 50px; animation: spin 1s linear infinite; margin-bottom: 20px; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        #status { font-size: 1.2rem; color: #aaa; }
+    </style>
+</head>
+<body>
+    <div class="loader"></div>
+    <div id="status">Initializing...</div>
+    <script>
+        async function init() {
+            const status = document.getElementById('status');
+            try {
+                const configRes = await fetch('split/config.json');
+                if (!configRes.ok) throw new Error("Config not found");
+                const config = await configRes.json();
+                
+                let fullContent = "";
+                const total = config.totalParts;
+                
+                for (let i = 0; i < total; i++) {
+                    const partNum = (i + 1).toString().padStart(3, '0');
+                    status.innerText = `Loading part ${i + 1}/${total}...`;
+                    
+                    const partRes = await fetch('split/part' + partNum);
+                    if (!partRes.ok) throw new Error(`Part ${partNum} missing`);
+                    fullContent += await partRes.text();
+                }
+
+                status.innerText = "Rendering...";
+                document.open();
+                document.write(fullContent);
+                document.close();
+            } catch (e) {
+                status.innerText = "Error: " + e.message;
+                status.style.color = "#ff5555";
+                console.error(e);
+            }
+        }
+        init();
+    </script>
+</body>
+</html>
