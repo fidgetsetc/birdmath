@@ -2,60 +2,54 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Loading...</title>
     <style>
-        body, html { margin: 0; padding: 0; width: 100%; height: 100%; background: #000; overflow: hidden; font-family: sans-serif; }
-        .wrap { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; color: #666; }
-        .bar-bg { width: 200px; height: 4px; background: #222; border-radius: 10px; margin-top: 20px; overflow: hidden; }
-        .bar-fill { width: 0%; height: 100%; background: #0088ff; transition: width 0.2s; }
-        #status { font-size: 12px; margin-top: 10px; text-transform: uppercase; letter-spacing: 1px; }
-        iframe { border: none; width: 100vw; height: 100vh; display: none; }
+        body { background: #000; color: #555; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; font-family: sans-serif; overflow: hidden; }
+        .box { text-align: center; }
+        .loader { width: 40px; height: 40px; border: 3px solid #222; border-top-color: #0cf; border-radius: 50%; animation: s 1s infinite linear; margin: 0 auto 20px; }
+        @keyframes s { to { transform: rotate(360deg); } }
+        #t { font-size: 10px; text-transform: uppercase; letter-spacing: 2px; }
     </style>
 </head>
 <body>
-    <div class="wrap" id="loader">
-        <div class="bar-bg"><div class="bar-fill" id="fill"></div></div>
-        <div id="status">Waking up Skips...</div>
+    <div class="box">
+        <div class="loader"></div>
+        <div id="t">Booting...</div>
     </div>
-    <iframe id="gameFrame"></iframe>
-
     <script>
-        async function launch() {
-            const status = document.getElementById('status');
-            const fill = document.getElementById('fill');
-            const frame = document.getElementById('gameFrame');
-            const loader = document.getElementById('loader');
-
+        (async function() {
+            const t = document.getElementById('t');
             try {
-                const configRes = await fetch('/play/among/split/config.json');
-                const config = await configRes.json();
-                const total = config.totalParts;
+                const cR = await fetch('/play/among/split/config.json');
+                const config = await cR.json();
+                const total = config.parts;
                 
-                let chunks = [];
+                let buffers = [];
                 for (let i = 1; i <= total; i++) {
-                    status.innerText = "Loading Part " + i + "/" + total;
-                    fill.style.width = ((i / total) * 100) + "%";
-                    
+                    t.innerText = "Fetch Part " + i + "/" + total;
                     const res = await fetch('/play/among/split/part' + i.toString().padStart(3, '0'));
-                    if (!res.ok) throw new Error("Missing part " + i);
-                    // Use arrayBuffer to keep binary integrity
-                    chunks.push(await res.arrayBuffer());
+                    if (!res.ok) throw new Error("Part " + i + " 404");
+                    buffers.push(await res.arrayBuffer());
                 }
 
-                status.innerText = "Finalizing...";
-                const blob = new Blob(chunks, { type: 'text/html' });
-                const blobUrl = URL.createObjectURL(blob);
-                
-                loader.style.display = 'none';
-                frame.style.display = 'block';
-                frame.src = blobUrl;
+                t.innerText = "Syncing Bytes...";
+                // Reassemble exactly as binary to avoid encoding shifts
+                const blob = new Blob(buffers, { type: 'text/html' });
+                const reader = new FileReader();
+                reader.onload = () => {
+                    t.innerText = "Ignition...";
+                    // Using document.open/write on the top level but with binary-safe string
+                    document.open();
+                    document.write(reader.result);
+                    document.close();
+                };
+                reader.readAsText(blob); // This is safer than window.location for games with local assets
+
             } catch (e) {
-                status.innerText = "FAIL: " + e.message;
-                status.style.color = "red";
+                t.innerText = "Critical: " + e.message;
+                t.style.color = "red";
             }
-        }
-        window.onload = launch;
+        })();
     </script>
 </body>
 </html>
