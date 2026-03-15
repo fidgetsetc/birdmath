@@ -3,31 +3,28 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>EPIXGAMES | Home 🎮</title>
+  <title>EPIXGAMES</title>
   <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
-  <!-- Three.js library for 3D animation -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <style>
-    /* --- CORE VARIABLES --- */
     :root {
-      /* Dynamic variables controlled by JS */
       --bg-color: #1a1a1a;
       --bg-image: none;
       --primary-color: #4287f5;
       --secondary-color: #61dafb;
       --text-color: #ffffff;
-      --card-bg: #2d3138;
+      --card-bg: rgba(45, 49, 56, 0.9);
       --button-bg: #61dafb;
       --button-hover-bg: #21a1f1;
-      --danger-color: #f44336;
+      --danger-color: #ff4757;
+      --success-color: #2ed573;
     }
 
-    /* --- GLOBAL STYLES --- */
     body {
       background-color: var(--bg-color);
       background-image: var(--bg-image);
       background-size: cover;
-      background-attachment: fixed;
+      background-attachment: fixed; 
       background-position: center;
       color: var(--text-color);
       font-family: 'Roboto', sans-serif;
@@ -39,64 +36,39 @@
       min-height: 100vh;
       box-sizing: border-box;
       overflow-x: hidden;
-      transition: background 0.5s ease, color 0.5s ease;
+      transition: background 0.5s ease;
     }
 
-    /* --- HEADER & CLOAKING --- */
-    header {
-      margin-bottom: 30px;
-      width: 100%;
-      max-width: 1000px;
-      text-align: center;
-      position: relative;
-    }
-
-    .cloak-btn {
-      position: absolute;
-      top: 0;
-      right: 0;
-      background: #333;
-      color: #777;
-      border: 1px solid #555;
-      padding: 5px 10px;
-      font-size: 0.8rem;
-      cursor: pointer;
-      border-radius: 4px;
-      transition: all 0.3s;
-      z-index: 10;
-    }
-
-    .cloak-btn:hover {
-      background: #444;
-      color: white;
-    }
+    header { margin-bottom: 30px; width: 100%; max-width: 1000px; text-align: center; position: relative; }
 
     h1 {
       font-family: 'Press Start 2P', cursive;
       color: var(--primary-color);
       font-size: 2.5em;
-      margin-bottom: 10px;
-      text-shadow: 3px 3px #000;
+      margin-bottom: 15px;
+      text-shadow: -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000, 2px 2px 0 #000, 4px 4px 0 #000;
+      letter-spacing: 2px;
     }
 
     .abandoned-text {
-      color: #888;
+      color: #fff;
       font-style: italic;
-      margin-top: -5px;
-      margin-bottom: 20px;
+      margin-bottom: 10px;
       font-size: 0.9em;
-      background: rgba(0,0,0,0.5);
-      padding: 5px 10px;
+      background: rgba(0,0,0,0.6);
+      padding: 6px 12px;
       border-radius: 4px;
       display: inline-block;
+      text-shadow: 1px 1px 2px #000;
+      border: 1px solid rgba(255,255,255,0.1);
     }
 
-    p {
-      font-size: 1.1em;
-      transition: opacity 0.5s ease-in-out;
+    #subtitle {
+      font-weight: 700;
+      text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+      opacity: 0.8;
     }
 
-    /* --- NAVIGATION --- */
     #tabs-container {
       display: flex;
       justify-content: center;
@@ -104,409 +76,390 @@
       max-width: 900px;
       margin-bottom: 30px;
       background-color: var(--card-bg);
-      border-radius: 12px;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+      backdrop-filter: blur(10px);
+      border-radius: 16px;
       overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.1);
+      position: sticky;
+      top: 10px;
+      z-index: 1000;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.4);
     }
 
     .tab-button {
       flex: 1;
-      padding: 15px;
-      background-color: var(--card-bg);
+      padding: 18px;
+      background-color: transparent;
       color: var(--text-color);
       border: none;
-      border-right: 1px solid rgba(255, 255, 255, 0.1);
       font-family: 'Press Start 2P', cursive;
-      font-size: 0.8em;
+      font-size: 0.6em;
       cursor: pointer;
-      transition: background-color 0.3s ease;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      border-bottom: 3px solid transparent;
     }
 
-    .tab-button:last-child { border-right: none; }
-    .tab-button:hover { background-color: rgba(255, 255, 255, 0.1); }
-    .tab-button.active {
-      background-color: var(--button-bg);
-      color: #1a1a1a;
+    .tab-button.active { 
+      background-color: rgba(255,255,255,0.05); 
+      color: var(--button-bg);
+      border-bottom-color: var(--button-bg);
+    }
+    
+    .tab-button:hover:not(.active) {
+      background-color: rgba(255,255,255,0.1);
     }
 
-    /* --- GAME GRIDS --- */
-    .tab-content {
-      display: none;
-      width: 100%;
-      max-width: 1200px;
-      padding: 20px;
-      box-sizing: border-box;
-    }
+    .tab-content { display: none; width: 100%; max-width: 1200px; padding: 20px; box-sizing: border-box; }
     .tab-content.active { display: block; }
 
-    .section-title {
-      font-family: 'Press Start 2P', cursive;
-      color: var(--secondary-color);
-      font-size: 1.5em;
-      margin: 40px 0 20px 0;
-      text-align: center;
-      text-shadow: 2px 2px #000;
+    /* LOADER */
+    .loader-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 100px 50px;
       width: 100%;
-      border-bottom: 2px solid #333;
-      padding-bottom: 10px;
     }
 
-    .games-container {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 25px;
-      width: 100%;
+    .throbber {
+      width: 60px;
+      height: 60px;
+      border: 6px solid rgba(255,255,255,0.1);
+      border-top-color: var(--primary-color);
+      border-radius: 50%;
+      animation: spin 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite;
+      margin-bottom: 20px;
     }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .games-container { display: flex; flex-wrap: wrap; justify-content: center; gap: 25px; }
 
     .game-card {
       background-color: var(--card-bg);
-      border-radius: 12px;
-      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
-      padding: 15px;
-      text-align: center;
+      backdrop-filter: blur(5px);
+      border-radius: 16px;
+      padding: 18px;
       width: 200px;
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      text-align: center;
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      border: 1px solid rgba(255,255,255,0.05);
       display: flex;
       flex-direction: column;
-      justify-content: space-between;
-      border: 2px solid transparent;
-      position: relative;
+      animation: fadeInUp 0.6s ease forwards;
+      opacity: 0;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
     }
-
-    .game-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.6);
-      border-color: var(--secondary-color);
+    .game-card:hover { 
+      transform: translateY(-10px) scale(1.02); 
+      border-color: var(--secondary-color); 
+      box-shadow: 0 15px 35px rgba(0,0,0,0.5); 
     }
-
-    .game-card img {
-      width: 100%;
-      height: 120px;
-      object-fit: cover;
-      border-radius: 8px;
-      margin-bottom: 10px;
-      background-color: #000;
-    }
-
-    .game-card h3 {
-      font-size: 1em;
-      margin: 5px 0 15px 0;
-      color: var(--text-color);
-    }
+    .game-card img { width: 100%; height: 120px; object-fit: cover; border-radius: 10px; margin-bottom: 12px; background: #000; }
+    .game-card h3 { font-size: 1.1em; margin: 10px 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
     .play-btn {
-      background-color: var(--button-bg);
-      color: #1a1a1a;
-      border: none;
-      border-radius: 6px;
-      padding: 10px;
-      font-weight: bold;
-      cursor: pointer;
-      width: 100%;
-      transition: 0.2s;
-    }
-
-    .play-btn:hover { background-color: var(--button-hover-bg); }
-
-    /* --- STORE STYLES --- */
-    .money-display {
-      font-family: 'Press Start 2P', cursive;
-      color: gold;
-      text-align: center;
-      margin-bottom: 30px;
-      font-size: 1.2em;
-      text-shadow: 2px 2px #000;
-    }
-
-    .store-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-      gap: 20px;
-      width: 100%;
-    }
-
-    .store-item {
-      background-color: var(--card-bg);
-      border-radius: 12px;
-      padding: 15px;
-      text-align: center;
-      border: 2px solid transparent;
-      transition: transform 0.2s;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      height: 250px;
-    }
-
-    .store-item:hover {
-      transform: scale(1.02);
-      border-color: var(--secondary-color);
-    }
-
-    .store-item img {
-      width: 100%;
-      height: 100px;
-      object-fit: cover;
-      border-radius: 8px;
-      margin-bottom: 10px;
-    }
-
-    .store-item h4 {
-      margin: 5px 0;
-      color: var(--secondary-color);
-    }
-
-    .store-item p {
-      font-size: 0.9em;
-      color: #ccc;
-      margin-bottom: 10px;
-    }
-
-    .store-btn {
-      width: 100%;
-      padding: 10px;
-      border: none;
-      border-radius: 6px;
-      font-weight: bold;
-      cursor: pointer;
-      transition: 0.2s;
-    }
-
-    .btn-buy {
-      background-color: #4CAF50;
-      color: white;
-    }
-    .btn-buy:hover:not(:disabled) { background-color: #45a049; }
-    .btn-buy:disabled { background-color: #555; cursor: not-allowed; opacity: 0.7; }
-
-    .btn-equip {
-      background-color: var(--button-bg);
-      color: #1a1a1a;
-    }
-    .btn-equip:hover { background-color: var(--button-hover-bg); }
-
-    .btn-equipped {
-      background-color: #9E9E9E;
-      color: #fff;
-      cursor: default;
-    }
-
-    /* --- SEARCH --- */
-    .search-container {
-      width: 100%;
-      max-width: 600px;
-      margin: 0 auto 20px auto;
-      display: flex;
-      gap: 10px;
-    }
-    .search-input {
-      flex: 1;
-      padding: 10px;
-      border-radius: 8px;
-      border: none;
-      background: #333;
-      color: white;
-    }
-    .search-btn {
-      padding: 10px 20px;
-      border-radius: 8px;
-      border: none;
       background: var(--button-bg);
-      cursor: pointer;
-      font-weight: bold;
-    }
-
-    /* --- IFRAME PLAYER --- */
-    .player-overlay {
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background: rgba(0,0,0,0.95);
-      z-index: 2000;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.3s;
-    }
-    .player-overlay.active {
-      opacity: 1;
-      pointer-events: all;
-    }
-    .iframe-wrapper {
-      width: 90%;
-      height: 80%;
-      background: #000;
-      border-radius: 8px;
-      overflow: hidden;
-    }
-    iframe {
-      width: 100%; height: 100%;
+      color: #000;
       border: none;
-    }
-    .controls {
-      margin-top: 15px;
-      display: flex;
-      gap: 10px;
-    }
-    .control-btn {
-      background: #444;
-      color: white;
-      border: none;
-      padding: 10px 20px;
-      border-radius: 5px;
+      padding: 12px 20px;
+      border-radius: 10px;
       cursor: pointer;
-    }
-    .control-btn:hover { background: #555; }
-    .btn-exit { background: var(--danger-color); }
-    .btn-exit:hover { background: #d32f2f; }
-
-    /* --- FOOTER --- */
-    footer {
-      margin-top: 50px;
-      text-align: center;
-      color: #666;
-      font-size: 0.8em;
-      border-top: 1px solid #333;
-      padding-top: 20px;
+      font-weight: 800;
       width: 100%;
-      max-width: 900px;
+      margin-top: auto;
+      transition: all 0.2s;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      box-shadow: 0 4px 0 rgba(0,0,0,0.2);
     }
-    footer h4 { margin-bottom: 5px; color: #888; }
-    footer p { font-size: 0.9em; color: #555; }
+    .play-btn:hover { 
+      filter: brightness(1.1); 
+      transform: translateY(-2px);
+      box-shadow: 0 6px 0 rgba(0,0,0,0.2);
+    }
+    .play-btn:active {
+      transform: translateY(1px);
+      box-shadow: 0 2px 0 rgba(0,0,0,0.2);
+    }
 
-    /* --- BSOD (Panic Mode) --- */
-    #bsod {
-      display: none;
-      position: fixed;
-      top: 0; left: 0;
-      width: 100vw; height: 100vh;
-      background-color: #0078d7;
-      color: white;
-      z-index: 9999;
-      padding: 100px;
-      box-sizing: border-box;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      cursor: none;
+    .studio-container {
+      background: var(--card-bg);
+      padding: 30px;
+      border-radius: 20px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 30px;
+      border: 1px solid rgba(255,255,255,0.1);
     }
-    .sad-face { font-size: 10em; margin-bottom: 20px; }
-    .bsod-text { font-size: 1.5em; margin-bottom: 20px; }
-    .bsod-small { font-size: 1em; }
+
+    .theme-list {
+      margin-top: 20px;
+      max-height: 350px;
+      overflow-y: auto;
+      background: rgba(0,0,0,0.3);
+      border-radius: 12px;
+      padding: 10px;
+      border: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .theme-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      transition: 0.2s;
+    }
+    .theme-item:last-child { border-bottom: none; }
+    .theme-item:hover { background: rgba(255,255,255,0.05); border-radius: 8px; }
     
-    /* --- 3D Canvas --- */
-    #background3DCanvas {
-      position: fixed;
-      top: 0; left: 0;
-      width: 100vw; height: 100vh;
-      z-index: -1;
+    .theme-item-actions { display: flex; gap: 8px; }
+    .mini-btn { 
+      padding: 6px 12px; 
+      font-size: 10px; 
+      border-radius: 6px; 
+      border: none; 
+      cursor: pointer; 
+      font-weight: bold;
+      transition: 0.2s;
+    }
+    .mini-btn:hover { filter: contrast(1.2); transform: scale(1.05); }
+
+    .studio-control input[type="text"], .studio-control input[type="color"] {
+        width: 100%;
+        padding: 12px;
+        border-radius: 8px;
+        border: 1px solid rgba(255,255,255,0.1);
+        background: rgba(0,0,0,0.2);
+        color: white;
+        box-sizing: border-box;
     }
 
-    /* --- RESPONSIVE --- */
-    @media (max-width: 768px) {
-      h1 { font-size: 1.5em; }
-      .games-container { justify-content: center; }
-      .iframe-wrapper { width: 100%; height: 70%; }
-      .store-grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
+    #background3DCanvas { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -1; pointer-events: none; }
+    
+    .player-overlay {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.98); z-index: 5000; display: none;
+      flex-direction: column; align-items: center; justify-content: center;
+    }
+    .player-overlay.active { display: flex; }
+    .iframe-wrapper { width: 95%; height: 85%; background: #000; border-radius: 12px; overflow: hidden; position: relative; border: 2px solid var(--primary-color); box-shadow: 0 0 50px rgba(0,0,0,0.5); }
+    #gameFrame { width: 100%; height: 100%; border: none; }
+
+    .player-controls {
+      display: flex;
+      gap: 15px;
+      margin-top: 20px;
+      width: 95%;
+      justify-content: flex-end;
+    }
+
+    .control-btn {
+      padding: 12px 25px;
+      border-radius: 10px;
+      font-weight: 800;
+      cursor: pointer;
+      border: none;
+      transition: 0.3s;
+      text-transform: uppercase;
+      font-size: 0.9em;
+    }
+    .close-btn { background: var(--danger-color); color: white; }
+    .fullscreen-btn { background: var(--success-color); color: black; }
+    .control-btn:hover { transform: translateY(-3px); box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
+
+    .cloak-overlay {
+      position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 10000; display: none;
+      background-size: cover; background-position: center; background-color: black; cursor: none;
     }
   </style>
+  <style>
+  .search-container {
+    width: 100%;
+    max-width: 600px;
+    margin: 0 auto 25px auto;
+    position: relative;
+  }
+
+  #gameSearch {
+    width: 100%;
+    padding: 15px 20px;
+    background: var(--card-bg);
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    color: white;
+    font-family: 'Roboto', sans-serif;
+    font-size: 1rem;
+    outline: none;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+    box-sizing: border-box;
+  }
+
+  #gameSearch:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 15px var(--primary-color);
+  }
+
+  .search-icon {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    opacity: 0.5;
+    pointer-events: none;
+  }
+</style>
+
+
+
 </head>
 <body>
 
-  <!-- Background Animation -->
   <canvas id="background3DCanvas"></canvas>
 
-  <!-- Fake BSOD Container -->
-  <div id="bsod">
-    <div class="sad-face">:(</div>
-    <div class="bsod-text">Your PC ran into a problem and needs to restart. We're just collecting some error info, and then we'll restart for you.</div>
-    <div class="bsod-text">0% complete</div>
-    <br><br>
-    <div class="bsod-small">
-      Stop Code: CRITICAL_PROCESS_DIED<br>
-    </div>
+  <!-- Cloak Overlays -->
+  <div id="cloak-chrome-boot" class="cloak-overlay" style="background-image: url('https://files.catbox.moe/3lwsu4.png');"></div>
+  <div id="cloak-bsod" class="cloak-overlay" style="background-image: url('https://www.windowslatest.com/wp-content/uploads/2025/07/Windows-11-Black-Screen-of-Death-error.jpg');"></div>
+  <div id="cloak-chrome-update" class="cloak-overlay">
+    <video width="100%" height="100%" loop muted id="update-video">
+      <source src="https://files.catbox.moe/h5w2ff.webm" type="video/webm">
+    </video>
   </div>
+  <div id="cloak-custom" class="cloak-overlay"></div>
 
   <header>
-    <button class="cloak-btn" onclick="cloakSite()">Cloak (about:blank)</button>
-    <div class="header-content">
-      <h1>EPIXGAMES</h1>
-      <div class="abandoned-text">Just tweaked things</div>
-      <p id="subtitle">Play games, chill, and keep it EPIX.</p>
-    </div>
+    <h1>EPIXGAMES</h1>
+    <div class="abandoned-text">More changes. Even more awesome.</div>
+    <p id="subtitle">Let's play.</p>
   </header>
 
-  <!-- Navigation -->
   <nav id="tabs-container">
     <button class="tab-button active" onclick="showTab('games')">Games</button>
-    <button class="tab-button" onclick="showTab('store')">Themes</button>
-    <button class="tab-button" onclick="showTab('legacy')">Legacy Games</button>
+    <button class="tab-button" onclick="showTab('cloaks')">Cloaks</button>
+    <button class="tab-button" onclick="showTab('studio')">Studio</button>
   </nav>
 
-  <!-- Content Areas -->
   <div id="content-wrapper">
-    
-    <!-- Games Tab -->
+    <!-- Main Games Tab -->
     <div id="games" class="tab-content active">
+      <div id="games-loader" class="loader-container">
+        <div class="throbber"></div>
+        <p style="font-family: 'Press Start 2P', cursive; font-size: 0.7em;">Booting Library...</p>
+      </div>
       <div class="search-container">
-        <input type="text" id="searchInput" class="search-input" placeholder="Search games...">
-        <button class="search-btn" onclick="filterGames()">Search</button>
-      </div>
+  <input type="text" id="gameSearch" placeholder="Search games (e.g. Angry Birds...)" oninput="filterGames()">
+</div>
+      <div class="games-container" id="new-games-container"></div>
+    </div>
 
-      <h2 class="section-title">Featured Games</h2>
-      <div id="new-games-container" class="games-container">
-        <!-- New games injected via JS -->
+    <!-- Cloaks Tab -->
+    <div id="cloaks" class="tab-content">
+      <div class="studio-container">
+        <div>
+          <h3 style="font-family: 'Press Start 2P', cursive; font-size: 0.8em; margin-bottom: 20px;">Super-Cloak Setup</h3>
+          <p>Press <b>ESC</b> once to exit any cloak.</p>
+          <div style="display: flex; flex-direction: column; gap: 12px;">
+            <div class="cloak-list-item" style="display:flex; justify-content: space-between; align-items:center; background: rgba(0,0,0,0.3); padding: 15px; border-radius: 12px;">
+                <span>ChromeOS Boot</span>
+                <input type="text" id="key-chrome-boot" maxlength="1" value="p" style="width: 40px; text-align:center; padding: 8px; border-radius: 6px; border: none; background: #444; color: white;">
+            </div>
+            <div class="cloak-list-item" style="display:flex; justify-content: space-between; align-items:center; background: rgba(0,0,0,0.3); padding: 15px; border-radius: 12px;">
+                <span>BSOD Win11</span>
+                <input type="text" id="key-bsod" maxlength="1" value="b" style="width: 40px; text-align:center; padding: 8px; border-radius: 6px; border: none; background: #444; color: white;">
+            </div>
+          </div>
+        </div>
       </div>
     </div>
 
-    <!-- Legacy Tab -->
-    <div id="legacy" class="tab-content">
-      <h2 class="section-title">Legacy Archive</h2>
-      <p style="text-align: center; color: #666; margin-bottom: 20px;">Old games from the classic era. More likely to be blocked.</p>
-      <div id="legacy-games-container" class="games-container">
-        <!-- Legacy games injected via JS -->
+    <!-- Studio Tab -->
+    <div id="studio" class="tab-content">
+      <div class="studio-container">
+        <div>
+          <h3 style="font-family: 'Press Start 2P', cursive; font-size: 0.8em;">Theme Studio</h3>
+          <div class="studio-control" style="margin-bottom: 15px;">
+            <label style="display:block; margin-bottom:5px; font-weight:bold;">Theme Name</label>
+            <input type="text" id="studio-theme-name" placeholder="My Cool Theme">
+          </div>
+          <div class="studio-control" style="margin-bottom: 15px;">
+            <label style="display:block; margin-bottom:5px; font-weight:bold;">Background Image URL</label>
+            <input type="text" id="studio-bg-img" placeholder="https://..." oninput="updateStudioPreview()">
+          </div>
+          <div class="studio-control" style="margin-bottom: 15px;">
+            <label style="display:block; margin-bottom:5px; font-weight:bold;">UI Accent Color</label>
+            <input type="color" id="studio-accent" value="#61dafb" oninput="updateStudioPreview()">
+          </div>
+          <button class="play-btn" onclick="saveNewTheme()">Add to Library</button>
+          
+          <div class="share-container" style="margin-top: 25px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.1);">
+            <h4 style="margin-bottom: 10px;">Import Theme</h4>
+            <div class="studio-control">
+              <input type="text" id="share-code-input" placeholder="Paste Base64 theme code here...">
+              <button class="play-btn" style="background: var(--success-color); color: black; margin-top: 10px;" onclick="importTheme()">Import From Code</button>
+            </div>
+          </div>
+        </div>
+        
+        <div>
+          <h3 style="font-family: 'Press Start 2P', cursive; font-size: 0.8em;">Theme Library</h3>
+          <div class="theme-list" id="theme-library-list"></div>
+          <div class="preview-box" id="studio-preview" style="margin-top: 20px; border: 2px dashed rgba(255,255,255,0.2); border-radius: 12px; padding: 20px; text-align:center;">
+            <p style="font-size: 10px; opacity: 0.5; margin-bottom: 15px;">PREVIEW</p>
+            <div id="preview-btn-mock" style="background: var(--button-bg); color: black; padding: 10px; margin: 10px auto; width: 100px; border-radius: 8px; font-weight:bold; font-size: 11px;">Button</div>
+            <div id="preview-card-mock" style="background: var(--card-bg); padding: 12px; border-radius: 10px; border: 2px solid var(--secondary-color); font-size: 11px;">Card Border</div>
+          </div>
+        </div>
       </div>
     </div>
-
-    <!-- Store Tab -->
-    <div id="store" class="tab-content">
-      <h2 class="section-title">Themes</h2>
-      <div id="store-items-container" class="store-grid">
-        <!-- Store items injected via JS -->
-      </div>
-    </div>
-
   </div>
 
-  <!-- Game Player Overlay -->
+  <!-- Player UI -->
   <div id="gamePlayer" class="player-overlay">
-    <div class="iframe-wrapper">
-      <iframe id="gameFrame" src="" allowfullscreen></iframe>
+    <div class="iframe-wrapper" id="frameWrapper">
+      <iframe id="gameFrame" src="" allowfullscreen="true"></iframe>
     </div>
-    <div class="controls">
-      <button class="control-btn" onclick="toggleFullscreen()">Fullscreen</button>
-      <button class="control-btn btn-exit" onclick="closeGame()">Exit Game</button>
+    <div class="player-controls">
+      <button class="control-btn fullscreen-btn" onclick="toggleFullscreen()">Fullscreen</button>
+      <button class="control-btn close-btn" onclick="closeGame()">Close Game</button>
     </div>
   </div>
-
-  <footer>
-    <h4>2026 EPIX - EPIXGAMES</h4>
-    <p>EPIXGAMES is not to be confused with Epic Games.</p> 
-    <p>We do not own any of the games here EXCEPT Dodge the Bar and Fantasy Avengers.</p>
-    <p>Many parts of this site are generated by AI assistants.</p>
-    <br>
-    <p style="opacity: 0.5;">Press <b>~</b> (Tilde) for Emergency Panic Mode</p>
-  </footer>
 
 <script>
-  /* ================================================================
-   EPIXGAMES CONFIGURATION & DATA
-   ================================================================
-  */
+function filterGames() {
+  const query = document.getElementById('gameSearch').value.toLowerCase();
+  const container = document.getElementById('new-games-container');
+  
+  // Filter the array
+  const filtered = NEW_GAMES.filter(game => 
+    game.name.toLowerCase().includes(query)
+  );
 
-  // 1. THE NEW GAMES LIST
+  // Re-render only the filtered ones
+  container.innerHTML = '';
+  
+  if (filtered.length === 0) {
+    container.innerHTML = `<p style="font-family: 'Press Start 2P', cursive; font-size: 0.6em; margin-top: 20px;">No games found, dude. 💀</p>`;
+    return;
+  }
+
+  filtered.forEach((g, index) => {
+    const card = document.createElement('div');
+    card.className = 'game-card';
+    card.style.opacity = '1'; // Skip animation for instant search feel
+    card.style.transform = 'translateY(0)';
+    card.innerHTML = `<img src="${g.img}"><h3>${g.name}</h3><button class="play-btn" onclick="launch('${g.url}')">Play Now</button>`;
+    container.appendChild(card);
+  });
+}
+
   const NEW_GAMES = [
     { name: 'Minecrft 1.8 WASM', url: '/schoolwork/mine.html', img: 'https://assets.nintendo.com/image/upload/ar_16:9,c_lpad,w_1240/b_white/f_auto/q_auto/ncom/software/switch/70010000000964/a28a81253e919298beab2295e39a56b7a5140ef15abdb56135655e5c221b2a3a' },
     { name: 'Minecrft Pocket 0.6.1 alpha WASM', url: '/schoolwork/pocket/index.html', img: 'https://assets.nintendo.com/image/upload/ar_16:9,c_lpad,w_1240/b_white/f_auto/q_auto/ncom/software/switch/70010000000964/a28a81253e919298beab2295e39a56b7a5140ef15abdb56135655e5c221b2a3a' },
@@ -534,357 +487,228 @@
     { name: 'Fist Punch', url: './swf/fist', img: 'https://static.wikia.nocookie.net/theregularshow/images/c/c1/Fist_Punch.JPG/' }
   ];
 
-  // 2. THE LEGACY GAMES LIST
-  const LEGACY_BASE_URL = '';
-  const LEGACY_GAMES = [
-    { name: 'AngryBirds', path: './schoolwork/angrybird.html', img: 'https://www.angrybirds.com/wp-content/uploads/2022/06/AB_Classic_1920x1080_TitlePicture_Vector-1300x731.png' },
-    { name: 'Basket Bros', path: './schoolwork/basketbros.html', img: 'https://mouse-practice.com/wp-content/uploads/2024/01/basketbros-300x201.jpg' },
-    { name: 'Battleship', path: './schoolwork/battleship.html', img: 'https://assets.nintendo.com/image/upload/q_auto/f_auto/ncom/software/switch/70010000015008/f398ff3a04730c763baffbb20e77645138bf58a69d24a2031a19661c7132706c' },
-    { name: 'Bad Piggies', path: './schoolwork/badpiggies.html', img: 'https://i.ytimg.com/vi/YsCpDaSooWA/maxresdefault.jpg' },
-    { name: 'Catac.io', path: './schoolwork/catacio.html', img: 'https://catac.io/img/banner.png' },
-    { name: 'Chess', path: './schoolwork/chess.html', img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/Chess_pieces_close_up.jpg/960px-Chess_pieces_close_up.jpg' },
-    { name: 'Cut the Rope', path: './schoolwork/cuttherope.html', img: 'https://play-lh.googleusercontent.com/j8C5NNlvSd8UzBvdije6tKpv2DfXKr6ejIF1jHASKLRBjpB485OL7IbwzqrxSAVktdMj' },
-    { name: 'Dodge the Bar', path: './schoolwork/dodgethebar.html', img: 'https://www.mediafire.com/convkey/c5ac/mr39ydydg5a22oi7g.jpg' },
-    { name: 'Fireboy/Watergirl', path: './schoolwork/fireboyandwatergirl.html', img: 'https://tcf.admeen.org/game/13000/12674/400x246/fireboy-and-watergirl-1-forest-temple.jpg' },
-    { name: 'Subway Surfers', path: './schoolwork/subwaysurfers.html', img: 'https://mediaproxy.tvtropes.org/width/1200/https://static.tvtropes.org/pmwiki/pub/images/img_9060.jpeg' },
-    { name: 'Super Mario Bros', path: './schoolwork/supermariobros.html', img: 'https://townsquare.media/site/295/files/2020/09/super-mario-bros.jpg?w=780&q=75' },
-    { name: 'Tiny Fishing', path: './schoolwork/tinyfishing.html', img: 'https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/9b/e0/80/9be080f4-4a8f-f9b0-b989-b2a8e575080b/AppIcon-0-0-1x_U007emarketing-0-8-0-85-220.png/1200x600wa.png' },
-    { name: 'Fantasy Avengers', path: './schoolwork/fantasyavengers.html', img: 'https://www.mediafire.com/convkey/20b0/u146qzvpooa02ot7g.jpg' },
-    { name: 'Mario 64', path: './schoolwork/64.html', img: 'https://static.wikia.nocookie.net/mario64/images/7/7e/Super_Mario_64_Box_art.jpg' }
+  let bgShapes = [];
+  let themeLibrary = JSON.parse(localStorage.getItem('epix_library')) || [
+    { id: 'default', name: 'Original Epix', color: '#61dafb', img: '', target: 'all' }
   ];
 
-  // 3. STORE ITEMS
-  const STORE_ITEMS = [
-    { id: 'default', name: 'Default Theme', type: 'theme', cost: 0, 
-      img: 'https://placehold.co/100x100/282c34/FFFFFF?text=Default',
-      styles: { '--bg-color': '#1a1a1a', '--bg-image': 'none', '--text-color': '#ffffff' } 
-    },
-    { id: 'bg-stars', name: 'Starry Night', type: 'theme', cost: 0, 
-      img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/ea/Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg/500px-Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg',
-      styles: { '--bg-color': '#000', '--bg-image': 'url("https://upload.wikimedia.org/wikipedia/commons/thumb/e/ea/Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg/1280px-Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg")', '--text-color': '#ffffff' }
-    },
-    { id: 'bg-neon', name: 'Neon Grid', type: 'theme', cost: 0, 
-      img: 'https://static.vecteezy.com/system/resources/previews/020/562/054/non_2x/background-of-neon-grid-for-retro-futuristic-design-vector.jpg',
-      styles: { '--bg-color': '#2a0033', '--bg-image': 'url("https://static.vecteezy.com/system/resources/previews/020/562/054/non_2x/background-of-neon-grid-for-retro-futuristic-design-vector.jpg")', '--text-color': '#00ffcc' }
-    },
-    { id: 'bg-matrix', name: 'The Matrix', type: 'theme', cost: 0,
-      img: 'https://upload.wikimedia.org/wikipedia/commons/c/c7/Matrix_glitch.png',
-      styles: { '--bg-color': '#000', '--bg-image': 'url("https://upload.wikimedia.org/wikipedia/commons/c/c7/Matrix_glitch.png")', '--text-color': '#00FF00' }
-    },
-    { id: 'text-gold', name: 'Gold Text', type: 'text', cost: 0, 
-      img: 'https://placehold.co/100x100/3c4048/FFD700?text=Gold',
-      styles: { '--text-color': 'gold' }
-    },
-    { id: 'text-lime', name: 'Lime Text', type: 'text', cost: 0, 
-      img: 'https://placehold.co/100x100/3c4048/00FF00?text=Lime',
-      styles: { '--text-color': 'lime' }
-    },
-    { id: 'bg-rs', name: 'Regular Show 1', type: 'theme', cost: 0,
-      img: 'https://media.wired.com/photos/59330ce9714b881cb2969b3b/master/pass/RegShow_Thumb_Group2.jpg',
-      styles: { '--bg-color': '#000', '--bg-image': 'url("https://media.wired.com/photos/59330ce9714b881cb2969b3b/master/pass/RegShow_Thumb_Group2.jpg"), '--text-color': '#ffffff'}
-    }
-  ];
-
-  // 4. VARIABLES & SETUP
-  let money = parseInt(localStorage.getItem('epixgamesMoney') || '0');
-  let ownedAccessories = JSON.parse(localStorage.getItem('epixgamesOwnedAccessories') || '{"default": true}');
-  let appliedAccessory = localStorage.getItem('epixgamesAppliedAccessory') || 'default';
-  let scene, camera, renderer, animationObjects = [];
-
-  // --- INITIALIZATION ---
-  document.addEventListener('DOMContentLoaded', () => {
-    init3DAnimation();
-    renderAllGames();
-    renderStore();
-    updateMoneyDisplay();
-    cycleSubtitle();
-    applyTheme(appliedAccessory); // Apply saved theme on load
-
-    // Panic Key Listener (~)
-    document.addEventListener('keydown', (e) => {
-      if (e.key === '`' || e.key === '~') {
-        toggleBSOD();
-      }
-    });
-
-    // Handle search enter key
-    document.getElementById('searchInput').addEventListener('keypress', (e) => {
-      if(e.key === 'Enter') filterGames();
-    });
-  });
-
-  // --- RENDER GAMES ---
-  function renderAllGames() {
-    const newContainer = document.getElementById('new-games-container');
-    const legacyContainer = document.getElementById('legacy-games-container');
-
-    newContainer.innerHTML = '';
-    legacyContainer.innerHTML = '';
-
-    // Render New Games
-    NEW_GAMES.forEach(game => {
-      const card = createGameCard(game, false);
-      newContainer.appendChild(card);
-    });
-
-    // Render Legacy Games
-    LEGACY_GAMES.forEach(game => {
-      const card = createGameCard(game, true);
-      legacyContainer.appendChild(card);
-    });
-  }
-
-  function createGameCard(game, isLegacy) {
-    const div = document.createElement('div');
-    div.className = 'game-card';
-    const imgSrc = game.img || 'https://placehold.co/200x150/333/FFF?text=Game';
+  function renderGames() {
+    const n = document.getElementById('new-games-container');
+    const loader = document.getElementById('games-loader');
     
-    div.innerHTML = `
-      <img src="${imgSrc}" alt="${game.name}" onerror="this.src='https://placehold.co/200x150/333/FFF?text=Error'">
-      <h3>${game.name}</h3>
-      <button class="play-btn" onclick="launchGame('${isLegacy ? 'legacy' : 'new'}', '${game.name}')">Play</button>
-    `;
-    return div;
+    n.style.display = 'none';
+    loader.style.display = 'flex';
+
+    setTimeout(() => {
+        loader.style.display = 'none';
+        n.style.display = 'flex';
+        n.innerHTML = '';
+        NEW_GAMES.forEach((g, index) => {
+          const card = document.createElement('div');
+          card.className = 'game-card';
+          card.style.animationDelay = `${index * 0.05}s`;
+          card.innerHTML = `<img src="${g.img}"><h3>${g.name}</h3><button class="play-btn" onclick="launch('${g.url}')">Play Now</button>`;
+          n.appendChild(card);
+        });
+    }, 800);
   }
 
-  // --- STORE LOGIC ---
-  function renderStore() {
-    const container = document.getElementById('store-items-container');
-    container.innerHTML = '';
-
-    STORE_ITEMS.forEach(item => {
-      const div = document.createElement('div');
-      div.className = 'store-item';
-      
-      const isOwned = ownedAccessories[item.id];
-      const isEquipped = appliedAccessory === item.id;
-      
-      let buttonHtml = '';
-      if (isEquipped) {
-        buttonHtml = `<button class="store-btn btn-equipped" disabled>Applied</button>`;
-      } else if (isOwned) {
-        buttonHtml = `<button class="store-btn btn-equip" onclick="equipItem('${item.id}')">Apply</button>`;
-      } else {
-        const canAfford = money >= item.cost;
-        buttonHtml = `<button class="store-btn btn-buy" onclick="buyItem('${item.id}', ${item.cost})" ${!canAfford ? 'disabled' : ''}>Get</button>`;
-      }
-
-      div.innerHTML = `
-        <img src="${item.img}" alt="${item.name}">
-        <h4>${item.name}</h4>
-        <p>${item.type === 'theme' ? 'Background Theme' : 'Text Style'}</p>
-        ${buttonHtml}
-      `;
-      container.appendChild(div);
-    });
-  }
-
-  function buyItem(id, cost) {
-    if (money >= cost) {
-      money -= cost;
-      ownedAccessories[id] = true;
-      localStorage.setItem('epixgamesMoney', money);
-      localStorage.setItem('epixgamesOwnedAccessories', JSON.stringify(ownedAccessories));
-      updateMoneyDisplay();
-      renderStore();
-      // Auto-equip
-      equipItem(id);
-    } else {
-      alert("Not enough money!");
-    }
-  }
-
-  function equipItem(id) {
-    if (ownedAccessories[id]) {
-      appliedAccessory = id;
-      localStorage.setItem('epixgamesAppliedAccessory', id);
-      applyTheme(id);
-      renderStore();
-    }
-  }
-
-  function applyTheme(id) {
-    const item = STORE_ITEMS.find(i => i.id === id);
-    if (!item) return;
-
-    // Apply specific styles to :root
-    for (const [key, value] of Object.entries(item.styles)) {
-      document.documentElement.style.setProperty(key, value);
-    }
-  }
-
-  // --- LAUNCHER LOGIC ---
-  function launchGame(type, gameName) {
-    let url = '';
-    
-    if (type === 'new') {
-      const game = NEW_GAMES.find(g => g.name === gameName);
-      if (game) url = game.url;
-    } else {
-      const game = LEGACY_GAMES.find(g => g.name === gameName);
-      if (game) url = LEGACY_BASE_URL + game.path;
-    }
-
-    if (url) {
-      document.getElementById('gameFrame').src = url;
-      document.getElementById('gamePlayer').classList.add('active');
-      startEarning();
-    }
+  function launch(u) {
+    document.getElementById('gameFrame').src = u;
+    document.getElementById('gamePlayer').classList.add('active');
   }
 
   function closeGame() {
     document.getElementById('gameFrame').src = '';
     document.getElementById('gamePlayer').classList.remove('active');
-    stopEarning();
   }
 
   function toggleFullscreen() {
-    const iframe = document.getElementById('gameFrame');
-    if (iframe.requestFullscreen) iframe.requestFullscreen();
-    else if (iframe.webkitRequestFullscreen) iframe.webkitRequestFullscreen();
+    const elem = document.getElementById('frameWrapper');
+    if (elem.requestFullscreen) elem.requestFullscreen();
+    else if (elem.webkitRequestFullscreen) elem.webkitRequestFullscreen();
+    else if (elem.msRequestFullscreen) elem.msRequestFullscreen();
   }
 
-  // --- CLOAKING LOGIC ---
-  function cloakSite() {
-    const win = window.open('about:blank', '_blank');
-    if (win) {
-      const doc = win.document;
-      const iframe = doc.createElement('iframe');
-      iframe.style.width = '100vw';
-      iframe.style.height = '100vh';
-      iframe.style.border = 'none';
-      iframe.style.position = 'fixed';
-      iframe.style.top = '0';
-      iframe.style.left = '0';
-      iframe.src = window.location.href;
-      doc.body.style.margin = '0';
-      doc.body.appendChild(iframe);
-    } else {
-      alert("Pop-up blocked! Please allow pop-ups to use Cloak.");
-    }
+  function showTab(t) {
+    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+    document.querySelectorAll('.tab-button').forEach(b => b.classList.remove('active'));
+    document.getElementById(t).classList.add('active');
+    event.currentTarget.classList.add('active');
+    if(t === 'games') renderGames();
   }
 
-  // --- PANIC MODE (BSOD) ---
-  function toggleBSOD() {
-    const bsod = document.getElementById('bsod');
-    if (bsod.style.display === 'block') {
-      bsod.style.display = 'none';
-      if (document.exitFullscreen) document.exitFullscreen();
-    } else {
-      bsod.style.display = 'block';
-      if (document.documentElement.requestFullscreen) {
-        document.documentElement.requestFullscreen();
-      }
-    }
+  // THEME SYSTEM
+  function updateStudioPreview() {
+    const img = document.getElementById('studio-bg-img').value;
+    const color = document.getElementById('studio-accent').value;
+    const preview = document.getElementById('studio-preview');
+    if(img) preview.style.backgroundImage = `url('${img}')`;
+    document.getElementById('preview-btn-mock').style.background = color;
+    document.getElementById('preview-card-mock').style.borderColor = color;
   }
 
-  // --- SEARCH ---
-  function filterGames() {
-    const query = document.getElementById('searchInput').value.toLowerCase();
-    const cards = document.querySelectorAll('.game-card');
+  function saveNewTheme() {
+    const name = document.getElementById('studio-theme-name').value || "Unnamed Theme";
+    const img = document.getElementById('studio-bg-img').value;
+    const color = document.getElementById('studio-accent').value;
     
-    cards.forEach(card => {
-      const title = card.querySelector('h3').innerText.toLowerCase();
-      if (title.includes(query)) {
-        card.style.display = 'flex';
-      } else {
-        card.style.display = 'none';
-      }
+    const newTheme = { id: Date.now().toString(), name, img, color, target: 'all' };
+    themeLibrary.push(newTheme);
+    saveAndRefreshLibrary();
+    applyTheme(newTheme);
+    showToast(`Saved ${name}! ✨`);
+    document.getElementById('studio-theme-name').value = '';
+  }
+
+  function saveAndRefreshLibrary() {
+    localStorage.setItem('epix_library', JSON.stringify(themeLibrary));
+    renderThemeLibrary();
+  }
+
+  function renderThemeLibrary() {
+    const list = document.getElementById('theme-library-list');
+    list.innerHTML = '';
+    themeLibrary.forEach(t => {
+        const item = document.createElement('div');
+        item.className = 'theme-item';
+        item.innerHTML = `
+            <div class="theme-item-info">
+                <span style="color:${t.color}; text-shadow: 0 0 5px ${t.color}">●</span> <b>${t.name}</b>
+            </div>
+            <div class="theme-item-actions">
+                <button class="mini-btn" style="background:var(--success-color); color:black;" onclick="applyThemeById('${t.id}')">Apply</button>
+                <button class="mini-btn" style="background:#444; color:white;" onclick="exportThemeCode('${t.id}')">Code</button>
+                <button class="mini-btn" style="background:#555; color:white;" onclick="downloadThemeFile('${t.id}')">File</button>
+                ${t.id !== 'default' ? `<button class="mini-btn" style="background:var(--danger-color); color:white;" onclick="deleteTheme('${t.id}')">X</button>` : ''}
+            </div>
+        `;
+        list.appendChild(item);
     });
   }
 
-  // --- TABS ---
-  function showTab(id) {
-    document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-    document.querySelectorAll('.tab-button').forEach(el => el.classList.remove('active'));
+  function applyThemeById(id) {
+    const t = themeLibrary.find(x => x.id === id);
+    if(t) {
+        applyTheme(t);
+        showToast(`Theme: ${t.name} Active`);
+    }
+  }
+
+  function applyTheme(t) {
+    document.documentElement.style.setProperty('--bg-image', t.img ? `url('${t.img}')` : 'none');
+    document.documentElement.style.setProperty('--button-bg', t.color);
+    document.documentElement.style.setProperty('--primary-color', t.color);
+    document.documentElement.style.setProperty('--secondary-color', t.color);
+    if(bgShapes.length > 0) bgShapes.forEach(s => s.material.color.set(t.color));
+    localStorage.setItem('epix_active_id', t.id);
+  }
+
+  function exportThemeCode(id) {
+    const t = themeLibrary.find(x => x.id === id);
+    const code = btoa(JSON.stringify(t));
+    const input = document.getElementById('share-code-input');
+    input.value = code;
+    input.select();
+    document.execCommand('copy');
+    showToast("Theme Code Copied! 📋");
+  }
+
+  function downloadThemeFile(id) {
+    const t = themeLibrary.find(x => x.id === id);
+    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(t));
+    const dlAnchorElem = document.createElement('a');
+    dlAnchorElem.setAttribute("href", dataStr);
+    dlAnchorElem.setAttribute("download", `${t.name.replace(/\s+/g, '_')}_theme.json`);
+    dlAnchorElem.click();
+    showToast("Downloading JSON... 💾");
+  }
+
+  function importTheme() {
+    try {
+        const code = document.getElementById('share-code-input').value;
+        const t = JSON.parse(atob(code));
+        t.id = Date.now().toString();
+        themeLibrary.push(t);
+        saveAndRefreshLibrary();
+        applyTheme(t);
+        showToast("Theme Imported Successfully! 🔥");
+        document.getElementById('share-code-input').value = '';
+    } catch(e) {
+        showToast("Error: Bad theme code 💀");
+    }
+  }
+
+  function deleteTheme(id) {
+    themeLibrary = themeLibrary.filter(x => x.id !== id);
+    saveAndRefreshLibrary();
+  }
+
+  function showToast(msg) {
+    const old = document.querySelector('.epix-toast');
+    if(old) old.remove();
+    const t = document.createElement('div');
+    t.className = 'epix-toast';
+    t.style = "position:fixed;bottom:30px;left:50%;transform:translateX(-50%);background:var(--card-bg);backdrop-filter:blur(10px);color:white;padding:12px 25px;border-radius:30px;font-weight:bold;z-index:9999;border:1px solid var(--primary-color);box-shadow: 0 10px 25px rgba(0,0,0,0.5); animation: fadeInUp 0.3s ease;";
+    t.innerText = msg;
+    document.body.appendChild(t);
+    setTimeout(() => {
+        t.style.opacity = '0';
+        t.style.transform = 'translateX(-50%) translateY(20px)';
+        t.style.transition = '0.5s';
+        setTimeout(() => t.remove(), 500);
+    }, 2500);
+  }
+
+  function init3D() {
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
+    const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('background3DCanvas'), alpha: true, antialias: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    const accent = getComputedStyle(document.documentElement).getPropertyValue('--primary-color').trim() || '#4287f5';
+    for(let i=0; i<30; i++) {
+        const g = new THREE.IcosahedronGeometry(Math.random()*1.5, 0);
+        const m = new THREE.MeshBasicMaterial({ color: accent, wireframe: true, transparent: true, opacity: 0.1 });
+        const mesh = new THREE.Mesh(g, m);
+        mesh.position.set((Math.random()-0.5)*50, (Math.random()-0.5)*50, (Math.random()-0.5)*50);
+        scene.add(mesh);
+        bgShapes.push(mesh);
+    }
+    camera.position.z = 25;
+    function anim() {
+        requestAnimationFrame(anim);
+        bgShapes.forEach(it => { it.rotation.x += 0.001; it.rotation.y += 0.001; });
+        renderer.render(scene, camera);
+    }
+    anim();
+    window.addEventListener('resize', () => {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+  }
+
+  window.addEventListener('keydown', (e) => {
+    if(e.key === 'Escape') {
+        document.querySelectorAll('.cloak-overlay').forEach(o => o.style.display = 'none');
+        document.getElementById('update-video').pause();
+    }
+    const k = e.key.toLowerCase();
+    const bootK = document.getElementById('key-chrome-boot').value.toLowerCase();
+    const bsodK = document.getElementById('key-bsod').value.toLowerCase();
     
-    document.getElementById(id).classList.add('active');
-    
-    // Refresh store if opening store tab to ensure buttons are correct
-    if(id === 'store') renderStore();
-  }
+    if(k === bootK) document.getElementById('cloak-chrome-boot').style.display = 'block';
+    if(k === bsodK) document.getElementById('cloak-bsod').style.display = 'block';
+  });
 
-  // --- MONEY SYSTEM ---
-  let earningInterval;
-  function startEarning() {
-    clearInterval(earningInterval);
-    earningInterval = setInterval(() => {
-      money += 5;
-      localStorage.setItem('epixgamesMoney', money);
-      updateMoneyDisplay();
-    }, 60000); // 5 coins every minute
-  }
-  function stopEarning() {
-    clearInterval(earningInterval);
-  }
-  function updateMoneyDisplay() {
-    const els = document.querySelectorAll('#money-display');
-    els.forEach(el => el.innerText = money);
-  }
-
-  // --- SUBTITLE ANIMATION ---
-  function cycleSubtitle() {
-    const texts = [
-      "Play games, chill, and keep it EPIX.",
-      "No downloads, just play.",
-      "Compatible with your potato PC.",
-      "The revival is here."
-    ];
-    let i = 0;
-    const el = document.getElementById('subtitle');
-    setInterval(() => {
-      el.style.opacity = 0;
-      setTimeout(() => {
-        i = (i + 1) % texts.length;
-        el.innerText = texts[i];
-        el.style.opacity = 1;
-      }, 500);
-    }, 5000);
-  }
-
-  // --- 3D BACKGROUND (Three.js) ---
-  function init3DAnimation() {
-      const canvas = document.getElementById('background3DCanvas');
-      if (!canvas) return;
-
-      scene = new THREE.Scene();
-      camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-      renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: true });
-      renderer.setSize(window.innerWidth, window.innerHeight);
-
-      const material = new THREE.MeshBasicMaterial({ color: 0x4287f5, wireframe: true, opacity: 0.3, transparent: true });
-
-      for (let i = 0; i < 30; i++) {
-          const geometry = new THREE.BoxGeometry(1, 1, 1);
-          const cube = new THREE.Mesh(geometry, material);
-          cube.position.set(
-              (Math.random() - 0.5) * 50,
-              (Math.random() - 0.5) * 50,
-              (Math.random() - 0.5) * 50
-          );
-          scene.add(cube);
-          animationObjects.push(cube);
-      }
-      camera.position.z = 20;
-      animate3D();
-      window.addEventListener('resize', () => {
-          camera.aspect = window.innerWidth / window.innerHeight;
-          camera.updateProjectionMatrix();
-          renderer.setSize(window.innerWidth, window.innerHeight);
-      });
-  }
-
-  function animate3D() {
-      requestAnimationFrame(animate3D);
-      animationObjects.forEach(obj => {
-          obj.rotation.x += 0.002;
-          obj.rotation.y += 0.002;
-      });
-      renderer.render(scene, camera);
-  }
-
+  window.onload = () => { 
+    init3D(); 
+    renderThemeLibrary();
+    const activeId = localStorage.getItem('epix_active_id');
+    if(activeId) applyThemeById(activeId);
+    renderGames(); 
+  };
 </script>
 </body>
 </html>
-
 
