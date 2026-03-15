@@ -426,7 +426,6 @@
     <br><br>
     <div class="bsod-small">
       Stop Code: CRITICAL_PROCESS_DIED<br>
-      <small>Press <b>~</b> to force reboot (Exit Fake BSOD)</small>
     </div>
   </div>
 
@@ -442,7 +441,7 @@
   <!-- Navigation -->
   <nav id="tabs-container">
     <button class="tab-button active" onclick="showTab('games')">Games</button>
-    <button class="tab-button" onclick="showTab('store')">Store</button>
+    <button class="tab-button" onclick="showTab('store')">Themes</button>
     <button class="tab-button" onclick="showTab('legacy')">Legacy Games</button>
   </nav>
 
@@ -465,7 +464,7 @@
     <!-- Legacy Tab -->
     <div id="legacy" class="tab-content">
       <h2 class="section-title">Legacy Archive</h2>
-      <p style="text-align: center; color: #666; margin-bottom: 20px;">Old games from the classic era.</p>
+      <p style="text-align: center; color: #666; margin-bottom: 20px;">Old games from the classic era. More likely to be blocked.</p>
       <div id="legacy-games-container" class="games-container">
         <!-- Legacy games injected via JS -->
       </div>
@@ -473,8 +472,7 @@
 
     <!-- Store Tab -->
     <div id="store" class="tab-content">
-      <h2 class="section-title">Store</h2>
-      <div class="money-display">Money: <span id="money-display">0</span> 💰</div>
+      <h2 class="section-title">Themes</h2>
       <div id="store-items-container" class="store-grid">
         <!-- Store items injected via JS -->
       </div>
@@ -561,25 +559,29 @@
       img: 'https://placehold.co/100x100/282c34/FFFFFF?text=Default',
       styles: { '--bg-color': '#1a1a1a', '--bg-image': 'none', '--text-color': '#ffffff' } 
     },
-    { id: 'bg-stars', name: 'Starry Night', type: 'theme', cost: 50, 
+    { id: 'bg-stars', name: 'Starry Night', type: 'theme', cost: 0, 
       img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/ea/Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg/500px-Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg',
       styles: { '--bg-color': '#000', '--bg-image': 'url("https://upload.wikimedia.org/wikipedia/commons/thumb/e/ea/Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg/1280px-Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg")', '--text-color': '#ffffff' }
     },
-    { id: 'bg-neon', name: 'Neon Grid', type: 'theme', cost: 75, 
+    { id: 'bg-neon', name: 'Neon Grid', type: 'theme', cost: 0, 
       img: 'https://static.vecteezy.com/system/resources/previews/020/562/054/non_2x/background-of-neon-grid-for-retro-futuristic-design-vector.jpg',
       styles: { '--bg-color': '#2a0033', '--bg-image': 'url("https://static.vecteezy.com/system/resources/previews/020/562/054/non_2x/background-of-neon-grid-for-retro-futuristic-design-vector.jpg")', '--text-color': '#00ffcc' }
     },
-    { id: 'bg-matrix', name: 'The Matrix', type: 'theme', cost: 100,
+    { id: 'bg-matrix', name: 'The Matrix', type: 'theme', cost: 0,
       img: 'https://upload.wikimedia.org/wikipedia/commons/c/c7/Matrix_glitch.png',
       styles: { '--bg-color': '#000', '--bg-image': 'url("https://upload.wikimedia.org/wikipedia/commons/c/c7/Matrix_glitch.png")', '--text-color': '#00FF00' }
     },
-    { id: 'text-gold', name: 'Gold Text', type: 'text', cost: 30, 
+    { id: 'text-gold', name: 'Gold Text', type: 'text', cost: 0, 
       img: 'https://placehold.co/100x100/3c4048/FFD700?text=Gold',
       styles: { '--text-color': 'gold' }
     },
-    { id: 'text-lime', name: 'Lime Text', type: 'text', cost: 30, 
+    { id: 'text-lime', name: 'Lime Text', type: 'text', cost: 0, 
       img: 'https://placehold.co/100x100/3c4048/00FF00?text=Lime',
       styles: { '--text-color': 'lime' }
+    },
+    { id: 'bg-matrix', name: 'Regular Show 1', type: 'theme', cost: 0,
+      img: 'https://media.wired.com/photos/59330ce9714b881cb2969b3b/master/pass/RegShow_Thumb_Group2.jpg',
+      styles: { '--bg-color': '#000', '--bg-image': 'url("https://media.wired.com/photos/59330ce9714b881cb2969b3b/master/pass/RegShow_Thumb_Group2.jpg")', '--text-color': '#00FF00' }
     }
   ];
 
@@ -659,12 +661,12 @@
       
       let buttonHtml = '';
       if (isEquipped) {
-        buttonHtml = `<button class="store-btn btn-equipped" disabled>Equipped</button>`;
+        buttonHtml = `<button class="store-btn btn-equipped" disabled>Applied</button>`;
       } else if (isOwned) {
-        buttonHtml = `<button class="store-btn btn-equip" onclick="equipItem('${item.id}')">Equip</button>`;
+        buttonHtml = `<button class="store-btn btn-equip" onclick="equipItem('${item.id}')">Apply</button>`;
       } else {
         const canAfford = money >= item.cost;
-        buttonHtml = `<button class="store-btn btn-buy" onclick="buyItem('${item.id}', ${item.cost})" ${!canAfford ? 'disabled' : ''}>Buy (${item.cost})</button>`;
+        buttonHtml = `<button class="store-btn btn-buy" onclick="buyItem('${item.id}', ${item.cost})" ${!canAfford ? 'disabled' : ''}>Get</button>`;
       }
 
       div.innerHTML = `
