@@ -283,7 +283,7 @@
 
     <div id="games" class="tab-content">
       <div class="search-container">
-          <input type="text" id="gameSearch" placeholder="Search library..." oninput="filterGames()">
+          <input type="text" id="videoSearch" placeholder="Search library..." oninput="filterVideos()">
       </div>
       <div class="games-container" id="new-games-container"></div>
     </div>
@@ -381,6 +381,21 @@
         const card = document.createElement('div');
         card.className = 'game-card';
         card.innerHTML = `<img src="${g.img}"><h3>${g.name}</h3><button class="play-btn" onclick="launch('${g.url}')">Play</button>`;
+        container.appendChild(card);
+    });
+  }
+  function filterVideos() {
+    const q = document.getElementById('videoSearch').value.toLowerCase();
+    renderGames(NEW_VIDEOS.filter(g => g.name.toLowerCase().includes(q)));
+  }
+
+  function renderVideos(list = NEW_VIDEOS {
+    const container = document.getElementById('new-videos-container');
+    container.innerHTML = '';
+    list.forEach(g => {
+        const card = document.createElement('div');
+        card.className = 'game-card';
+        card.innerHTML = `<img src="${g.img}"><h3>${g.name}</h3><button class="play-btn" onclick="launch('${g.url}')">Watch</button>`;
         container.appendChild(card);
     });
   }
