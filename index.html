@@ -142,6 +142,27 @@
         margin-top: -122px;
         border: none;
     }
+    .browsersettings-view-container {
+        width: 98%;
+        max-width: 1350px;
+        margin: 0 auto;
+        border-radius: 20px;
+        background: var(--card-bg);
+        border: 1px solid rgba(255,255,255,0.1);
+        padding: 15px;
+        box-sizing: border-box;
+    }
+
+    .browsersettings-wrapper {
+        width: 100%;
+        height: 78vh;
+        min-height: 550px;
+        background: #000;
+        border-radius: 12px;
+        overflow: hidden;
+        position: relative;
+        border: 1px solid rgba(255,255,255,0.2);
+    }
 
     .games-container { display: flex; flex-wrap: wrap; justify-content: center; gap: 25px; }
 
@@ -251,8 +272,8 @@
     </div>
     <div id="content-wrapper" style="width: 100%; display: flex; justify-content: center;">
     <div id="browsersettings" class="tab-content active">
-        <div class="browser-view-container">
-            <div class="browser-wrapper">
+        <div class="browsersettings-view-container">
+            <div class="browsersettings-wrapper">
                 <iframe class="browsersettings-iframe" name="myiFrame" src="https://storage.googleapis.com/canvas-lms/index.html#/search" allowfullscreen></iframe>
             </div>
             <p>The Privacy tab will not work in this case. Disabling Tabs Bar will remove the address bar. Here you can go ahead and change the search engine to DuckDuckGo.</p>
