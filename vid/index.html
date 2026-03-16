@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aura Player | The Ultimate Regular Show & Angry Birds Setup</title>
+    <title>Aura Player | Regular Show & Angry Birds</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -18,7 +18,7 @@
         .video-container {
             position: relative; width: 100%; height: 100%;
             display: flex; align-items: center; justify-content: center;
-            background: radial-gradient(circle at center, #111 0%, #000 100%);
+            background: #000;
         }
 
         video { width: 100%; height: 100%; max-height: 100vh; object-fit: contain; z-index: 10; }
@@ -27,13 +27,12 @@
             background: rgba(0, 0, 0, 0.8);
             color: #fff;
             font-size: 1.1rem;
-            text-shadow: 0 0 5px rgba(0,0,0,0.5);
         }
 
         .controls-overlay {
             position: absolute; bottom: 0; left: 0; right: 0;
-            padding: 30px; background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, transparent 100%);
-            opacity: 0; transition: all 0.4s ease; transform: translateY(10px);
+            padding: 30px; background: linear-gradient(to top, rgba(0,0,0,0.95) 0%, transparent 100%);
+            opacity: 0; transition: all 0.3s ease; transform: translateY(5px);
             pointer-events: none; z-index: 100;
         }
 
@@ -50,7 +49,7 @@
 
         #big-play-btn {
             position: absolute; z-index: 50;
-            background: rgba(129, 140, 248, 0.2);
+            background: rgba(129, 140, 248, 0.25);
             backdrop-filter: blur(12px);
             border: 1px solid rgba(255, 255, 255, 0.1);
             transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
@@ -60,11 +59,11 @@
 
         #toast {
             position: absolute; top: 24px; right: 24px;
-            background: rgba(20, 20, 20, 0.8); backdrop-filter: blur(16px);
+            background: rgba(30, 30, 30, 0.9); backdrop-filter: blur(16px);
             border: 1px solid rgba(255, 255, 255, 0.1); color: white;
-            padding: 14px 22px; border-radius: 16px; z-index: 200;
-            transform: translateX(180%); transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
-            display: flex; align-items: center; gap: 14px;
+            padding: 12px 20px; border-radius: 12px; z-index: 200;
+            transform: translateX(180%); transition: transform 0.5s ease;
+            display: flex; align-items: center; gap: 12px; font-weight: 600;
         }
 
         #toast.show { transform: translateX(0); }
@@ -74,38 +73,33 @@
 
     <div id="container" class="video-container">
         <div id="toast">
-            <div class="bg-indigo-500/20 p-2.5 rounded-xl text-indigo-400">
-                <i class="fas fa-closed-captioning text-lg"></i>
-            </div>
-            <div>
-                <p class="font-bold text-sm">Captions Ready</p>
-                <p class="text-xs opacity-60">Auto-converted SRT to VTT</p>
-            </div>
+            <i class="fas fa-closed-captioning text-indigo-400"></i>
+            <span>Captions Ready!</span>
         </div>
 
         <video id="v" playsinline crossorigin="anonymous"></video>
 
-        <button id="big-play-btn" class="w-24 h-24 rounded-full flex items-center justify-center text-white shadow-2xl">
-            <i class="fas fa-play text-4xl ml-1"></i>
+        <button id="big-play-btn" class="w-20 h-20 rounded-full flex items-center justify-center text-white shadow-2xl">
+            <i class="fas fa-play text-3xl ml-1"></i>
         </button>
 
-        <div class="controls-overlay pointer-auto flex flex-col gap-5">
-            <input type="range" id="seek" value="0" step="0.1" class="w-full h-1.5 rounded-full appearance-none bg-white/10">
+        <div class="controls-overlay pointer-auto flex flex-col gap-4">
+            <input type="range" id="seek" value="0" step="0.1" class="w-full h-1.5 rounded-full appearance-none bg-white/20">
 
             <div class="flex items-center justify-between text-white">
-                <div class="flex items-center gap-7">
-                    <button id="play-btn" class="text-2xl hover:text-indigo-400 transition-colors"><i class="fas fa-play"></i></button>
+                <div class="flex items-center gap-6">
+                    <button id="play-btn" class="text-xl w-6"><i class="fas fa-play"></i></button>
                     <div class="flex items-center gap-3">
-                        <button id="mute-btn" class="text-xl opacity-80"><i class="fas fa-volume-up"></i></button>
-                        <input type="range" id="vol-slider" min="0" max="1" step="0.05" value="1" class="w-24 h-1">
+                        <button id="mute-btn" class="text-lg"><i class="fas fa-volume-up"></i></button>
+                        <input type="range" id="vol-slider" min="0" max="1" step="0.05" value="1" class="w-20 h-1">
                     </div>
-                    <span class="text-xs font-mono opacity-50"><span id="cur">0:00</span> / <span id="dur">0:00</span></span>
+                    <span class="text-[11px] font-mono opacity-60"><span id="cur">0:00</span> / <span id="dur">0:00</span></span>
                 </div>
 
-                <div class="flex items-center gap-7">
-                    <button id="cc-btn" title="Toggle Captions" class="hidden text-2xl opacity-40 hover:opacity-100"><i class="fas fa-closed-captioning"></i></button>
-                    <button id="loop-btn" title="Toggle Loop" class="text-2xl opacity-40 hover:opacity-100"><i class="fas fa-infinity"></i></button>
-                    <button id="fs-btn" class="text-2xl opacity-40 hover:opacity-100"><i class="fas fa-expand"></i></button>
+                <div class="flex items-center gap-6">
+                    <button id="cc-btn" title="Toggle Captions" class="hidden text-xl opacity-50 hover:opacity-100"><i class="fas fa-closed-captioning"></i></button>
+                    <button id="loop-btn" title="Toggle Loop" class="text-xl opacity-50 hover:opacity-100"><i class="fas fa-infinity"></i></button>
+                    <button id="fs-btn" class="text-xl opacity-50 hover:opacity-100"><i class="fas fa-expand"></i></button>
                 </div>
             </div>
         </div>
@@ -126,62 +120,66 @@
         const fsBtn = document.getElementById('fs-btn');
         const toast = document.getElementById('toast');
 
-        // Logic to parse the || separator
-        const search = window.location.search.substring(1);
-        const parts = search.split('||');
-        const videoUrl = parts[0] ? decodeURIComponent(parts[0]) : '';
-        const captionUrl = parts[1] ? decodeURIComponent(parts[1]) : '';
+        // Clean URL Parsing
+        const fullUrl = window.location.href;
+        const queryStart = fullUrl.indexOf('?');
+        let videoUrl = '';
+        let captionUrl = '';
 
-        // 1. Load Video
-        if (videoUrl) {
-            v.src = videoUrl;
-            v.load();
+        if (queryStart !== -1) {
+            const query = decodeURIComponent(fullUrl.substring(queryStart + 1));
+            const parts = query.split('||');
+            videoUrl = parts[0];
+            captionUrl = parts[1] || '';
         }
 
-        // 2. SRT to VTT Conversion Engine
-        async function setupCaptions(url) {
-            try {
-                const response = await fetch(url);
-                if (!response.ok) throw new Error("Caption fetch failed");
-                let text = await response.text();
+        // 1. SET VIDEO SOURCE IMMEDIATELY
+        if (videoUrl) {
+            // Remove the 'vid?' prefix if it exists in the string
+            v.src = videoUrl.replace(/^vid\?/, '');
+        } else {
+            v.src = 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4';
+        }
 
-                // If it's SRT, convert it to VTT
-                if (url.toLowerCase().endsWith('.srt') || !text.startsWith('WEBVTT')) {
+        // 2. BACKGROUND CAPTION LOADING (Won't block video)
+        async function loadCaptions(url) {
+            if (!url) return;
+            try {
+                const res = await fetch(url);
+                if (!res.ok) return;
+                let text = await res.text();
+
+                // SRT to VTT minimal logic
+                if (url.toLowerCase().includes('.srt') || !text.includes('WEBVTT')) {
                     text = "WEBVTT\n\n" + text
                         .replace(/\r\n/g, '\n')
-                        .replace(/\n(\d+)\n/g, '\n') // Remove SRT indices
-                        .replace(/(\d{2}:\d{2}:\d{2}),(\d{3})/g, '$1.$2'); // Swap comma for dot
+                        .replace(/\n(\d+)\n/g, '\n')
+                        .replace(/(\d{2}:\d{2}:\d{2}),(\d{3})/g, '$1.$2');
                 }
 
                 const blob = new Blob([text], { type: 'text/vtt' });
-                const blobUrl = URL.createObjectURL(blob);
-
                 const track = document.createElement('track');
                 track.kind = 'captions';
                 track.label = 'English';
                 track.srclang = 'en';
-                track.src = blobUrl;
-                track.mode = 'hidden'; 
+                track.src = URL.createObjectURL(blob);
+                track.mode = 'hidden';
                 v.appendChild(track);
                 
                 ccBtn.classList.remove('hidden');
-                showToast();
+                toast.classList.add('show');
+                setTimeout(() => toast.classList.remove('show'), 4000);
             } catch (e) {
-                console.error("Caption error:", e);
+                console.warn("Captions blocked by CORS or Network error. Video will play anyway.");
             }
         }
 
-        if (captionUrl) setupCaptions(captionUrl);
+        loadCaptions(captionUrl);
 
-        function showToast() {
-            toast.classList.add('show');
-            setTimeout(() => toast.classList.remove('show'), 5000);
-        }
-
-        // --- Controls Logic ---
+        // --- Controls ---
         const togglePlay = () => {
             if (v.paused) {
-                v.play();
+                v.play().catch(() => {});
                 playBtn.innerHTML = '<i class="fas fa-pause"></i>';
                 container.classList.add('is-playing');
             } else {
@@ -197,47 +195,24 @@
 
         v.ontimeupdate = () => {
             if (!v.duration) return;
-            const percent = (v.currentTime / v.duration) * 100;
-            seek.value = percent;
-            curTime.innerText = formatTime(v.currentTime);
-            seek.style.background = `linear-gradient(to right, #818cf8 ${percent}%, rgba(255,255,255,0.1) ${percent}%)`;
+            const p = (v.currentTime / v.duration) * 100;
+            seek.value = p;
+            curTime.innerText = format(v.currentTime);
+            seek.style.background = `linear-gradient(to right, #818cf8 ${p}%, rgba(255,255,255,0.1) ${p}%)`;
         };
 
-        v.onloadedmetadata = () => durTime.innerText = formatTime(v.duration);
-
+        v.onloadedmetadata = () => durTime.innerText = format(v.duration);
         seek.oninput = () => v.currentTime = (seek.value / 100) * v.duration;
-
-        volSlider.oninput = (e) => {
-            v.volume = e.target.value;
-            muteBtn.innerHTML = v.volume == 0 ? '<i class="fas fa-volume-mute"></i>' : '<i class="fas fa-volume-up"></i>';
-        };
-
-        loopBtn.onclick = () => {
-            v.loop = !v.loop;
-            loopBtn.classList.toggle('btn-active', v.loop);
-        };
-
+        volSlider.oninput = (e) => { v.volume = e.target.value; muteBtn.innerHTML = v.volume == 0 ? '<i class="fas fa-volume-mute"></i>' : '<i class="fas fa-volume-up"></i>'; };
+        loopBtn.onclick = () => { v.loop = !v.loop; loopBtn.classList.toggle('btn-active', v.loop); };
         ccBtn.onclick = () => {
-            const track = v.textTracks[0];
-            if (track.mode === 'showing') {
-                track.mode = 'hidden';
-                ccBtn.classList.remove('btn-active');
-            } else {
-                track.mode = 'showing';
-                ccBtn.classList.add('btn-active');
-            }
+            const t = v.textTracks[0];
+            t.mode = t.mode === 'showing' ? 'hidden' : 'showing';
+            ccBtn.classList.toggle('btn-active', t.mode === 'showing');
         };
-
-        fsBtn.onclick = () => {
-            if (!document.fullscreenElement) container.requestFullscreen();
-            else document.exitFullscreen();
-        };
-
-        function formatTime(s) {
-            const m = Math.floor(s / 60);
-            const sec = Math.floor(s % 60);
-            return `${m}:${sec < 10 ? '0' : ''}${sec}`;
-        }
+        fsBtn.onclick = () => { if (!document.fullscreenElement) container.requestFullscreen(); else document.exitFullscreen(); };
+        function format(s) { const m = Math.floor(s/60); const sec = Math.floor(s%60); return `${m}:${sec < 10 ? '0' : ''}${sec}`; }
+        window.onkeydown = (e) => { if (e.code === 'Space') { e.preventDefault(); togglePlay(); } };
     </script>
 </body>
 </html>
