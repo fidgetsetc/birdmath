@@ -196,7 +196,7 @@
     }
 
     .search-container { width: 100%; max-width: 600px; margin: 0 auto 25px auto; }
-    #gameSearch {
+    #gameSearch, #videoSearch {
         width: 100%;
         padding: 15px 20px;
         background: var(--card-bg);
@@ -283,14 +283,14 @@
 
     <div id="games" class="tab-content">
       <div class="search-container">
-          <input type="text" id="videoSearch" placeholder="Search library..." oninput="filterVideos()">
+          <input type="text" id="gameSearch" placeholder="Search library..." oninput="filterGames()">
       </div>
       <div class="games-container" id="new-games-container"></div>
     </div>
 
     <div id="videos" class="tab-content">
       <div class="search-container">
-          <input type="text" id="gameSearch" placeholder="Search library..." oninput="filterGames()">
+          <input type="text" id="videoSearch" placeholder="Search library..." oninput="filterVideos()">
       </div>
       <div class="games-container" id="new-videos-container"></div>
     </div>
@@ -384,18 +384,19 @@
         container.appendChild(card);
     });
   }
+
   function filterVideos() {
     const q = document.getElementById('videoSearch').value.toLowerCase();
-    renderGames(NEW_VIDEOS.filter(g => g.name.toLowerCase().includes(q)));
+    renderVideos(NEW_VIDEOS.filter(v => v.name.toLowerCase().includes(q)));
   }
 
-  function renderVideos(list = NEW_VIDEOS {
+  function renderVideos(list = NEW_VIDEOS) {
     const container = document.getElementById('new-videos-container');
     container.innerHTML = '';
-    list.forEach(g => {
+    list.forEach(v => {
         const card = document.createElement('div');
         card.className = 'game-card';
-        card.innerHTML = `<img src="${g.img}"><h3>${g.name}</h3><button class="play-btn" onclick="launch('${g.url}')">Watch</button>`;
+        card.innerHTML = `<img src="${v.img}"><h3>${v.name}</h3><button class="play-btn" onclick="launch('${v.url}')">Watch</button>`;
         container.appendChild(card);
     });
   }
@@ -416,6 +417,7 @@
     document.getElementById(t).classList.add('active');
     document.getElementById('btn-' + t).classList.add('active');
     if(t === 'games') renderGames();
+    if(t === 'videos') renderVideos();
   }
 
   function saveNewTheme() {
@@ -426,7 +428,6 @@
     themeLibrary.push(newTheme);
     localStorage.setItem('epix_library', JSON.stringify(themeLibrary));
     renderThemeLibrary();
-    // Update export box with the new theme
     document.getElementById('theme-base64-input').value = btoa(JSON.stringify(newTheme));
   }
 
@@ -436,7 +437,7 @@
     try {
       const decoded = JSON.parse(atob(code));
       if(decoded.name && decoded.color) {
-        decoded.id = Date.now().toString(); // New ID for local storage
+        decoded.id = Date.now().toString(); 
         themeLibrary.push(decoded);
         localStorage.setItem('epix_library', JSON.stringify(themeLibrary));
         renderThemeLibrary();
@@ -470,7 +471,6 @@
     if(t) {
       const code = btoa(JSON.stringify(t));
       document.getElementById('theme-base64-input').value = code;
-      // Also try copying to clipboard
       const el = document.createElement('textarea');
       el.value = code;
       document.body.appendChild(el);
@@ -486,7 +486,6 @@
         document.documentElement.style.setProperty('--bg-image', t.img ? `url('${t.img}')` : 'none');
         document.documentElement.style.setProperty('--primary-color', t.color);
         document.documentElement.style.setProperty('--button-bg', t.color);
-        // Sync studio inputs
         document.getElementById('studio-theme-name').value = t.name;
         document.getElementById('studio-bg-img').value = t.img;
         document.getElementById('studio-accent').value = t.color;
@@ -525,4 +524,3 @@
 </script>
 </body>
 </html>
-
