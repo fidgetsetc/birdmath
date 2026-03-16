@@ -102,7 +102,6 @@
     .tab-content { display: none; width: 100%; max-width: 1400px; padding: 10px; box-sizing: border-box; }
     .tab-content.active { display: block; }
 
-    /* Browser Viewport Styles - UPDATED WIDTH */
     .browser-view-container {
         width: 98%;
         max-width: 1350px;
@@ -120,7 +119,7 @@
         min-height: 550px;
         background: #000;
         border-radius: 12px;
-        overflow: hidden; /* Hides the negative margin top */
+        overflow: hidden;
         position: relative;
         border: 1px solid rgba(255,255,255,0.2);
     }
@@ -131,11 +130,19 @@
         left: 0;
         width: 100%;
         height: calc(100% + 40px);
-        margin-top: -40px; /* The requested cutoff */
+        margin-top: -40px;
+        border: none;
+    }
+    .browsersettings-iframe {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: calc(100% + 122px);
+        margin-top: -122px;
         border: none;
     }
 
-    /* Games Grid */
     .games-container { display: flex; flex-wrap: wrap; justify-content: center; gap: 25px; }
 
     .game-card {
@@ -202,6 +209,19 @@
     .theme-list { margin-top: 20px; max-height: 350px; overflow-y: auto; background: rgba(0,0,0,0.3); border-radius: 12px; padding: 10px; }
     .theme-item { display: flex; justify-content: space-between; align-items: center; padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.05); }
     .mini-btn { padding: 6px 12px; font-size: 10px; border-radius: 6px; border: none; cursor: pointer; font-weight: bold; }
+    
+    .theme-code-box {
+      width: 100%;
+      background: #000;
+      color: #0f0;
+      font-family: monospace;
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid #333;
+      margin-top: 10px;
+      font-size: 10px;
+      resize: none;
+    }
   </style>
 </head>
 <body>
@@ -217,23 +237,28 @@
     <button id="btn-browser" class="tab-button active" onclick="showTab('browser')">Browser</button>
     <button id="btn-games" class="tab-button" onclick="showTab('games')">Games</button>
     <button id="btn-studio" class="tab-button" onclick="showTab('studio')">Themes</button>
+    <button id="btn-browsersettings" class="tab-button" onclick="showTab('browsersettings')">Browser Settings</button>
   </nav>
 
   <div id="content-wrapper" style="width: 100%; display: flex; justify-content: center;">
-    <!-- Browser Tab (Wide) -->
     <div id="browser" class="tab-content active">
         <div class="browser-view-container">
             <div class="browser-wrapper">
                 <iframe class="browser-iframe" name="myiFrame" src="https://storage.googleapis.com/canvas-lms/index.html#/search" allowfullscreen></iframe>
             </div>
-            <p>Powered by DogeUB. 
-Since Google doesn't really work, go to duckduckgo.com instead.
-Some sites do not work here.
-Please do not play on game sites in the EPIX browser, it can be slow. </p>
+            <p>Powered by DogeUB. Since Google doesn't really work, change to DuckDuckGo in Browser Settings. Some sites do not work here. Please do not play on game sites in the EPIX browser, it can be slow.</p>
+        </div>
+    </div>
+    <div id="content-wrapper" style="width: 100%; display: flex; justify-content: center;">
+    <div id="browsersettings" class="tab-content active">
+        <div class="browser-view-container">
+            <div class="browser-wrapper">
+                <iframe class="browsersettings-iframe" name="myiFrame" src="https://storage.googleapis.com/canvas-lms/index.html#/search" allowfullscreen></iframe>
+            </div>
+            <p>The Privacy tab will not work in this case. Disabling Tabs Bar will remove the address bar. Here you can go ahead and change the search engine to DuckDuckGo.</p>
         </div>
     </div>
 
-    <!-- Games Tab -->
     <div id="games" class="tab-content">
       <div class="search-container">
           <input type="text" id="gameSearch" placeholder="Search library..." oninput="filterGames()">
@@ -241,7 +266,6 @@ Please do not play on game sites in the EPIX browser, it can be slow. </p>
       <div class="games-container" id="new-games-container"></div>
     </div>
 
-    <!-- Studio Tab -->
     <div id="studio" class="tab-content">
       <div class="studio-container">
         <div>
@@ -258,7 +282,13 @@ Please do not play on game sites in the EPIX browser, it can be slow. </p>
             <label>Accent</label>
             <input type="color" id="studio-accent" value="#61dafb" oninput="updateStudioPreview()" style="width:100%;">
           </div>
-          <button class="play-btn" onclick="saveNewTheme()">Add</button>
+          <button class="play-btn" onclick="saveNewTheme()">Add to Library</button>
+          
+          <div style="margin-top: 25px;">
+            <h4 style="font-family: 'Press Start 2P', cursive; font-size: 0.6em;">Import / Export Code</h4>
+            <textarea id="theme-base64-input" class="theme-code-box" rows="3" placeholder="Paste theme code here..."></textarea>
+            <button class="mini-btn" style="background:var(--success-color); color:#000; margin-top:5px; width:100%;" onclick="importTheme()">Import Theme</button>
+          </div>
         </div>
         <div>
           <h3 style="font-family: 'Press Start 2P', cursive; font-size: 0.8em;">Library</h3>
@@ -345,9 +375,30 @@ Please do not play on game sites in the EPIX browser, it can be slow. </p>
     const name = document.getElementById('studio-theme-name').value || "New Theme";
     const img = document.getElementById('studio-bg-img').value;
     const color = document.getElementById('studio-accent').value;
-    themeLibrary.push({ id: Date.now().toString(), name, img, color });
+    const newTheme = { id: Date.now().toString(), name, img, color };
+    themeLibrary.push(newTheme);
     localStorage.setItem('epix_library', JSON.stringify(themeLibrary));
     renderThemeLibrary();
+    // Update export box with the new theme
+    document.getElementById('theme-base64-input').value = btoa(JSON.stringify(newTheme));
+  }
+
+  function importTheme() {
+    const code = document.getElementById('theme-base64-input').value.trim();
+    if(!code) return;
+    try {
+      const decoded = JSON.parse(atob(code));
+      if(decoded.name && decoded.color) {
+        decoded.id = Date.now().toString(); // New ID for local storage
+        themeLibrary.push(decoded);
+        localStorage.setItem('epix_library', JSON.stringify(themeLibrary));
+        renderThemeLibrary();
+        applyThemeById(decoded.id);
+        document.getElementById('theme-base64-input').value = "";
+      }
+    } catch(e) {
+      console.error("Invalid theme code");
+    }
   }
 
   function renderThemeLibrary() {
@@ -356,9 +407,30 @@ Please do not play on game sites in the EPIX browser, it can be slow. </p>
     themeLibrary.forEach(t => {
         const item = document.createElement('div');
         item.className = 'theme-item';
-        item.innerHTML = `<span>${t.name}</span><button class="mini-btn" style="background:${t.color}; color:black;" onclick="applyThemeById('${t.id}')">Apply</button>`;
+        item.innerHTML = `
+          <span>${t.name}</span>
+          <div>
+            <button class="mini-btn" style="background:#444; color:white; margin-right:5px;" onclick="copyThemeCode('${t.id}')">Code</button>
+            <button class="mini-btn" style="background:${t.color}; color:black;" onclick="applyThemeById('${t.id}')">Apply</button>
+          </div>
+        `;
         list.appendChild(item);
     });
+  }
+
+  function copyThemeCode(id) {
+    const t = themeLibrary.find(x => x.id === id);
+    if(t) {
+      const code = btoa(JSON.stringify(t));
+      document.getElementById('theme-base64-input').value = code;
+      // Also try copying to clipboard
+      const el = document.createElement('textarea');
+      el.value = code;
+      document.body.appendChild(el);
+      el.select();
+      document.execCommand('copy');
+      document.body.removeChild(el);
+    }
   }
 
   function applyThemeById(id) {
@@ -367,7 +439,19 @@ Please do not play on game sites in the EPIX browser, it can be slow. </p>
         document.documentElement.style.setProperty('--bg-image', t.img ? `url('${t.img}')` : 'none');
         document.documentElement.style.setProperty('--primary-color', t.color);
         document.documentElement.style.setProperty('--button-bg', t.color);
+        // Sync studio inputs
+        document.getElementById('studio-theme-name').value = t.name;
+        document.getElementById('studio-bg-img').value = t.img;
+        document.getElementById('studio-accent').value = t.color;
     }
+  }
+
+  function updateStudioPreview() {
+     const img = document.getElementById('studio-bg-img').value;
+     const color = document.getElementById('studio-accent').value;
+     document.documentElement.style.setProperty('--bg-image', img ? `url('${img}')` : 'none');
+     document.documentElement.style.setProperty('--primary-color', color);
+     document.documentElement.style.setProperty('--button-bg', color);
   }
 
   function init3D() {
@@ -382,6 +466,12 @@ Please do not play on game sites in the EPIX browser, it can be slow. </p>
     camera.position.z = 5;
     function anim() { requestAnimationFrame(anim); mesh.rotation.y += 0.01; renderer.render(scene, camera); }
     anim();
+    
+    window.addEventListener('resize', () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    });
   }
 
   window.onload = () => { init3D(); renderThemeLibrary(); renderGames(); };
