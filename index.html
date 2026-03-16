@@ -257,6 +257,7 @@
   <nav id="tabs-container">
     <button id="btn-browser" class="tab-button active" onclick="showTab('browser')">Browser</button>
     <button id="btn-games" class="tab-button" onclick="showTab('games')">Games</button>
+    <button id="btn-videos" class="tab-button" onclick="showTab('videos')">Videos</button>
     <button id="btn-studio" class="tab-button" onclick="showTab('studio')">Themes</button>
     <button id="btn-browsersettings" class="tab-button" onclick="showTab('browsersettings')">Browser Settings</button>
   </nav>
@@ -285,6 +286,13 @@
           <input type="text" id="gameSearch" placeholder="Search library..." oninput="filterGames()">
       </div>
       <div class="games-container" id="new-games-container"></div>
+    </div>
+
+    <div id="videos" class="tab-content">
+      <div class="search-container">
+          <input type="text" id="gameSearch" placeholder="Search library..." oninput="filterGames()">
+      </div>
+      <div class="games-container" id="new-videos-container"></div>
     </div>
 
     <div id="studio" class="tab-content">
@@ -354,6 +362,9 @@
     { name: 'Among Us', url: './schoolwork/amongus.html', img: 'https://static1.colliderimages.com/wordpress/wp-content/uploads/2024/03/among-us-social-featured.jpg' },
     { name: 'Flappy Bird', url: './schoolwork/flappybird.html', img: 'https://d112y698adiu2z.cloudfront.net/photos/production/software_photos/002/474/827/datas/original.jpg' },
     { name: 'Fist Punch', url: './swf/fist', img: 'https://static.wikia.nocookie.net/theregularshow/images/c/c1/Fist_Punch.JPG/' }
+  ];
+  const NEW_VIDEOS = [
+    { name: 'Regular Show S1', url: 'https://archive.org/download/regular-show-complete-isos/Regular%20Show/REGULAR%20SHOW%20SEASON%201%20DISC%201.mp4', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT7DA8Mt70HVzxLFcWVoQtJ21xgIqH6PRicZA&s' }
   ];
 
   let themeLibrary = JSON.parse(localStorage.getItem('epix_library')) || [{ id: 'default', name: 'Standard', color: '#61dafb', img: '' }];
