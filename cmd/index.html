@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WASM Linux Terminal</title>
+    <script src="https://copy.sh/v86/build/libv86.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/xterm@5.3.0/lib/xterm.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/xterm@5.3.0/css/xterm.css" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body, html { 
+            background-color: #000000; 
+            margin: 0; 
+            padding: 0; 
+            height: 100vh; 
+            width: 100vw; 
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        #terminal-container { 
+            flex-grow: 1; 
+            width: 100%;
+            background-color: #000000;
+        }
+        /* Custom xterm styling for that deep black look */
+        .xterm .xterm-viewport {
+            background-color: #000000 !important;
+        }
+        .xterm-viewport::-webkit-scrollbar { width: 6px; }
+        .xterm-viewport::-webkit-scrollbar-thumb { background: #222; border-radius: 10px; }
+        
+        .bottom-bar {
+            height: 48px;
+            background-color: #0a0a0a;
+            border-top: 1px solid #1a1a1a;
+            display: flex;
+            align-items: center;
+            padding: 0 1rem;
+            gap: 1rem;
+            z-index: 10;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="terminal-container"></div>
+
+    <footer class="bottom-bar">
+        <div id="status" class="text-[10px] uppercase tracking-widest text-zinc-500 font-mono flex-grow">
+            Booting...
+        </div>
+        <div class="flex gap-2">
+            <button id="save-btn" class="text-[11px] font-mono text-zinc-400 hover:text-emerald-400 transition-colors border border-zinc-800 px-2 py-1 rounded bg-black">
+                SAVE_STATE
+            </button>
+            <button id="restore-btn" class="text-[11px] font-mono text-zinc-400 hover:text-blue-400 transition-colors border border-zinc-800 px-2 py-1 rounded bg-black">
+                RESTORE
+            </button>
+            <button id="net-btn" class="text-[11px] font-mono text-zinc-400 hover:text-purple-400 transition-colors border border-zinc-800 px-2 py-1 rounded bg-black">
+                NET_ON
+            </button>
+        </div>
+    </footer>
+
+    <script>
+        const statusEl = document.getElementById("status");
+        let emulator;
+        
+        const term = new Terminal({
+            cursorBlink: true,
+            theme: { 
+                background: '#000000',
+                foreground: '#00ff41' // Classic matrix green
+            },
+            fontFamily: 'Menlo, Monaco, "Courier New", monospace',
+            fontSize: 14,
+            allowProposedApi: true
+        });
+        
+        term.open(document.getElementById('terminal-container'));
+        
+        // Auto-fit terminal on resize
+        function fitTerminal() {
+            const cols = Math.floor(window.innerWidth / 9);
+            const rows = Math.floor((window.innerHeight - 48) / 17);
+            term.resize(cols, rows);
+        }
+        window.onresize = fitTerminal;
+        fitTerminal();
+
+        term.writeln("\x1b[1;32m[SYS]\x1b[0m INITIALIZING WASM_KERNEL...");
+
+        const config = {
+            wasm_path: "https://copy.sh/v86/build/v86.wasm",
+            bios: { url: "https://copy.sh/v86/bios/seabios.bin" },
+            vga_bios: { url: "https://copy.sh/v86/bios/vgabios.bin" },
+            cdrom: { url: "https://copy.sh/v86/images/linux.iso" },
+            autostart: true,
+            screen_container: null,
+            serial_container_xtermjs: term,
+        };
+
+        window.onload = () => {
+            emulator = new V86Starter(config);
+
+            emulator.add_listener("emulator-ready", () => {
+                statusEl.innerText = "READY // ROOT:NO_PASS";
+            });
+
+            document.getElementById("save-btn").onclick = async () => {
+                try {
+                    const state = await emulator.save_state();
+                    const blob = new Blob([state], { type: "application/octet-stream" });
+                    const reader = new FileReader();
+                    reader.onload = function() {
+                        localStorage.setItem("linux_save_state", reader.result);
+                        statusEl.innerText = "STATE_LOCKED";
+                        setTimeout(() => statusEl.innerText = "READY // ROOT:NO_PASS", 2000);
+                    };
+                    reader.readAsDataURL(blob);
+                } catch (e) {
+                    statusEl.innerText = "SAVE_ERROR";
+                }
+            };
+
+            document.getElementById("restore-btn").onclick = async () => {
+                const saved = localStorage.getItem("linux_save_state");
+                if (!saved) {
+                    statusEl.innerText = "NO_SAVE_FOUND";
+                    return;
+                }
+                
+                statusEl.innerText = "RESTORING...";
+                const res = await fetch(saved);
+                const buffer = await res.arrayBuffer();
+                emulator.restore_state(buffer);
+                statusEl.innerText = "STATE_RESTORED";
+            };
+
+            document.getElementById("net-btn").onclick = () => {
+                statusEl.innerText = "NET_RELAY_ACTIVE";
+                emulator.set_network_relay("wss://relay.widgetry.org/"); 
+                term.writeln("\r\n\x1b[1;35m[NET]\x1b[0m Relay linked. Run 'udhcpc eth0' to get IP.");
+            };
+        };
+    </script>
+</body>
+</html>
+
