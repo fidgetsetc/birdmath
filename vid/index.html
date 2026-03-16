@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aura Player Embed</title>
+    <title>Aura Player Embed | Toast Edition</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -14,7 +14,7 @@
             height: 100%;
             overflow: hidden;
             background-color: #000;
-            font-family: system-ui, -apple-system, sans-serif;
+            font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
         }
 
         .video-container {
@@ -33,17 +33,24 @@
             cursor: pointer;
         }
 
+        video::cue {
+            background: rgba(0, 0, 0, 0.75);
+            color: #fff;
+            font-size: 1.1rem;
+            font-weight: 500;
+        }
+
         .controls-overlay {
             position: absolute;
             bottom: 0;
             left: 0;
             right: 0;
-            padding: 20px;
-            background: linear-gradient(transparent, rgba(0,0,0,0.9));
+            padding: 24px;
+            background: linear-gradient(transparent, rgba(0,0,0,0.95));
             opacity: 0;
             transition: opacity 0.3s ease;
             pointer-events: none;
-            z-index: 20;
+            z-index: 50;
         }
 
         .video-container:hover .controls-overlay {
@@ -59,69 +66,98 @@
             cursor: pointer;
         }
 
-        .loop-active {
-            color: #818cf8;
-            filter: drop-shadow(0 0 8px rgba(129, 140, 248, 0.8));
+        .btn-active {
+            color: #818cf8 !important;
+            opacity: 1 !important;
+            filter: drop-shadow(0 0 10px rgba(129, 140, 248, 0.8));
         }
 
         #big-play-btn {
             position: absolute;
-            z-index: 30;
-            background: rgba(129, 140, 248, 0.3);
-            backdrop-filter: blur(8px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            transition: all 0.2s ease;
+            z-index: 40;
+            background: rgba(129, 140, 248, 0.25);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             display: flex;
         }
-        
-        #big-play-btn:hover {
-            transform: scale(1.1);
-            background: rgba(129, 140, 248, 0.5);
-        }
 
-        /* Hide big button when playing */
         .is-playing #big-play-btn {
             display: none;
+        }
+
+        /* Toast Styling */
+        #toast {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(129, 140, 248, 0.2);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(129, 140, 248, 0.3);
+            color: white;
+            padding: 12px 20px;
+            border-radius: 12px;
+            z-index: 100;
+            transform: translateX(150%);
+            transition: transform 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+        }
+
+        #toast.show {
+            transform: translateX(0);
         }
     </style>
 </head>
 <body>
 
-    <div id="container" class="video-container">
-        <video id="v" playsinline>
+    <div id="container" class="video-container group">
+        <!-- Toast Notification -->
+        <div id="toast">
+            <div class="bg-indigo-500/30 p-2 rounded-lg">
+                <i class="fas fa-closed-captioning"></i>
+            </div>
+            <span>Captions are available for this video.</span>
+        </div>
+
+        <video id="v" playsinline crossorigin="anonymous">
             <source src="" type="video/mp4">
         </video>
 
-        <!-- Big Center Play Button -->
-        <button id="big-play-btn" class="w-20 h-20 rounded-full flex items-center justify-center text-white active:scale-95">
-            <i class="fas fa-play text-3xl ml-1"></i>
+        <button id="big-play-btn" class="w-24 h-24 rounded-full flex items-center justify-center text-white active:scale-95 shadow-2xl">
+            <i class="fas fa-play text-4xl ml-1"></i>
         </button>
 
-        <!-- Controls UI -->
-        <div class="controls-overlay pointer-auto flex flex-col gap-3">
-            <!-- Progress Bar -->
+        <div class="controls-overlay pointer-auto flex flex-col gap-4">
             <input type="range" id="seek" value="0" step="0.1" class="w-full h-1.5 rounded-lg appearance-none bg-white/20">
 
             <div class="flex items-center justify-between text-white px-1">
-                <div class="flex items-center gap-6">
-                    <button id="play-btn" class="text-lg w-6"><i class="fas fa-play"></i></button>
+                <div class="flex items-center gap-4 sm:gap-6">
+                    <button id="play-btn" class="text-xl w-6 hover:scale-110 transition-transform"><i class="fas fa-play"></i></button>
                     
-                    <div class="flex items-center gap-2">
-                        <button id="mute-btn" class="w-6"><i class="fas fa-volume-up"></i></button>
-                        <input type="range" id="vol-slider" min="0" max="1" step="0.05" value="1" class="w-20 h-1">
+                    <div class="flex items-center gap-2 group/vol">
+                        <button id="mute-btn" class="w-6 hover:scale-110 transition-transform"><i class="fas fa-volume-up"></i></button>
+                        <input type="range" id="vol-slider" min="0" max="1" step="0.05" value="1" class="w-16 sm:w-24 h-1">
                     </div>
 
-                    <span class="text-[10px] font-mono tracking-widest opacity-70">
+                    <span class="text-[11px] font-mono tracking-tight opacity-80 select-none">
                         <span id="cur">0:00</span> / <span id="dur">0:00</span>
                     </span>
                 </div>
 
-                <div class="flex items-center gap-6">
-                    <button id="loop-btn" title="Toggle Loop" class="transition-all opacity-60 hover:opacity-100">
-                        <i class="fas fa-infinity text-lg"></i>
+                <div class="flex items-center gap-4 sm:gap-6">
+                    <button id="cc-btn" title="Toggle Captions" class="hidden transition-all opacity-60 hover:opacity-100 hover:scale-110">
+                        <i class="fas fa-closed-captioning text-xl"></i>
                     </button>
-                    <button id="fs-btn" class="opacity-60 hover:opacity-100">
-                        <i class="fas fa-expand"></i>
+                    <button id="loop-btn" title="Toggle Loop" class="transition-all opacity-60 hover:opacity-100 hover:scale-110">
+                        <i class="fas fa-infinity text-xl"></i>
+                    </button>
+                    <button id="fs-btn" class="opacity-60 hover:opacity-100 hover:scale-110 transition-transform">
+                        <i class="fas fa-expand text-xl"></i>
                     </button>
                 </div>
             </div>
@@ -139,18 +175,39 @@
         const curTime = document.getElementById('cur');
         const durTime = document.getElementById('dur');
         const loopBtn = document.getElementById('loop-btn');
+        const ccBtn = document.getElementById('cc-btn');
         const fsBtn = document.getElementById('fs-btn');
+        const toast = document.getElementById('toast');
 
-        // Logic to get the URL directly after the "?"
-        const rawParam = window.location.search.substring(1); 
-        const videoSrc = rawParam.startsWith('v=') ? rawParam.split('v=')[1] : rawParam;
+        // Parse URL: ?video_url&caption_url
+        const query = window.location.search.substring(1);
+        const parts = query.split('&');
+        
+        const videoSrc = parts[0] ? decodeURIComponent(parts[0]) : '';
+        const captionSrc = parts[1] ? decodeURIComponent(parts[1]) : '';
 
-        // Fallback
-        v.src = decodeURIComponent(videoSrc) || 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4';
+        v.src = videoSrc || 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4';
 
-        const toggle = () => {
+        if (captionSrc) {
+            const track = document.createElement('track');
+            track.kind = 'captions';
+            track.label = 'English';
+            track.srclang = 'en';
+            track.src = captionSrc;
+            track.default = false; 
+            v.appendChild(track);
+            ccBtn.classList.remove('hidden');
+
+            // Show Toast
+            setTimeout(() => {
+                toast.classList.add('show');
+                setTimeout(() => toast.classList.remove('show'), 4000);
+            }, 800);
+        }
+
+        const togglePlay = () => {
             if (v.paused) {
-                v.play().catch(err => console.log("Autoplay/Play blocked:", err));
+                v.play().catch(err => console.error("Playback blocked:", err));
                 playBtn.innerHTML = '<i class="fas fa-pause"></i>';
                 container.classList.add('is-playing');
             } else {
@@ -161,16 +218,15 @@
         };
 
         const format = (s) => {
-            if (isNaN(s) || !isFinite(s)) return "0:00";
+            if (!s || isNaN(s) || !isFinite(s)) return "0:00";
             const m = Math.floor(s / 60);
             s = Math.floor(s % 60);
             return `${m}:${s < 10 ? '0' : ''}${s}`;
         };
 
-        // Events
-        bigPlay.onclick = toggle;
-        playBtn.onclick = toggle;
-        v.onclick = toggle;
+        bigPlay.onclick = togglePlay;
+        playBtn.onclick = togglePlay;
+        v.onclick = togglePlay;
 
         v.ontimeupdate = () => {
             if (!v.duration) return;
@@ -178,25 +234,22 @@
             curTime.innerText = format(v.currentTime);
         };
 
-        v.onloadedmetadata = () => {
-            durTime.innerText = format(v.duration);
-        };
+        v.onloadedmetadata = () => durTime.innerText = format(v.duration);
 
         seek.oninput = () => {
             if (!v.duration) return;
             v.currentTime = (seek.value / 100) * v.duration;
         };
 
-        // Volume Logic
         volSlider.oninput = (e) => {
             const val = parseFloat(e.target.value);
             v.volume = val;
-            v.muted = val === 0;
+            v.muted = (val === 0);
             updateVolIcon(val);
         };
 
         function updateVolIcon(val) {
-            if (val === 0) muteBtn.innerHTML = '<i class="fas fa-volume-mute"></i>';
+            if (val === 0 || v.muted) muteBtn.innerHTML = '<i class="fas fa-volume-mute"></i>';
             else if (val < 0.5) muteBtn.innerHTML = '<i class="fas fa-volume-down"></i>';
             else muteBtn.innerHTML = '<i class="fas fa-volume-up"></i>';
         }
@@ -212,22 +265,29 @@
             }
         };
 
-        // Loop Toggle
         loopBtn.onclick = () => {
             v.loop = !v.loop;
-            loopBtn.classList.toggle('loop-active', v.loop);
-            loopBtn.classList.toggle('opacity-60', !v.loop);
+            loopBtn.classList.toggle('btn-active', v.loop);
         };
 
-        // Fullscreen Fix for Permission Policy
+        ccBtn.onclick = () => {
+            const tracks = v.textTracks;
+            if (tracks.length > 0) {
+                if (tracks[0].mode === 'showing') {
+                    tracks[0].mode = 'hidden';
+                    ccBtn.classList.remove('btn-active');
+                } else {
+                    tracks[0].mode = 'showing';
+                    ccBtn.classList.add('btn-active');
+                }
+            }
+        };
+
         fsBtn.onclick = () => {
             try {
                 if (!document.fullscreenElement && !document.webkitFullscreenElement) {
                     if (container.requestFullscreen) {
-                        container.requestFullscreen().catch(e => {
-                            // Fallback to video element if container is disallowed
-                            v.requestFullscreen().catch(err => console.error("FS Error:", err));
-                        });
+                        container.requestFullscreen().catch(() => v.requestFullscreen());
                     } else if (container.webkitRequestFullscreen) {
                         container.webkitRequestFullscreen();
                     }
@@ -236,16 +296,14 @@
                     else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
                 }
             } catch (err) {
-                console.error("Fullscreen policy restriction:", err);
+                console.warn("FS error:", err);
             }
         };
 
-        // Keyboard support
         window.onkeydown = (e) => { 
-            if(e.code === 'Space') { 
-                e.preventDefault(); 
-                toggle(); 
-            } 
+            if(e.code === 'Space') { e.preventDefault(); togglePlay(); }
+            if(e.code === 'KeyF') fsBtn.click();
+            if(e.code === 'KeyM') muteBtn.click();
         };
     </script>
 </body>
