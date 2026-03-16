@@ -3,168 +3,117 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aura Player Embed | Fixed Edition</title>
+    <title>Aura Player | The Ultimate Regular Show & Angry Birds Setup</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap');
+        
         body, html {
-            margin: 0;
-            padding: 0;
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-            background-color: #000;
-            font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+            margin: 0; padding: 0; width: 100%; height: 100%;
+            overflow: hidden; background-color: #000;
+            font-family: 'Plus Jakarta Sans', sans-serif;
         }
 
         .video-container {
-            position: relative;
-            width: 100%;
-            height: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            position: relative; width: 100%; height: 100%;
+            display: flex; align-items: center; justify-content: center;
+            background: radial-gradient(circle at center, #111 0%, #000 100%);
         }
 
-        video {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-            cursor: pointer;
-        }
+        video { width: 100%; height: 100%; max-height: 100vh; object-fit: contain; z-index: 10; }
 
         video::cue {
-            background: rgba(0, 0, 0, 0.75);
+            background: rgba(0, 0, 0, 0.8);
             color: #fff;
             font-size: 1.1rem;
-            font-weight: 500;
+            text-shadow: 0 0 5px rgba(0,0,0,0.5);
         }
 
         .controls-overlay {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            padding: 24px;
-            background: linear-gradient(transparent, rgba(0,0,0,0.95));
-            opacity: 0;
-            transition: opacity 0.3s ease;
-            pointer-events: none;
-            z-index: 50;
+            position: absolute; bottom: 0; left: 0; right: 0;
+            padding: 30px; background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, transparent 100%);
+            opacity: 0; transition: all 0.4s ease; transform: translateY(10px);
+            pointer-events: none; z-index: 100;
         }
 
-        .video-container:hover .controls-overlay {
-            opacity: 1;
-        }
+        .video-container:hover .controls-overlay { opacity: 1; transform: translateY(0); }
+        .pointer-auto { pointer-events: auto; }
 
-        .pointer-auto {
-            pointer-events: auto;
-        }
-
-        input[type=range] {
-            accent-color: #818cf8;
-            cursor: pointer;
-        }
+        input[type=range] { accent-color: #818cf8; cursor: pointer; }
 
         .btn-active {
             color: #818cf8 !important;
+            filter: drop-shadow(0 0 8px rgba(129, 140, 248, 0.8));
             opacity: 1 !important;
-            filter: drop-shadow(0 0 10px rgba(129, 140, 248, 0.8));
         }
 
         #big-play-btn {
-            position: absolute;
-            z-index: 40;
-            background: rgba(129, 140, 248, 0.25);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            display: flex;
-        }
-
-        .is-playing #big-play-btn {
-            display: none;
-        }
-
-        #toast {
-            position: absolute;
-            top: 20px;
-            right: 20px;
+            position: absolute; z-index: 50;
             background: rgba(129, 140, 248, 0.2);
             backdrop-filter: blur(12px);
-            border: 1px solid rgba(129, 140, 248, 0.3);
-            color: white;
-            padding: 12px 20px;
-            border-radius: 12px;
-            z-index: 100;
-            transform: translateX(150%);
-            transition: transform 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            font-size: 0.875rem;
-            font-weight: 600;
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
-        #toast.show {
-            transform: translateX(0);
+        .is-playing #big-play-btn { opacity: 0; pointer-events: none; transform: scale(0.8); }
+
+        #toast {
+            position: absolute; top: 24px; right: 24px;
+            background: rgba(20, 20, 20, 0.8); backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.1); color: white;
+            padding: 14px 22px; border-radius: 16px; z-index: 200;
+            transform: translateX(180%); transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+            display: flex; align-items: center; gap: 14px;
         }
+
+        #toast.show { transform: translateX(0); }
     </style>
 </head>
 <body>
 
-    <div id="container" class="video-container group">
+    <div id="container" class="video-container">
         <div id="toast">
-            <div class="bg-indigo-500/30 p-2 rounded-lg">
-                <i class="fas fa-closed-captioning"></i>
+            <div class="bg-indigo-500/20 p-2.5 rounded-xl text-indigo-400">
+                <i class="fas fa-closed-captioning text-lg"></i>
             </div>
-            <span>Captions are available for this video.</span>
+            <div>
+                <p class="font-bold text-sm">Captions Ready</p>
+                <p class="text-xs opacity-60">Auto-converted SRT to VTT</p>
+            </div>
         </div>
 
-        <video id="v" playsinline crossorigin="anonymous">
-            <!-- Source will be set via JS -->
-        </video>
+        <video id="v" playsinline crossorigin="anonymous"></video>
 
-        <button id="big-play-btn" class="w-24 h-24 rounded-full flex items-center justify-center text-white active:scale-95 shadow-2xl">
+        <button id="big-play-btn" class="w-24 h-24 rounded-full flex items-center justify-center text-white shadow-2xl">
             <i class="fas fa-play text-4xl ml-1"></i>
         </button>
 
-        <div class="controls-overlay pointer-auto flex flex-col gap-4">
-            <input type="range" id="seek" value="0" step="0.1" class="w-full h-1.5 rounded-lg appearance-none bg-white/20">
+        <div class="controls-overlay pointer-auto flex flex-col gap-5">
+            <input type="range" id="seek" value="0" step="0.1" class="w-full h-1.5 rounded-full appearance-none bg-white/10">
 
-            <div class="flex items-center justify-between text-white px-1">
-                <div class="flex items-center gap-4 sm:gap-6">
-                    <button id="play-btn" class="text-xl w-6 hover:scale-110 transition-transform"><i class="fas fa-play"></i></button>
-                    
-                    <div class="flex items-center gap-2 group/vol">
-                        <button id="mute-btn" class="w-6 hover:scale-110 transition-transform"><i class="fas fa-volume-up"></i></button>
-                        <input type="range" id="vol-slider" min="0" max="1" step="0.05" value="1" class="w-16 sm:w-24 h-1">
+            <div class="flex items-center justify-between text-white">
+                <div class="flex items-center gap-7">
+                    <button id="play-btn" class="text-2xl hover:text-indigo-400 transition-colors"><i class="fas fa-play"></i></button>
+                    <div class="flex items-center gap-3">
+                        <button id="mute-btn" class="text-xl opacity-80"><i class="fas fa-volume-up"></i></button>
+                        <input type="range" id="vol-slider" min="0" max="1" step="0.05" value="1" class="w-24 h-1">
                     </div>
-
-                    <span class="text-[11px] font-mono tracking-tight opacity-80 select-none">
-                        <span id="cur">0:00</span> / <span id="dur">0:00</span>
-                    </span>
+                    <span class="text-xs font-mono opacity-50"><span id="cur">0:00</span> / <span id="dur">0:00</span></span>
                 </div>
 
-                <div class="flex items-center gap-4 sm:gap-6">
-                    <button id="cc-btn" title="Toggle Captions" class="hidden transition-all opacity-60 hover:opacity-100 hover:scale-110">
-                        <i class="fas fa-closed-captioning text-xl"></i>
-                    </button>
-                    <button id="loop-btn" title="Toggle Loop" class="transition-all opacity-60 hover:opacity-100 hover:scale-110">
-                        <i class="fas fa-infinity text-xl"></i>
-                    </button>
-                    <button id="fs-btn" class="opacity-60 hover:opacity-100 hover:scale-110 transition-transform">
-                        <i class="fas fa-expand text-xl"></i>
-                    </button>
+                <div class="flex items-center gap-7">
+                    <button id="cc-btn" title="Toggle Captions" class="hidden text-2xl opacity-40 hover:opacity-100"><i class="fas fa-closed-captioning"></i></button>
+                    <button id="loop-btn" title="Toggle Loop" class="text-2xl opacity-40 hover:opacity-100"><i class="fas fa-infinity"></i></button>
+                    <button id="fs-btn" class="text-2xl opacity-40 hover:opacity-100"><i class="fas fa-expand"></i></button>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        const container = document.getElementById('container');
         const v = document.getElementById('v');
+        const container = document.getElementById('container');
         const playBtn = document.getElementById('play-btn');
         const bigPlay = document.getElementById('big-play-btn');
         const seek = document.getElementById('seek');
@@ -177,45 +126,62 @@
         const fsBtn = document.getElementById('fs-btn');
         const toast = document.getElementById('toast');
 
-        // Parse URL
-        const fullQuery = window.location.search.substring(1);
-        
-        // We split by "||" but ensure we handle potential URL encoding
-        const parts = fullQuery.split('||');
-        const videoSrc = parts[0] ? decodeURIComponent(parts[0]) : '';
-        const captionSrc = parts[1] ? decodeURIComponent(parts[1]) : '';
+        // Logic to parse the || separator
+        const search = window.location.search.substring(1);
+        const parts = search.split('||');
+        const videoUrl = parts[0] ? decodeURIComponent(parts[0]) : '';
+        const captionUrl = parts[1] ? decodeURIComponent(parts[1]) : '';
 
-        // Only set src if we actually have one
-        if (videoSrc) {
-            v.src = videoSrc;
-            v.load(); // CRITICAL: Force the browser to refresh the source
-        } else {
-            // Default Demo Video
-            v.src = 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4';
+        // 1. Load Video
+        if (videoUrl) {
+            v.src = videoUrl;
+            v.load();
         }
 
-        if (captionSrc) {
-            const track = document.createElement('track');
-            track.kind = 'captions';
-            track.label = 'English';
-            track.srclang = 'en';
-            track.src = captionSrc;
-            track.default = false; 
-            v.appendChild(track);
-            ccBtn.classList.remove('hidden');
+        // 2. SRT to VTT Conversion Engine
+        async function setupCaptions(url) {
+            try {
+                const response = await fetch(url);
+                if (!response.ok) throw new Error("Caption fetch failed");
+                let text = await response.text();
 
-            setTimeout(() => {
-                toast.classList.add('show');
-                setTimeout(() => toast.classList.remove('show'), 4000);
-            }, 800);
+                // If it's SRT, convert it to VTT
+                if (url.toLowerCase().endsWith('.srt') || !text.startsWith('WEBVTT')) {
+                    text = "WEBVTT\n\n" + text
+                        .replace(/\r\n/g, '\n')
+                        .replace(/\n(\d+)\n/g, '\n') // Remove SRT indices
+                        .replace(/(\d{2}:\d{2}:\d{2}),(\d{3})/g, '$1.$2'); // Swap comma for dot
+                }
+
+                const blob = new Blob([text], { type: 'text/vtt' });
+                const blobUrl = URL.createObjectURL(blob);
+
+                const track = document.createElement('track');
+                track.kind = 'captions';
+                track.label = 'English';
+                track.srclang = 'en';
+                track.src = blobUrl;
+                track.mode = 'hidden'; 
+                v.appendChild(track);
+                
+                ccBtn.classList.remove('hidden');
+                showToast();
+            } catch (e) {
+                console.error("Caption error:", e);
+            }
         }
 
+        if (captionUrl) setupCaptions(captionUrl);
+
+        function showToast() {
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 5000);
+        }
+
+        // --- Controls Logic ---
         const togglePlay = () => {
             if (v.paused) {
-                v.play().catch(err => {
-                    console.error("Playback failed:", err);
-                    // If it failed because of CORS or bad source, show it in console
-                });
+                v.play();
                 playBtn.innerHTML = '<i class="fas fa-pause"></i>';
                 container.classList.add('is-playing');
             } else {
@@ -225,54 +191,25 @@
             }
         };
 
-        const format = (s) => {
-            if (!s || isNaN(s) || !isFinite(s)) return "0:00";
-            const m = Math.floor(s / 60);
-            s = Math.floor(s % 60);
-            return `${m}:${s < 10 ? '0' : ''}${s}`;
-        };
-
         bigPlay.onclick = togglePlay;
         playBtn.onclick = togglePlay;
         v.onclick = togglePlay;
 
         v.ontimeupdate = () => {
             if (!v.duration) return;
-            seek.value = (v.currentTime / v.duration) * 100;
-            curTime.innerText = format(v.currentTime);
+            const percent = (v.currentTime / v.duration) * 100;
+            seek.value = percent;
+            curTime.innerText = formatTime(v.currentTime);
+            seek.style.background = `linear-gradient(to right, #818cf8 ${percent}%, rgba(255,255,255,0.1) ${percent}%)`;
         };
 
-        v.onloadedmetadata = () => {
-            durTime.innerText = format(v.duration);
-        };
+        v.onloadedmetadata = () => durTime.innerText = formatTime(v.duration);
 
-        seek.oninput = () => {
-            if (!v.duration) return;
-            v.currentTime = (seek.value / 100) * v.duration;
-        };
+        seek.oninput = () => v.currentTime = (seek.value / 100) * v.duration;
 
         volSlider.oninput = (e) => {
-            const val = parseFloat(e.target.value);
-            v.volume = val;
-            v.muted = (val === 0);
-            updateVolIcon(val);
-        };
-
-        function updateVolIcon(val) {
-            if (val === 0 || v.muted) muteBtn.innerHTML = '<i class="fas fa-volume-mute"></i>';
-            else if (val < 0.5) muteBtn.innerHTML = '<i class="fas fa-volume-down"></i>';
-            else muteBtn.innerHTML = '<i class="fas fa-volume-up"></i>';
-        }
-
-        muteBtn.onclick = () => {
-            v.muted = !v.muted;
-            if (v.muted) {
-                muteBtn.innerHTML = '<i class="fas fa-volume-mute"></i>';
-                volSlider.value = 0;
-            } else {
-                updateVolIcon(v.volume);
-                volSlider.value = v.volume;
-            }
+            v.volume = e.target.value;
+            muteBtn.innerHTML = v.volume == 0 ? '<i class="fas fa-volume-mute"></i>' : '<i class="fas fa-volume-up"></i>';
         };
 
         loopBtn.onclick = () => {
@@ -281,40 +218,26 @@
         };
 
         ccBtn.onclick = () => {
-            const tracks = v.textTracks;
-            if (tracks.length > 0) {
-                if (tracks[0].mode === 'showing') {
-                    tracks[0].mode = 'hidden';
-                    ccBtn.classList.remove('btn-active');
-                } else {
-                    tracks[0].mode = 'showing';
-                    ccBtn.classList.add('btn-active');
-                }
+            const track = v.textTracks[0];
+            if (track.mode === 'showing') {
+                track.mode = 'hidden';
+                ccBtn.classList.remove('btn-active');
+            } else {
+                track.mode = 'showing';
+                ccBtn.classList.add('btn-active');
             }
         };
 
         fsBtn.onclick = () => {
-            try {
-                if (!document.fullscreenElement && !document.webkitFullscreenElement) {
-                    if (container.requestFullscreen) {
-                        container.requestFullscreen().catch(() => v.requestFullscreen());
-                    } else if (container.webkitRequestFullscreen) {
-                        container.webkitRequestFullscreen();
-                    }
-                } else {
-                    if (document.exitFullscreen) document.exitFullscreen();
-                    else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
-                }
-            } catch (err) {
-                console.warn("FS failed:", err);
-            }
+            if (!document.fullscreenElement) container.requestFullscreen();
+            else document.exitFullscreen();
         };
 
-        window.onkeydown = (e) => { 
-            if(e.code === 'Space') { e.preventDefault(); togglePlay(); }
-            if(e.code === 'KeyF') fsBtn.click();
-            if(e.code === 'KeyM') muteBtn.click();
-        };
+        function formatTime(s) {
+            const m = Math.floor(s / 60);
+            const sec = Math.floor(s % 60);
+            return `${m}:${sec < 10 ? '0' : ''}${sec}`;
+        }
     </script>
 </body>
 </html>
