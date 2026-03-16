@@ -194,7 +194,7 @@
       margin-top: auto;
       text-transform: uppercase;
     }
-.cmd-iframe {
+    .cmd-iframe {
         position: absolute;
         top: 0;
         left: 0;
@@ -251,6 +251,13 @@
       font-size: 10px;
       resize: none;
     }
+
+    #content-wrapper {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
   </style>
 </head>
 <body>
@@ -271,7 +278,7 @@
     <button id="btn-browsersettings" class="tab-button" onclick="showTab('browsersettings')">Browser Settings</button>
   </nav>
 
-  <div id="content-wrapper" style="width: 100%; display: flex; justify-content: center;">
+  <div id="content-wrapper">
     <div id="browser" class="tab-content active">
         <div class="browser-view-container">
             <div class="browser-wrapper">
@@ -290,7 +297,6 @@
         </div>
     </div>
     
-    <div id="content-wrapper" style="width: 100%; display: flex; justify-content: center;">
     <div id="cmd" class="tab-content">
         <div class="browser-view-container">
             <div class="browser-wrapper">
@@ -350,7 +356,8 @@
     <div class="iframe-wrapper" id="frameWrapper">
       <iframe id="gameFrame" src="" allowfullscreen="true"></iframe>
     </div>
-    <div style="margin-top:20px;">
+    <div style="margin-top:20px; display: flex; gap: 15px;">
+      <button class="mini-btn" style="background:var(--primary-color); color:black; padding:10px 20px;" onclick="toggleFullScreen()">Full Screen</button>
       <button class="mini-btn" style="background:var(--danger-color); color:white; padding:10px 20px;" onclick="closeGame()">Close</button>
     </div>
   </div>
@@ -430,6 +437,20 @@
   function closeGame() {
     document.getElementById('gameFrame').src = '';
     document.getElementById('gamePlayer').classList.remove('active');
+    if (document.fullscreenElement) {
+        document.exitFullscreen();
+    }
+  }
+
+  function toggleFullScreen() {
+    const iframe = document.getElementById('gameFrame');
+    if (iframe.requestFullscreen) {
+        iframe.requestFullscreen();
+    } else if (iframe.webkitRequestFullscreen) { /* Safari */
+        iframe.webkitRequestFullscreen();
+    } else if (iframe.msRequestFullscreen) { /* IE11 */
+        iframe.msRequestFullscreen();
+    }
   }
 
   function showTab(t) {
@@ -545,3 +566,4 @@
 </script>
 </body>
 </html>
+
