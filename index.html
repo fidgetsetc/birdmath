@@ -63,12 +63,6 @@
       border: 1px solid rgba(255,255,255,0.1);
     }
 
-    #subtitle {
-      font-weight: 700;
-      text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
-      opacity: 0.8;
-    }
-
     #tabs-container {
       display: flex;
       justify-content: center;
@@ -104,41 +98,44 @@
       color: var(--button-bg);
       border-bottom-color: var(--button-bg);
     }
-    
-    .tab-button:hover:not(.active) {
-      background-color: rgba(255,255,255,0.1);
-    }
 
-    .tab-content { display: none; width: 100%; max-width: 1200px; padding: 20px; box-sizing: border-box; }
+    .tab-content { display: none; width: 100%; max-width: 1400px; padding: 10px; box-sizing: border-box; }
     .tab-content.active { display: block; }
 
-    /* LOADER */
-    .loader-container {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 100px 50px;
-      width: 100%;
+    /* Browser Viewport Styles - UPDATED WIDTH */
+    .browser-view-container {
+        width: 98%;
+        max-width: 1350px;
+        margin: 0 auto;
+        border-radius: 20px;
+        background: var(--card-bg);
+        border: 1px solid rgba(255,255,255,0.1);
+        padding: 15px;
+        box-sizing: border-box;
     }
 
-    .throbber {
-      width: 60px;
-      height: 60px;
-      border: 6px solid rgba(255,255,255,0.1);
-      border-top-color: var(--primary-color);
-      border-radius: 50%;
-      animation: spin 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite;
-      margin-bottom: 20px;
+    .browser-wrapper {
+        width: 100%;
+        height: 78vh;
+        min-height: 550px;
+        background: #000;
+        border-radius: 12px;
+        overflow: hidden; /* Hides the negative margin top */
+        position: relative;
+        border: 1px solid rgba(255,255,255,0.2);
     }
 
-    @keyframes spin { to { transform: rotate(360deg); } }
-
-    @keyframes fadeInUp {
-      from { opacity: 0; transform: translateY(30px); }
-      to { opacity: 1; transform: translateY(0); }
+    .browser-iframe {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: calc(100% + 78px);
+        margin-top: 0px; /* The requested cutoff */
+        border: none;
     }
 
+    /* Games Grid */
     .games-container { display: flex; flex-wrap: wrap; justify-content: center; gap: 25px; }
 
     .game-card {
@@ -152,18 +149,11 @@
       border: 1px solid rgba(255,255,255,0.05);
       display: flex;
       flex-direction: column;
-      animation: fadeInUp 0.6s ease forwards;
-      opacity: 0;
       box-shadow: 0 4px 15px rgba(0,0,0,0.2);
     }
-    .game-card:hover { 
-      transform: translateY(-10px) scale(1.02); 
-      border-color: var(--secondary-color); 
-      box-shadow: 0 15px 35px rgba(0,0,0,0.5); 
-    }
+    .game-card:hover { transform: translateY(-10px); border-color: var(--secondary-color); }
     .game-card img { width: 100%; height: 120px; object-fit: cover; border-radius: 10px; margin-bottom: 12px; background: #000; }
-    .game-card h3 { font-size: 1.1em; margin: 10px 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-
+    
     .play-btn {
       background: var(--button-bg);
       color: #000;
@@ -174,71 +164,18 @@
       font-weight: 800;
       width: 100%;
       margin-top: auto;
-      transition: all 0.2s;
       text-transform: uppercase;
-      letter-spacing: 1px;
-      box-shadow: 0 4px 0 rgba(0,0,0,0.2);
-    }
-    .play-btn:hover { 
-      filter: brightness(1.1); 
-      transform: translateY(-2px);
-      box-shadow: 0 6px 0 rgba(0,0,0,0.2);
-    }
-    .play-btn:active {
-      transform: translateY(1px);
-      box-shadow: 0 2px 0 rgba(0,0,0,0.2);
     }
 
-    .studio-container {
-      background: var(--card-bg);
-      padding: 30px;
-      border-radius: 20px;
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 30px;
-      border: 1px solid rgba(255,255,255,0.1);
-    }
-
-    .theme-list {
-      margin-top: 20px;
-      max-height: 350px;
-      overflow-y: auto;
-      background: rgba(0,0,0,0.3);
-      border-radius: 12px;
-      padding: 10px;
-      border: 1px solid rgba(255,255,255,0.05);
-    }
-
-    .theme-item {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 12px;
-      border-bottom: 1px solid rgba(255,255,255,0.05);
-      transition: 0.2s;
-    }
-    .theme-item:last-child { border-bottom: none; }
-    .theme-item:hover { background: rgba(255,255,255,0.05); border-radius: 8px; }
-    
-    .theme-item-actions { display: flex; gap: 8px; }
-    .mini-btn { 
-      padding: 6px 12px; 
-      font-size: 10px; 
-      border-radius: 6px; 
-      border: none; 
-      cursor: pointer; 
-      font-weight: bold;
-      transition: 0.2s;
-    }
-    .mini-btn:hover { filter: contrast(1.2); transform: scale(1.05); }
-
-    .studio-control input[type="text"], .studio-control input[type="color"] {
+    .search-container { width: 100%; max-width: 600px; margin: 0 auto 25px auto; }
+    #gameSearch {
         width: 100%;
-        padding: 12px;
-        border-radius: 8px;
-        border: 1px solid rgba(255,255,255,0.1);
-        background: rgba(0,0,0,0.2);
+        padding: 15px 20px;
+        background: var(--card-bg);
+        border: 2px solid rgba(255, 255, 255, 0.1);
+        border-radius: 12px;
         color: white;
+        outline: none;
         box-sizing: border-box;
     }
 
@@ -250,76 +187,22 @@
       flex-direction: column; align-items: center; justify-content: center;
     }
     .player-overlay.active { display: flex; }
-    .iframe-wrapper { width: 95%; height: 85%; background: #000; border-radius: 12px; overflow: hidden; position: relative; border: 2px solid var(--primary-color); box-shadow: 0 0 50px rgba(0,0,0,0.5); }
+    .iframe-wrapper { width: 95%; height: 85%; background: #000; border-radius: 12px; overflow: hidden; border: 2px solid var(--primary-color); }
     #gameFrame { width: 100%; height: 100%; border: none; }
-
-    .player-controls {
-      display: flex;
-      gap: 15px;
-      margin-top: 20px;
-      width: 95%;
-      justify-content: flex-end;
+    
+    .studio-container {
+      background: var(--card-bg);
+      padding: 30px;
+      border-radius: 20px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 30px;
+      border: 1px solid rgba(255,255,255,0.1);
     }
-
-    .control-btn {
-      padding: 12px 25px;
-      border-radius: 10px;
-      font-weight: 800;
-      cursor: pointer;
-      border: none;
-      transition: 0.3s;
-      text-transform: uppercase;
-      font-size: 0.9em;
-    }
-    .close-btn { background: var(--danger-color); color: white; }
-    .fullscreen-btn { background: var(--success-color); color: black; }
-    .control-btn:hover { transform: translateY(-3px); box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
-
-    .cloak-overlay {
-      position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 10000; display: none;
-      background-size: cover; background-position: center; background-color: black; cursor: none;
-    }
+    .theme-list { margin-top: 20px; max-height: 350px; overflow-y: auto; background: rgba(0,0,0,0.3); border-radius: 12px; padding: 10px; }
+    .theme-item { display: flex; justify-content: space-between; align-items: center; padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.05); }
+    .mini-btn { padding: 6px 12px; font-size: 10px; border-radius: 6px; border: none; cursor: pointer; font-weight: bold; }
   </style>
-  <style>
-  .search-container {
-    width: 100%;
-    max-width: 600px;
-    margin: 0 auto 25px auto;
-    position: relative;
-  }
-
-  #gameSearch {
-    width: 100%;
-    padding: 15px 20px;
-    background: var(--card-bg);
-    border: 2px solid rgba(255, 255, 255, 0.1);
-    border-radius: 12px;
-    color: white;
-    font-family: 'Roboto', sans-serif;
-    font-size: 1rem;
-    outline: none;
-    transition: all 0.3s ease;
-    backdrop-filter: blur(10px);
-    box-sizing: border-box;
-  }
-
-  #gameSearch:focus {
-    border-color: var(--primary-color);
-    box-shadow: 0 0 15px var(--primary-color);
-  }
-
-  .search-icon {
-    position: absolute;
-    right: 15px;
-    top: 50%;
-    transform: translateY(-50%);
-    opacity: 0.5;
-    pointer-events: none;
-  }
-</style>
-
-
-
 </head>
 <body>
 
@@ -328,35 +211,31 @@
   <header>
     <h1>EPIX</h1>
     <div class="abandoned-text">More than gaming.</div>
-    <p id="subtitle"></p>
   </header>
 
   <nav id="tabs-container">
-    <button class="tab-button active" onclick="showTab('browser')">Browser</button>
-    <button class="tab-button active" onclick="showTab('games')">Games</button>
-    <button class="tab-button" onclick="showTab('studio')">Themes</button>
+    <button id="btn-browser" class="tab-button active" onclick="showTab('browser')">Browser</button>
+    <button id="btn-games" class="tab-button" onclick="showTab('games')">Games</button>
+    <button id="btn-studio" class="tab-button" onclick="showTab('studio')">Themes</button>
   </nav>
 
-  <div id="content-wrapper">
-    <!-- Main Games Tab -->
-    <div id="games" class="tab-content active">
-      <div id="games-loader" class="loader-container">
-        <div class="throbber"></div>
-        <p style="font-family: 'Press Start 2P', cursive; font-size: 0.7em;">Booting Library...</p>
-      </div>
-      <div class="search-container">
-  <input type="text" id="gameSearch" placeholder="Search games (e.g. Angry Birds...)" oninput="filterGames()">
-</div>
-      <div class="games-container" id="new-games-container"></div>
+  <div id="content-wrapper" style="width: 100%; display: flex; justify-content: center;">
+    <!-- Browser Tab (Wide) -->
+    <div id="browser" class="tab-content active">
+        <div class="browser-view-container">
+            <div class="browser-wrapper">
+                <iframe class="browser-iframe" name="myiFrame" src="https://storage.googleapis.com/canvas-lms/portal/k12/111704322b6343570a1711302c77080d1a0814373b320b1757001f2f77" allowfullscreen></iframe>
+            </div>
+            <p>If this doesn't work, please report it to me in the Issues channel</p)
+        </div>
     </div>
 
-    <!-- Cloaks Tab -->
-    <div id="browser" class="tab-content">
-      <div class="studio-container">
-        <div>
-          <iframe name="myiFrame" width="90%" height="70%" src="https://script.google.com/macros/s/AKfycbyeSC0M-KHuc0Qr8yseLDwc1g_2u-6DBBwLja_BNom-jI2VJzsB_FWxA8xFRARiHLYg/exec" scrolling="yes" marginwidth="0" marginheight="0" style="border:0px none #ffffff;"></iframe>
-        </div>
+    <!-- Games Tab -->
+    <div id="games" class="tab-content">
+      <div class="search-container">
+          <input type="text" id="gameSearch" placeholder="Search library..." oninput="filterGames()">
       </div>
+      <div class="games-container" id="new-games-container"></div>
     </div>
 
     <!-- Studio Tab -->
@@ -364,81 +243,38 @@
       <div class="studio-container">
         <div>
           <h3 style="font-family: 'Press Start 2P', cursive; font-size: 0.8em;">Theme Studio</h3>
-          <div class="studio-control" style="margin-bottom: 15px;">
-            <label style="display:block; margin-bottom:5px; font-weight:bold;">Theme Name</label>
-            <input type="text" id="studio-theme-name" placeholder="My Cool Theme">
+          <div style="margin-bottom: 15px;">
+            <label>Name</label>
+            <input type="text" id="studio-theme-name" style="width:100%; padding:10px; border-radius:8px; background:#000; color:white;">
           </div>
-          <div class="studio-control" style="margin-bottom: 15px;">
-            <label style="display:block; margin-bottom:5px; font-weight:bold;">Background Image URL</label>
-            <input type="text" id="studio-bg-img" placeholder="https://..." oninput="updateStudioPreview()">
+          <div style="margin-bottom: 15px;">
+            <label>BG URL</label>
+            <input type="text" id="studio-bg-img" oninput="updateStudioPreview()" style="width:100%; padding:10px; border-radius:8px; background:#000; color:white;">
           </div>
-          <div class="studio-control" style="margin-bottom: 15px;">
-            <label style="display:block; margin-bottom:5px; font-weight:bold;">UI Accent Color</label>
-            <input type="color" id="studio-accent" value="#61dafb" oninput="updateStudioPreview()">
+          <div style="margin-bottom: 15px;">
+            <label>Accent</label>
+            <input type="color" id="studio-accent" value="#61dafb" oninput="updateStudioPreview()" style="width:100%;">
           </div>
-          <button class="play-btn" onclick="saveNewTheme()">Add to Library</button>
-          
-          <div class="share-container" style="margin-top: 25px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.1);">
-            <h4 style="margin-bottom: 10px;">Import Theme</h4>
-            <div class="studio-control">
-              <input type="text" id="share-code-input" placeholder="Paste Base64 theme code here...">
-              <button class="play-btn" style="background: var(--success-color); color: black; margin-top: 10px;" onclick="importTheme()">Import From Code</button>
-            </div>
-          </div>
+          <button class="play-btn" onclick="saveNewTheme()">Add</button>
         </div>
-        
         <div>
-          <h3 style="font-family: 'Press Start 2P', cursive; font-size: 0.8em;">Theme Library</h3>
+          <h3 style="font-family: 'Press Start 2P', cursive; font-size: 0.8em;">Library</h3>
           <div class="theme-list" id="theme-library-list"></div>
-          <div class="preview-box" id="studio-preview" style="margin-top: 20px; border: 2px dashed rgba(255,255,255,0.2); border-radius: 12px; padding: 20px; text-align:center;">
-            <p style="font-size: 10px; opacity: 0.5; margin-bottom: 15px;">PREVIEW</p>
-            <div id="preview-btn-mock" style="background: var(--button-bg); color: black; padding: 10px; margin: 10px auto; width: 100px; border-radius: 8px; font-weight:bold; font-size: 11px;">Button</div>
-            <div id="preview-card-mock" style="background: var(--card-bg); padding: 12px; border-radius: 10px; border: 2px solid var(--secondary-color); font-size: 11px;">Card Border</div>
-          </div>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Player UI -->
   <div id="gamePlayer" class="player-overlay">
     <div class="iframe-wrapper" id="frameWrapper">
       <iframe id="gameFrame" src="" allowfullscreen="true"></iframe>
     </div>
-    <div class="player-controls">
-      <button class="control-btn fullscreen-btn" onclick="toggleFullscreen()">Fullscreen</button>
-      <button class="control-btn close-btn" onclick="closeGame()">Close Game</button>
+    <div style="margin-top:20px;">
+      <button class="mini-btn" style="background:var(--danger-color); color:white; padding:10px 20px;" onclick="closeGame()">Close</button>
     </div>
   </div>
 
 <script>
-function filterGames() {
-  const query = document.getElementById('gameSearch').value.toLowerCase();
-  const container = document.getElementById('new-games-container');
-  
-  // Filter the array
-  const filtered = NEW_GAMES.filter(game => 
-    game.name.toLowerCase().includes(query)
-  );
-
-  // Re-render only the filtered ones
-  container.innerHTML = '';
-  
-  if (filtered.length === 0) {
-    container.innerHTML = `<p style="font-family: 'Press Start 2P', cursive; font-size: 0.6em; margin-top: 20px;">No games found, dude. 💀</p>`;
-    return;
-  }
-
-  filtered.forEach((g, index) => {
-    const card = document.createElement('div');
-    card.className = 'game-card';
-    card.style.opacity = '1'; // Skip animation for instant search feel
-    card.style.transform = 'translateY(0)';
-    card.innerHTML = `<img src="${g.img}"><h3>${g.name}</h3><button class="play-btn" onclick="launch('${g.url}')">Play Now</button>`;
-    container.appendChild(card);
-  });
-};
-
   const NEW_GAMES = [
     { name: 'Minecrft 1.8 WASM', url: '/schoolwork/mine.html', img: 'https://assets.nintendo.com/image/upload/ar_16:9,c_lpad,w_1240/b_white/f_auto/q_auto/ncom/software/switch/70010000000964/a28a81253e919298beab2295e39a56b7a5140ef15abdb56135655e5c221b2a3a' },
     { name: 'Minecrft Pocket 0.6.1 alpha WASM', url: '/schoolwork/pocket/index.html', img: 'https://assets.nintendo.com/image/upload/ar_16:9,c_lpad,w_1240/b_white/f_auto/q_auto/ncom/software/switch/70010000000964/a28a81253e919298beab2295e39a56b7a5140ef15abdb56135655e5c221b2a3a' },
@@ -452,8 +288,8 @@ function filterGames() {
     { name: 'FNAF 2', url: 'https://york.cadou.ro.cdn.cloudflare.net/db/html/fnaf2/index.html', img: 'https://cdn-0001.qstv.on.epicgames.com/BSAQaGMyfLgZkMqceu/image/landscape_comp.jpeg' },
     { name: 'FNAF 3', url: 'https://york.cadou.ro.cdn.cloudflare.net/db/html/fnaf3/index.html', img: 'https://cdn-0001.qstv.on.epicgames.com/BSAQaGMyfLgZkMqceu/image/landscape_comp.jpeg' },
     { name: 'FNAF 4', url: 'https://york.cadou.ro.cdn.cloudflare.net/db/html/fnaf4/index.html', img: 'https://cdn-0001.qstv.on.epicgames.com/BSAQaGMyfLgZkMqceu/image/landscape_comp.jpeg' },
-    { name: 'FNAF Sister Location', url: 'https://york.cadou.ro.cdn.cloudflare.net/db/html/fnaf5/index.html', img: 'https://cdn-0001.qstv.on.epicgames.com/BSAQaGMyfLgZkMqceu/image/landscape_comp.jpeg0Hk8qJ8qJ8qJ8qJ8qJ8qJ8q.png' },
-    { name: 'Gu n Spin', url: 'https://york.cadou.ro.cdn.cloudflare.net/db/html/gun_spin/index.html', img: 'https://cdn-0001.qstv.on.epicgames.com/BSAQaGMyfLgZkMqceu/image/landscape_comp.jpeg0.png' },
+    { name: 'FNAF Sister Location', url: 'https://york.cadou.ro.cdn.cloudflare.net/db/html/fnaf5/index.html', img: 'https://cdn-0001.qstv.on.epicgames.com/BSAQaGMyfLgZkMqceu/image/landscape_comp.jpeg' },
+    { name: 'Gun Spin', url: 'https://york.cadou.ro.cdn.cloudflare.net/db/html/gun_spin/index.html', img: 'https://cdn-0001.qstv.on.epicgames.com/BSAQaGMyfLgZkMqceu/image/landscape_comp.jpeg' },
     { name: 'FNF', url: 'https://york.cadou.ro.cdn.cloudflare.net/db/html/friday_night_funkin/index.html', img: 'https://friday-nightfunkin.io/upload/imgs/friday-night-funkin.jpg' },
     { name: 'Geometry Dash', url: 'https://york.cadou.ro.cdn.cloudflare.net/db2/2025/scratch/geometry-dash-scratch/pre.html', img: 'https://i.redd.it/dorae3yhjqhb1.jpg' },
     { name: 'Run 1', url: 'https://york.cadou.ro.cdn.cloudflare.net/db2/2024/flash/run-1/pre.html', img: 'https://imgs.crazygames.com/run3b.png?metadata=none&quality=60&height=38940.png' },
@@ -466,30 +302,22 @@ function filterGames() {
     { name: 'Fist Punch', url: './swf/fist', img: 'https://static.wikia.nocookie.net/theregularshow/images/c/c1/Fist_Punch.JPG/' }
   ];
 
-  let bgShapes = [];
-  let themeLibrary = JSON.parse(localStorage.getItem('epix_library')) || [
-    { id: 'default', name: 'Original Epix', color: '#61dafb', img: '', target: 'all' }
-  ];
+  let themeLibrary = JSON.parse(localStorage.getItem('epix_library')) || [{ id: 'default', name: 'Standard', color: '#61dafb', img: '' }];
 
-  function renderGames() {
-    const n = document.getElementById('new-games-container');
-    const loader = document.getElementById('games-loader');
-    
-    n.style.display = 'none';
-    loader.style.display = 'flex';
+  function filterGames() {
+    const q = document.getElementById('gameSearch').value.toLowerCase();
+    renderGames(NEW_GAMES.filter(g => g.name.toLowerCase().includes(q)));
+  }
 
-    setTimeout(() => {
-        loader.style.display = 'none';
-        n.style.display = 'flex';
-        n.innerHTML = '';
-        NEW_GAMES.forEach((g, index) => {
-          const card = document.createElement('div');
-          card.className = 'game-card';
-          card.style.animationDelay = `${index * 0.05}s`;
-          card.innerHTML = `<img src="${g.img}"><h3>${g.name}</h3><button class="play-btn" onclick="launch('${g.url}')">Play Now</button>`;
-          n.appendChild(card);
-        });
-    }, 800);
+  function renderGames(list = NEW_GAMES) {
+    const container = document.getElementById('new-games-container');
+    container.innerHTML = '';
+    list.forEach(g => {
+        const card = document.createElement('div');
+        card.className = 'game-card';
+        card.innerHTML = `<img src="${g.img}"><h3>${g.name}</h3><button class="play-btn" onclick="launch('${g.url}')">Play</button>`;
+        container.appendChild(card);
+    });
   }
 
   function launch(u) {
@@ -502,45 +330,19 @@ function filterGames() {
     document.getElementById('gamePlayer').classList.remove('active');
   }
 
-  function toggleFullscreen() {
-    const elem = document.getElementById('frameWrapper');
-    if (elem.requestFullscreen) elem.requestFullscreen();
-    else if (elem.webkitRequestFullscreen) elem.webkitRequestFullscreen();
-    else if (elem.msRequestFullscreen) elem.msRequestFullscreen();
-  }
-
   function showTab(t) {
     document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
     document.querySelectorAll('.tab-button').forEach(b => b.classList.remove('active'));
     document.getElementById(t).classList.add('active');
-    event.currentTarget.classList.add('active');
+    document.getElementById('btn-' + t).classList.add('active');
     if(t === 'games') renderGames();
   }
 
-  // THEME SYSTEM
-  function updateStudioPreview() {
-    const img = document.getElementById('studio-bg-img').value;
-    const color = document.getElementById('studio-accent').value;
-    const preview = document.getElementById('studio-preview');
-    if(img) preview.style.backgroundImage = `url('${img}')`;
-    document.getElementById('preview-btn-mock').style.background = color;
-    document.getElementById('preview-card-mock').style.borderColor = color;
-  }
-
   function saveNewTheme() {
-    const name = document.getElementById('studio-theme-name').value || "Unnamed Theme";
+    const name = document.getElementById('studio-theme-name').value || "New Theme";
     const img = document.getElementById('studio-bg-img').value;
     const color = document.getElementById('studio-accent').value;
-    
-    const newTheme = { id: Date.now().toString(), name, img, color, target: 'all' };
-    themeLibrary.push(newTheme);
-    saveAndRefreshLibrary();
-    applyTheme(newTheme);
-    showToast(`Saved ${name}! ✨`);
-    document.getElementById('studio-theme-name').value = '';
-  }
-
-  function saveAndRefreshLibrary() {
+    themeLibrary.push({ id: Date.now().toString(), name, img, color });
     localStorage.setItem('epix_library', JSON.stringify(themeLibrary));
     renderThemeLibrary();
   }
@@ -551,17 +353,7 @@ function filterGames() {
     themeLibrary.forEach(t => {
         const item = document.createElement('div');
         item.className = 'theme-item';
-        item.innerHTML = `
-            <div class="theme-item-info">
-                <span style="color:${t.color}; text-shadow: 0 0 5px ${t.color}">●</span> <b>${t.name}</b>
-            </div>
-            <div class="theme-item-actions">
-                <button class="mini-btn" style="background:var(--success-color); color:black;" onclick="applyThemeById('${t.id}')">Apply</button>
-                <button class="mini-btn" style="background:#444; color:white;" onclick="exportThemeCode('${t.id}')">Code</button>
-                <button class="mini-btn" style="background:#555; color:white;" onclick="downloadThemeFile('${t.id}')">File</button>
-                ${t.id !== 'default' ? `<button class="mini-btn" style="background:var(--danger-color); color:white;" onclick="deleteTheme('${t.id}')">X</button>` : ''}
-            </div>
-        `;
+        item.innerHTML = `<span>${t.name}</span><button class="mini-btn" style="background:${t.color}; color:black;" onclick="applyThemeById('${t.id}')">Apply</button>`;
         list.appendChild(item);
     });
   }
@@ -569,124 +361,27 @@ function filterGames() {
   function applyThemeById(id) {
     const t = themeLibrary.find(x => x.id === id);
     if(t) {
-        applyTheme(t);
-        showToast(`Theme: ${t.name} Active`);
+        document.documentElement.style.setProperty('--bg-image', t.img ? `url('${t.img}')` : 'none');
+        document.documentElement.style.setProperty('--primary-color', t.color);
+        document.documentElement.style.setProperty('--button-bg', t.color);
     }
-  }
-
-  function applyTheme(t) {
-    document.documentElement.style.setProperty('--bg-image', t.img ? `url('${t.img}')` : 'none');
-    document.documentElement.style.setProperty('--button-bg', t.color);
-    document.documentElement.style.setProperty('--primary-color', t.color);
-    document.documentElement.style.setProperty('--secondary-color', t.color);
-    if(bgShapes.length > 0) bgShapes.forEach(s => s.material.color.set(t.color));
-    localStorage.setItem('epix_active_id', t.id);
-  }
-
-  function exportThemeCode(id) {
-    const t = themeLibrary.find(x => x.id === id);
-    const code = btoa(JSON.stringify(t));
-    const input = document.getElementById('share-code-input');
-    input.value = code;
-    input.select();
-    document.execCommand('copy');
-    showToast("Theme Code Copied! 📋");
-  }
-
-  function downloadThemeFile(id) {
-    const t = themeLibrary.find(x => x.id === id);
-    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(t));
-    const dlAnchorElem = document.createElement('a');
-    dlAnchorElem.setAttribute("href", dataStr);
-    dlAnchorElem.setAttribute("download", `${t.name.replace(/\s+/g, '_')}_theme.json`);
-    dlAnchorElem.click();
-    showToast("Downloading JSON... 💾");
-  }
-
-  function importTheme() {
-    try {
-        const code = document.getElementById('share-code-input').value;
-        const t = JSON.parse(atob(code));
-        t.id = Date.now().toString();
-        themeLibrary.push(t);
-        saveAndRefreshLibrary();
-        applyTheme(t);
-        showToast("Theme Imported Successfully! 🔥");
-        document.getElementById('share-code-input').value = '';
-    } catch(e) {
-        showToast("Error: Bad theme code 💀");
-    }
-  }
-
-  function deleteTheme(id) {
-    themeLibrary = themeLibrary.filter(x => x.id !== id);
-    saveAndRefreshLibrary();
-  }
-
-  function showToast(msg) {
-    const old = document.querySelector('.epix-toast');
-    if(old) old.remove();
-    const t = document.createElement('div');
-    t.className = 'epix-toast';
-    t.style = "position:fixed;bottom:30px;left:50%;transform:translateX(-50%);background:var(--card-bg);backdrop-filter:blur(10px);color:white;padding:12px 25px;border-radius:30px;font-weight:bold;z-index:9999;border:1px solid var(--primary-color);box-shadow: 0 10px 25px rgba(0,0,0,0.5); animation: fadeInUp 0.3s ease;";
-    t.innerText = msg;
-    document.body.appendChild(t);
-    setTimeout(() => {
-        t.style.opacity = '0';
-        t.style.transform = 'translateX(-50%) translateY(20px)';
-        t.style.transition = '0.5s';
-        setTimeout(() => t.remove(), 500);
-    }, 2500);
   }
 
   function init3D() {
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
-    const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('background3DCanvas'), alpha: true, antialias: true });
+    const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('background3DCanvas'), alpha: true });
     renderer.setSize(window.innerWidth, window.innerHeight);
-    const accent = getComputedStyle(document.documentElement).getPropertyValue('--primary-color').trim() || '#4287f5';
-    for(let i=0; i<30; i++) {
-        const g = new THREE.IcosahedronGeometry(Math.random()*1.5, 0);
-        const m = new THREE.MeshBasicMaterial({ color: accent, wireframe: true, transparent: true, opacity: 0.1 });
-        const mesh = new THREE.Mesh(g, m);
-        mesh.position.set((Math.random()-0.5)*50, (Math.random()-0.5)*50, (Math.random()-0.5)*50);
-        scene.add(mesh);
-        bgShapes.push(mesh);
-    }
-    camera.position.z = 25;
-    function anim() {
-        requestAnimationFrame(anim);
-        bgShapes.forEach(it => { it.rotation.x += 0.001; it.rotation.y += 0.001; });
-        renderer.render(scene, camera);
-    }
+    const g = new THREE.IcosahedronGeometry(1, 0);
+    const m = new THREE.MeshBasicMaterial({ color: 0x61dafb, wireframe: true, transparent: true, opacity: 0.1 });
+    const mesh = new THREE.Mesh(g, m);
+    scene.add(mesh);
+    camera.position.z = 5;
+    function anim() { requestAnimationFrame(anim); mesh.rotation.y += 0.01; renderer.render(scene, camera); }
     anim();
-    window.addEventListener('resize', () => {
-        camera.aspect = window.innerWidth / window.innerHeight;
-        camera.updateProjectionMatrix();
-        renderer.setSize(window.innerWidth, window.innerHeight);
-    });
   }
 
-  window.addEventListener('keydown', (e) => {
-    if(e.key === 'Escape') {
-        document.querySelectorAll('.cloak-overlay').forEach(o => o.style.display = 'none');
-        document.getElementById('update-video').pause();
-    }
-    const k = e.key.toLowerCase();
-    const bootK = document.getElementById('key-chrome-boot').value.toLowerCase();
-    const bsodK = document.getElementById('key-bsod').value.toLowerCase();
-    
-    if(k === bootK) document.getElementById('cloak-chrome-boot').style.display = 'block';
-    if(k === bsodK) document.getElementById('cloak-bsod').style.display = 'block';
-  });
-
-  window.onload = () => { 
-    init3D(); 
-    renderThemeLibrary();
-    const activeId = localStorage.getItem('epix_active_id');
-    if(activeId) applyThemeById(activeId);
-    renderGames(); 
-  };
+  window.onload = () => { init3D(); renderThemeLibrary(); renderGames(); };
 </script>
 </body>
 </html>
