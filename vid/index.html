@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aura Player Embed | Pro Edition</title>
+    <title>Aura Player Embed | Fixed Edition</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -53,8 +53,7 @@
             z-index: 50;
         }
 
-        .video-container:hover .controls-overlay,
-        .video-container:focus-within .controls-overlay {
+        .video-container:hover .controls-overlay {
             opacity: 1;
         }
 
@@ -116,7 +115,6 @@
 <body>
 
     <div id="container" class="video-container group">
-        <!-- Toast Notification -->
         <div id="toast">
             <div class="bg-indigo-500/30 p-2 rounded-lg">
                 <i class="fas fa-closed-captioning"></i>
@@ -125,17 +123,14 @@
         </div>
 
         <video id="v" playsinline crossorigin="anonymous">
-            <source src="" type="video/mp4">
+            <!-- Source will be set via JS -->
         </video>
 
-        <!-- Big Center Play Button -->
         <button id="big-play-btn" class="w-24 h-24 rounded-full flex items-center justify-center text-white active:scale-95 shadow-2xl">
             <i class="fas fa-play text-4xl ml-1"></i>
         </button>
 
-        <!-- Controls UI -->
         <div class="controls-overlay pointer-auto flex flex-col gap-4">
-            <!-- Progress Bar -->
             <input type="range" id="seek" value="0" step="0.1" class="w-full h-1.5 rounded-lg appearance-none bg-white/20">
 
             <div class="flex items-center justify-between text-white px-1">
@@ -182,15 +177,22 @@
         const fsBtn = document.getElementById('fs-btn');
         const toast = document.getElementById('toast');
 
-        // Parse URL: Using "||" as the separator to avoid conflicts with URL params like "&"
+        // Parse URL
         const fullQuery = window.location.search.substring(1);
-        const [videoPart, captionPart] = fullQuery.split('||');
         
-        const videoSrc = videoPart ? decodeURIComponent(videoPart) : '';
-        const captionSrc = captionPart ? decodeURIComponent(captionPart) : '';
+        // We split by "||" but ensure we handle potential URL encoding
+        const parts = fullQuery.split('||');
+        const videoSrc = parts[0] ? decodeURIComponent(parts[0]) : '';
+        const captionSrc = parts[1] ? decodeURIComponent(parts[1]) : '';
 
-        // Initial setup
-        v.src = videoSrc || 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4';
+        // Only set src if we actually have one
+        if (videoSrc) {
+            v.src = videoSrc;
+            v.load(); // CRITICAL: Force the browser to refresh the source
+        } else {
+            // Default Demo Video
+            v.src = 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4';
+        }
 
         if (captionSrc) {
             const track = document.createElement('track');
@@ -202,7 +204,6 @@
             v.appendChild(track);
             ccBtn.classList.remove('hidden');
 
-            // Show Toast with a slight delay
             setTimeout(() => {
                 toast.classList.add('show');
                 setTimeout(() => toast.classList.remove('show'), 4000);
@@ -211,7 +212,10 @@
 
         const togglePlay = () => {
             if (v.paused) {
-                v.play().catch(err => console.error("Playback blocked:", err));
+                v.play().catch(err => {
+                    console.error("Playback failed:", err);
+                    // If it failed because of CORS or bad source, show it in console
+                });
                 playBtn.innerHTML = '<i class="fas fa-pause"></i>';
                 container.classList.add('is-playing');
             } else {
@@ -238,7 +242,9 @@
             curTime.innerText = format(v.currentTime);
         };
 
-        v.onloadedmetadata = () => durTime.innerText = format(v.duration);
+        v.onloadedmetadata = () => {
+            durTime.innerText = format(v.duration);
+        };
 
         seek.oninput = () => {
             if (!v.duration) return;
@@ -300,7 +306,7 @@
                     else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
                 }
             } catch (err) {
-                console.warn("Fullscreen toggle failed:", err);
+                console.warn("FS failed:", err);
             }
         };
 
