@@ -194,7 +194,15 @@
       margin-top: auto;
       text-transform: uppercase;
     }
-
+.cmd-iframe {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: calc(100% + 0px);
+        margin-top: -0px;
+        border: none;
+    }
     .search-container { width: 100%; max-width: 600px; margin: 0 auto 25px auto; }
     #gameSearch, #videoSearch {
         width: 100%;
@@ -258,6 +266,7 @@
     <button id="btn-browser" class="tab-button active" onclick="showTab('browser')">Browser</button>
     <button id="btn-games" class="tab-button" onclick="showTab('games')">Games</button>
     <button id="btn-videos" class="tab-button" onclick="showTab('videos')">Videos</button>
+    <button id="btn-cmd" class="tab-button" onclick="showTab('cmd')">Linux</button>
     <button id="btn-studio" class="tab-button" onclick="showTab('studio')">Themes</button>
     <button id="btn-browsersettings" class="tab-button" onclick="showTab('browsersettings')">Browser Settings</button>
   </nav>
@@ -278,6 +287,16 @@
                 <iframe class="browsersettings-iframe" name="myiFrame" src="https://storage.googleapis.com/canvas-lms/index.html#/settings" allowfullscreen></iframe>
             </div>
             <p>The Privacy tab will not work in this case. Disabling Tabs Bar will remove the address bar. Here you can go ahead and change the search engine to DuckDuckGo.</p>
+        </div>
+    </div>
+    
+    <div id="content-wrapper" style="width: 100%; display: flex; justify-content: center;">
+    <div id="cmd" class="tab-content active">
+        <div class="browser-view-container">
+            <div class="browser-wrapper">
+                <iframe class="cmd-iframe" name="myiFrame" src="cmd" allowfullscreen></iframe>
+            </div>
+            <p>Powered by WASM. Uses Alpine Linux. Can take a while to boot, so be patient! By the way, it's only a terminal. Use save states to save your data.</p>
         </div>
     </div>
 
