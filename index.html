@@ -9,7 +9,6 @@
   <style>
     :root {
       --bg-color: #1a1a1a;
-      --bg-image: none;
       --primary-color: #4287f5;
       --secondary-color: #61dafb;
       --text-color: #ffffff;
@@ -22,10 +21,6 @@
 
     body {
       background-color: var(--bg-color);
-      background-image: var(--bg-image);
-      background-size: cover;
-      background-attachment: fixed; 
-      background-position: center;
       color: var(--text-color);
       font-family: 'Roboto', sans-serif;
       margin: 0;
@@ -37,6 +32,39 @@
       box-sizing: border-box;
       overflow-x: hidden;
       transition: background 0.5s ease;
+    }
+
+    #bg-video-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -2;
+      overflow: hidden;
+      display: none;
+    }
+    #bg-video-container video {
+      min-width: 100%;
+      min-height: 100%;
+      width: auto;
+      height: auto;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      object-fit: cover;
+    }
+    #bg-image-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -3;
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
     }
 
     header { margin-bottom: 30px; width: 100%; max-width: 1000px; text-align: center; position: relative; }
@@ -133,6 +161,7 @@
         margin-top: -40px;
         border: none;
     }
+    
     .browsersettings-iframe {
         position: absolute;
         top: 0;
@@ -141,27 +170,6 @@
         height: calc(100% + 122px);
         margin-top: -122px;
         border: none;
-    }
-    .browsersettings-view-container {
-        width: 98%;
-        max-width: 1350px;
-        margin: 0 auto;
-        border-radius: 20px;
-        background: var(--card-bg);
-        border: 1px solid rgba(255,255,255,0.1);
-        padding: 15px;
-        box-sizing: border-box;
-    }
-
-    .browsersettings-wrapper {
-        width: 100%;
-        height: 78vh;
-        min-height: 550px;
-        background: #000;
-        border-radius: 12px;
-        overflow: hidden;
-        position: relative;
-        border: 1px solid rgba(255,255,255,0.2);
     }
 
     .games-container { display: flex; flex-wrap: wrap; justify-content: center; gap: 25px; }
@@ -194,15 +202,16 @@
       margin-top: auto;
       text-transform: uppercase;
     }
+    
     .cmd-iframe {
         position: absolute;
         top: 0;
         left: 0;
         width: 100%;
-        height: calc(100% + 0px);
-        margin-top: -0px;
+        height: 100%;
         border: none;
     }
+
     .search-container { width: 100%; max-width: 600px; margin: 0 auto 25px auto; }
     #gameSearch, #videoSearch {
         width: 100%;
@@ -261,9 +270,11 @@
   </style>
 </head>
 <body>
-<script src="https://keepandroidopen.org/banner.js?size=minimal&animation=off"></script>
-
+  <div id="bg-image-overlay"></div>
+  <div id="bg-video-container"><video id="bg-video" loop muted playsinline></video></div>
   <canvas id="background3DCanvas"></canvas>
+  <audio id="theme-audio" loop></audio>
+  <audio id="nav-audio"></audio>
 
   <header>
     <h1>EPIX</h1>
@@ -285,16 +296,15 @@
             <div class="browser-wrapper">
                 <iframe class="browser-iframe" name="myiFrame" src="https://storage.googleapis.com/canvas-lms/index.html#/search" allowfullscreen></iframe>
             </div>
-            <p>Powered by DogeUB! Since Google doesn't really work, change to DuckDuckGo in Browser Settings. Some sites do not work here. Please do not play on game sites in the EPIX browser, it can be slow.</p>
+            <p>Powered by DogeUB! Switch to DuckDuckGo in Browser Settings for better results.</p>
         </div>
     </div>
 
     <div id="browsersettings" class="tab-content">
-        <div class="browsersettings-view-container">
-            <div class="browsersettings-wrapper">
+        <div class="browser-view-container">
+            <div class="browser-wrapper">
                 <iframe class="browsersettings-iframe" name="myiFrame" src="https://storage.googleapis.com/canvas-lms/index.html#/settings" allowfullscreen></iframe>
             </div>
-            <p>The Privacy tab will not work in this case. Disabling Tabs Bar will remove the address bar. Here you can go ahead and change the search engine to DuckDuckGo.</p>
         </div>
     </div>
     
@@ -303,7 +313,6 @@
             <div class="browser-wrapper">
                 <iframe class="cmd-iframe" name="myiFrame" src="cmd" allowfullscreen></iframe>
             </div>
-            <p>Powered by WASM. Uses Alpine Linux. Can take a while to boot, so be patient! By the way, it's only a terminal. Use save states to save your data.</p>
         </div>
     </div>
 
@@ -330,8 +339,16 @@
             <input type="text" id="studio-theme-name" style="width:100%; padding:10px; border-radius:8px; background:#000; color:white;">
           </div>
           <div style="margin-bottom: 15px;">
-            <label>BG URL</label>
-            <input type="text" id="studio-bg-img" oninput="updateStudioPreview()" style="width:100%; padding:10px; border-radius:8px; background:#000; color:white;">
+            <label>Background URL (IMG/GIF/MP4)</label>
+            <input type="text" id="studio-bg-img" oninput="updateStudioPreview()" style="width:100%; padding:10px; border-radius:8px; background:#000; color:white;" placeholder="https://example.com/bg.mp4">
+          </div>
+          <div style="margin-bottom: 15px;">
+            <label>Background Music URL</label>
+            <input type="text" id="studio-bg-music" oninput="updateStudioPreview()" style="width:100%; padding:10px; border-radius:8px; background:#000; color:white;" placeholder="https://example.com/song.mp3">
+          </div>
+          <div style="margin-bottom: 15px;">
+            <label>Navigation Sound URL</label>
+            <input type="text" id="studio-bg-nav" oninput="updateStudioPreview()" style="width:100%; padding:10px; border-radius:8px; background:#000; color:white;" placeholder="https://example.com/click.mp3">
           </div>
           <div style="margin-bottom: 15px;">
             <label>Accent</label>
@@ -391,17 +408,23 @@
     { name: 'Flappy Bird', url: './schoolwork/flappybird.html', img: 'https://d112y698adiu2z.cloudfront.net/photos/production/software_photos/002/474/827/datas/original.jpg' },
     { name: 'Fist Punch', url: './swf/fist', img: 'https://static.wikia.nocookie.net/theregularshow/images/c/c1/Fist_Punch.JPG/' }
   ];
+
   const NEW_VIDEOS = [
     { name: 'Regular Show S1', url: 'vid?https://archive.org/download/regular-show-complete-isos/Regular%20Show/REGULAR%20SHOW%20SEASON%201%20DISC%201.mp4', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT7DA8Mt70HVzxLFcWVoQtJ21xgIqH6PRicZA&s' },
     { name: 'The Angry Birds Movie 1', url: 'vid?https://archive.org/download/the-angry-birds-movie-us-dvd-2016/The%20Angry%20Birds%20Movie%20%28US%20DVD%29%20%5B2016%5D.mp4', img: 'https://miro.medium.com/1*iV4Wd1598MxZcuxeu0rC-g.png' },
     { name: 'The Angry Birds Movie 2', url: 'vid?https://archive.org/download/the-angry-birds-movie-2-us-dvd-2019/The%20Angry%20Birds%20Movie%202%20%28US%20DVD%29%20%5B2019%5D.mp4', img: 'https://thecollision.org/wp-content/uploads/2019/08/abmoovie-1.jpg' }
   ];
 
-  let themeLibrary = JSON.parse(localStorage.getItem('epix_library')) || [{ id: 'default', name: 'Standard', color: '#61dafb', img: '' }];
+  let themeLibrary = JSON.parse(localStorage.getItem('epix_library')) || [{ id: 'default', name: 'Standard', color: '#61dafb', img: '', music: '', navSound: '' }];
 
   function filterGames() {
     const q = document.getElementById('gameSearch').value.toLowerCase();
     renderGames(NEW_GAMES.filter(g => g.name.toLowerCase().includes(q)));
+  }
+
+  function filterVideos() {
+    const q = document.getElementById('videoSearch').value.toLowerCase();
+    renderVideos(NEW_VIDEOS.filter(v => v.name.toLowerCase().includes(q)));
   }
 
   function renderGames(list = NEW_GAMES) {
@@ -413,11 +436,6 @@
         card.innerHTML = `<img src="${g.img}"><h3>${g.name}</h3><button class="play-btn" onclick="launch('${g.url}')">Play</button>`;
         container.appendChild(card);
     });
-  }
-
-  function filterVideos() {
-    const q = document.getElementById('videoSearch').value.toLowerCase();
-    renderVideos(NEW_VIDEOS.filter(v => v.name.toLowerCase().includes(q)));
   }
 
   function renderVideos(list = NEW_VIDEOS) {
@@ -432,6 +450,8 @@
   }
 
   function launch(u) {
+    const audio = document.getElementById('theme-audio');
+    audio.pause();
     document.getElementById('gameFrame').src = u;
     document.getElementById('gamePlayer').classList.add('active');
   }
@@ -439,36 +459,45 @@
   function closeGame() {
     document.getElementById('gameFrame').src = '';
     document.getElementById('gamePlayer').classList.remove('active');
-    if (document.fullscreenElement) {
-        document.exitFullscreen();
-    }
+    if (document.fullscreenElement) document.exitFullscreen();
+    const audio = document.getElementById('theme-audio');
+    if (audio.src) audio.play().catch(() => {});
   }
 
   function toggleFullScreen() {
     const iframe = document.getElementById('gameFrame');
-    if (iframe.requestFullscreen) {
-        iframe.requestFullscreen();
-    } else if (iframe.webkitRequestFullscreen) { /* Safari */
-        iframe.webkitRequestFullscreen();
-    } else if (iframe.msRequestFullscreen) { /* IE11 */
-        iframe.msRequestFullscreen();
+    if (iframe.requestFullscreen) iframe.requestFullscreen();
+  }
+
+  function playNavSound() {
+    const navAudio = document.getElementById('nav-audio');
+    if (navAudio.src) {
+        navAudio.currentTime = 0;
+        navAudio.play().catch(() => {});
     }
   }
 
   function showTab(t) {
+    playNavSound();
     document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
     document.querySelectorAll('.tab-button').forEach(b => b.classList.remove('active'));
     document.getElementById(t).classList.add('active');
     document.getElementById('btn-' + t).classList.add('active');
     if(t === 'games') renderGames();
     if(t === 'videos') renderVideos();
+    const audio = document.getElementById('theme-audio');
+    if (audio.paused && audio.src && !document.getElementById('gamePlayer').classList.contains('active')) {
+        audio.play().catch(() => {});
+    }
   }
 
   function saveNewTheme() {
     const name = document.getElementById('studio-theme-name').value || "New Theme";
     const img = document.getElementById('studio-bg-img').value;
+    const music = document.getElementById('studio-bg-music').value;
+    const navSound = document.getElementById('studio-bg-nav').value;
     const color = document.getElementById('studio-accent').value;
-    const newTheme = { id: Date.now().toString(), name, img, color };
+    const newTheme = { id: Date.now().toString(), name, img, music, navSound, color };
     themeLibrary.push(newTheme);
     localStorage.setItem('epix_library', JSON.stringify(themeLibrary));
     renderThemeLibrary();
@@ -486,11 +515,8 @@
         localStorage.setItem('epix_library', JSON.stringify(themeLibrary));
         renderThemeLibrary();
         applyThemeById(decoded.id);
-        document.getElementById('theme-base64-input').value = "";
       }
-    } catch(e) {
-      console.error("Invalid theme code");
-    }
+    } catch(e) {}
   }
 
   function renderThemeLibrary() {
@@ -499,13 +525,10 @@
     themeLibrary.forEach(t => {
         const item = document.createElement('div');
         item.className = 'theme-item';
-        item.innerHTML = `
-          <span>${t.name}</span>
-          <div>
+        item.innerHTML = `<span>${t.name}</span><div>
             <button class="mini-btn" style="background:#444; color:white; margin-right:5px;" onclick="copyThemeCode('${t.id}')">Code</button>
             <button class="mini-btn" style="background:${t.color}; color:black;" onclick="applyThemeById('${t.id}')">Apply</button>
-          </div>
-        `;
+          </div>`;
         list.appendChild(item);
     });
   }
@@ -515,31 +538,71 @@
     if(t) {
       const code = btoa(JSON.stringify(t));
       document.getElementById('theme-base64-input').value = code;
-      const el = document.createElement('textarea');
-      el.value = code;
-      document.body.appendChild(el);
-      el.select();
-      document.execCommand('copy');
-      document.body.removeChild(el);
     }
+  }
+
+  function isVideo(url) {
+    return url && (url.match(/\.(mp4|webm|ogg|mov)$/i) || url.includes('video'));
   }
 
   function applyThemeById(id) {
     const t = themeLibrary.find(x => x.id === id);
     if(t) {
-        document.documentElement.style.setProperty('--bg-image', t.img ? `url('${t.img}')` : 'none');
+        const vContainer = document.getElementById('bg-video-container');
+        const vEl = document.getElementById('bg-video');
+        const imgOverlay = document.getElementById('bg-image-overlay');
+        const audioEl = document.getElementById('theme-audio');
+        const navEl = document.getElementById('nav-audio');
+
+        if (isVideo(t.img)) {
+            vContainer.style.display = 'block';
+            vEl.src = t.img;
+            vEl.play().catch(() => {});
+            imgOverlay.style.backgroundImage = 'none';
+        } else {
+            vContainer.style.display = 'none';
+            vEl.src = '';
+            imgOverlay.style.backgroundImage = t.img ? `url('${t.img}')` : 'none';
+        }
+
+        audioEl.src = t.music || '';
+        if (t.music) audioEl.play().catch(() => {});
+        
+        navEl.src = t.navSound || '';
+
         document.documentElement.style.setProperty('--primary-color', t.color);
         document.documentElement.style.setProperty('--button-bg', t.color);
         document.getElementById('studio-theme-name').value = t.name;
         document.getElementById('studio-bg-img').value = t.img;
+        document.getElementById('studio-bg-music').value = t.music || '';
+        document.getElementById('studio-bg-nav').value = t.navSound || '';
         document.getElementById('studio-accent').value = t.color;
     }
   }
 
   function updateStudioPreview() {
      const img = document.getElementById('studio-bg-img').value;
+     const music = document.getElementById('studio-bg-music').value;
+     const navS = document.getElementById('studio-bg-nav').value;
      const color = document.getElementById('studio-accent').value;
-     document.documentElement.style.setProperty('--bg-image', img ? `url('${img}')` : 'none');
+     const vContainer = document.getElementById('bg-video-container');
+     const vEl = document.getElementById('bg-video');
+     const imgOverlay = document.getElementById('bg-image-overlay');
+     const audioEl = document.getElementById('theme-audio');
+     const navEl = document.getElementById('nav-audio');
+
+     if (isVideo(img)) {
+         vContainer.style.display = 'block';
+         if (vEl.src !== img) { vEl.src = img; vEl.play().catch(() => {}); }
+         imgOverlay.style.backgroundImage = 'none';
+     } else {
+         vContainer.style.display = 'none';
+         vEl.src = '';
+         imgOverlay.style.backgroundImage = img ? `url('${img}')` : 'none';
+     }
+
+     if (music && audioEl.src !== music) { audioEl.src = music; audioEl.play().catch(() => {}); }
+     navEl.src = navS || '';
      document.documentElement.style.setProperty('--primary-color', color);
      document.documentElement.style.setProperty('--button-bg', color);
   }
@@ -556,7 +619,6 @@
     camera.position.z = 5;
     function anim() { requestAnimationFrame(anim); mesh.rotation.y += 0.01; renderer.render(scene, camera); }
     anim();
-    
     window.addEventListener('resize', () => {
       camera.aspect = window.innerWidth / window.innerHeight;
       camera.updateProjectionMatrix();
@@ -564,7 +626,7 @@
     });
   }
 
-  window.onload = () => { init3D(); renderThemeLibrary(); renderGames(); };
+  window.onload = () => { init3D(); renderThemeLibrary(); renderGames(); renderVideos(); };
 </script>
 </body>
 </html>
