@@ -267,6 +267,20 @@
       flex-direction: column;
       align-items: center;
     }
+
+    .mute-toggle {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        background: rgba(0,0,0,0.3);
+        padding: 8px 15px;
+        border-radius: 20px;
+        font-size: 0.8em;
+        margin-bottom: 10px;
+        border: 1px solid rgba(255,255,255,0.1);
+        cursor: pointer;
+    }
+    .mute-toggle input { cursor: pointer; }
   </style>
 </head>
 <body>
@@ -293,6 +307,11 @@
   <div id="content-wrapper">
     <div id="browser" class="tab-content active">
         <div class="browser-view-container">
+            <div style="display: flex; justify-content: flex-end;">
+                <label class="mute-toggle">
+                    <input type="checkbox" id="browser-mute-check" onchange="handleBrowserMute()"> Mute Background Music
+                </label>
+            </div>
             <div class="browser-wrapper">
                 <iframe class="browser-iframe" name="myiFrame" src="https://storage.googleapis.com/canvas-lms/index.html#/search" allowfullscreen></iframe>
             </div>
@@ -415,7 +434,13 @@
     { name: 'The Angry Birds Movie 2', url: 'vid?https://archive.org/download/the-angry-birds-movie-2-us-dvd-2019/The%20Angry%20Birds%20Movie%202%20%28US%20DVD%29%20%5B2019%5D.mp4', img: 'https://thecollision.org/wp-content/uploads/2019/08/abmoovie-1.jpg' }
   ];
 
-  let themeLibrary = JSON.parse(localStorage.getItem('epix_library')) || [{ id: 'default', name: 'Standard', color: '#61dafb', img: '', music: '', navSound: '' }];
+  let themeLibrary = [];
+  try {
+      const saved = localStorage.getItem('epix_library');
+      themeLibrary = saved ? JSON.parse(saved) : [{ id: 'default', name: 'Standard', color: '#61dafb', img: '', music: '', navSound: '' }];
+  } catch(e) {
+      themeLibrary = [{ id: 'default', name: 'Standard', color: '#61dafb', img: '', music: '', navSound: '' }];
+  }
 
   function filterGames() {
     const q = document.getElementById('gameSearch').value.toLowerCase();
@@ -461,7 +486,12 @@
     document.getElementById('gamePlayer').classList.remove('active');
     if (document.fullscreenElement) document.exitFullscreen();
     const audio = document.getElementById('theme-audio');
-    if (audio.src) audio.play().catch(() => {});
+    const isBrowser = document.getElementById('browser').classList.contains('active');
+    const isMuted = document.getElementById('browser-mute-check').checked;
+    
+    if (audio.src && !(isBrowser && isMuted)) {
+        audio.play().catch(() => {});
+    }
   }
 
   function toggleFullScreen() {
@@ -477,17 +507,35 @@
     }
   }
 
+  function handleBrowserMute() {
+      const isMuted = document.getElementById('browser-mute-check').checked;
+      const audio = document.getElementById('theme-audio');
+      if (isMuted) {
+          audio.pause();
+      } else if (audio.src && !document.getElementById('gamePlayer').classList.contains('active')) {
+          audio.play().catch(() => {});
+      }
+  }
+
   function showTab(t) {
     playNavSound();
     document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
     document.querySelectorAll('.tab-button').forEach(b => b.classList.remove('active'));
     document.getElementById(t).classList.add('active');
     document.getElementById('btn-' + t).classList.add('active');
+    
     if(t === 'games') renderGames();
     if(t === 'videos') renderVideos();
+    
     const audio = document.getElementById('theme-audio');
-    if (audio.paused && audio.src && !document.getElementById('gamePlayer').classList.contains('active')) {
-        audio.play().catch(() => {});
+    const isMuted = document.getElementById('browser-mute-check').checked;
+    
+    if (audio.src && !document.getElementById('gamePlayer').classList.contains('active')) {
+        if (t === 'browser' && isMuted) {
+            audio.pause();
+        } else {
+            audio.play().catch(() => {});
+        }
     }
   }
 
@@ -497,6 +545,7 @@
     const music = document.getElementById('studio-bg-music').value;
     const navSound = document.getElementById('studio-bg-nav').value;
     const color = document.getElementById('studio-accent').value;
+    
     const newTheme = { id: Date.now().toString(), name, img, music, navSound, color };
     themeLibrary.push(newTheme);
     localStorage.setItem('epix_library', JSON.stringify(themeLibrary));
@@ -516,7 +565,9 @@
         renderThemeLibrary();
         applyThemeById(decoded.id);
       }
-    } catch(e) {}
+    } catch(e) {
+        console.error("Theme import failed", e);
+    }
   }
 
   function renderThemeLibrary() {
@@ -566,7 +617,10 @@
         }
 
         audioEl.src = t.music || '';
-        if (t.music) audioEl.play().catch(() => {});
+        const isBrowser = document.getElementById('browser').classList.contains('active');
+        const isMuted = document.getElementById('browser-mute-check').checked;
+        
+        if (t.music && !(isBrowser && isMuted)) audioEl.play().catch(() => {});
         
         navEl.src = t.navSound || '';
 
@@ -601,7 +655,12 @@
          imgOverlay.style.backgroundImage = img ? `url('${img}')` : 'none';
      }
 
-     if (music && audioEl.src !== music) { audioEl.src = music; audioEl.play().catch(() => {}); }
+     if (music && audioEl.src !== music) { 
+         audioEl.src = music; 
+         const isBrowser = document.getElementById('browser').classList.contains('active');
+         const isMuted = document.getElementById('browser-mute-check').checked;
+         if (!(isBrowser && isMuted)) audioEl.play().catch(() => {});
+     }
      navEl.src = navS || '';
      document.documentElement.style.setProperty('--primary-color', color);
      document.documentElement.style.setProperty('--button-bg', color);
