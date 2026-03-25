@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Droid Z - Functional Edition</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&display=swap');
+
+        :root {
+            --android-bg: #121314;
+            --text-main: #ffffff;
+            --nav-bg: rgba(0, 0, 0, 0.8);
+            --app-bg: #1a1c1e;
+        }
+
+        .light-mode {
+            --android-bg: #e2e8f0;
+            --text-main: #000000;
+            --nav-bg: rgba(255, 255, 255, 0.8);
+            --app-bg: #ffffff;
+        }
+
+        body {
+            font-family: 'Google Sans', sans-serif;
+            background-color: #0d0d0d;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+            touch-action: manipulation;
+        }
+
+        #phone-shell {
+            width: 380px;
+            height: 780px;
+            background: #111;
+            border: 8px solid #222;
+            border-radius: 40px;
+            position: relative;
+            box-shadow: 0 0 40px rgba(0,0,0,0.6);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            transition: all 0.3s ease;
+        }
+
+        @media (max-width: 450px) {
+            #phone-shell {
+                width: 100vw;
+                height: 100vh;
+                border-radius: 0;
+                border: none;
+            }
+        }
+
+        /* Main Screen & Wallpaper */
+        .wallpaper {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(rgba(0,0,0,0.2), rgba(0,0,0,0.5)), 
+                        url('https://images.unsplash.com/photo-1614850523296-d8c1af93d400?auto=format&fit=crop&q=80&w=1000');
+            background-size: cover;
+            background-position: center;
+            z-index: 1;
+        }
+
+        .main-viewport {
+            flex: 1;
+            position: relative;
+            z-index: 10;
+            overflow: hidden;
+            background: var(--android-bg);
+            color: var(--text-main);
+        }
+
+        .screen {
+            position: absolute;
+            inset: 0;
+            padding: 40px 20px;
+            display: flex;
+            flex-direction: column;
+            transition: all 0.3s ease;
+            z-index: 10;
+        }
+
+        /* App Grid */
+        .app-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .app-icon {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+        }
+
+        .icon-shape {
+            width: 62px;
+            height: 62px;
+            border-radius: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 26px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            transition: transform 0.1s;
+        }
+
+        .app-icon:active .icon-shape { transform: scale(0.85); }
+        .app-label { font-size: 11px; font-weight: 500; text-align: center; color: white; text-shadow: 0 1px 3px rgba(0,0,0,0.8); }
+
+        /* App Windows */
+        .app-ui {
+            position: absolute;
+            inset: 0;
+            background: var(--app-bg);
+            z-index: 20;
+            transform: translateX(100%);
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .app-ui.active { transform: translateX(0); }
+
+        /* App Headers */
+        .app-header {
+            padding: 20px;
+            padding-top: 40px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            background: rgba(0,0,0,0.1);
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        /* --- Specific Apps --- */
+
+        /* Regular Chat */
+        #chat-history {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .msg { padding: 12px 16px; border-radius: 20px; max-width: 80%; font-size: 14px; }
+        .msg.sent { background: #0084ff; color: white; align-self: flex-end; border-bottom-right-radius: 4px; }
+        .msg.rcvd { background: #3e4042; color: white; align-self: flex-start; border-bottom-left-radius: 4px; }
+        .light-mode .msg.rcvd { background: #e4e6eb; color: black; }
+
+        /* Birbs Game */
+        #game-area {
+            flex: 1;
+            position: relative;
+            background: #87CEEB; /* Sky blue */
+            overflow: hidden;
+        }
+        #ground { position: absolute; bottom: 0; width: 100%; height: 30%; background: #8B4513; border-top: 10px solid #228B22; }
+        #slingshot { position: absolute; bottom: 30%; left: 40px; width: 10px; height: 60px; background: #5c3a21; }
+        #bird {
+            position: absolute; bottom: calc(30% + 40px); left: 30px;
+            width: 30px; height: 30px; background: #ff0000; border-radius: 50%;
+            display: flex; justify-content: center; align-items: center; font-size: 12px;
+            transition: all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            z-index: 2;
+        }
+        #pig {
+            position: absolute; bottom: 30%; right: 40px;
+            width: 35px; height: 35px; background: #32CD32; border-radius: 50%;
+            display: flex; justify-content: center; align-items: center; font-size: 16px;
+        }
+
+        /* Camera App */
+        #video-element { width: 100%; height: 100%; object-fit: cover; background: #000; }
+        .camera-ui { position: absolute; bottom: 30px; left: 0; width: 100%; display: flex; justify-content: center; }
+        .shutter { width: 70px; height: 70px; border-radius: 50%; background: white; border: 4px solid #ddd; cursor: pointer; }
+        .shutter:active { background: #ccc; transform: scale(0.95); }
+
+        /* Settings App */
+        .setting-row { display: flex; justify-content: space-between; padding: 20px; border-bottom: 1px solid rgba(128,128,128,0.2); }
+        .toggle { width: 50px; height: 26px; background: #ccc; border-radius: 13px; position: relative; cursor: pointer; transition: 0.3s; }
+        .toggle::after { content: ''; position: absolute; top: 2px; left: 2px; width: 22px; height: 22px; background: white; border-radius: 50%; transition: 0.3s; }
+        .toggle.on { background: #4CD964; }
+        .toggle.on::after { left: 26px; }
+
+        /* Navigation Bar */
+        .system-nav-bar {
+            height: 56px;
+            background: var(--nav-bg);
+            backdrop-filter: blur(15px);
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            z-index: 50;
+        }
+        .nav-btn {
+            width: 50px; height: 50px; display: flex; justify-content: center; align-items: center;
+            font-size: 18px; color: var(--text-main); cursor: pointer; border-radius: 50%;
+        }
+        .nav-btn:active { background: rgba(128,128,128,0.3); }
+
+        /* Colors */
+        .bg-mordecai { background: #6db3f2; color: #000; }
+        .bg-rigby { background: #8b5a2b; color: #fff; }
+        .bg-birb { background: #ff4b2b; color: #fff; }
+    </style>
+</head>
+<body>
+
+    <div id="phone-shell">
+        <div class="main-viewport" id="viewport">
+            
+            <!-- Home Screen -->
+            <div class="screen" id="home-screen">
+                <div class="wallpaper"></div>
+                
+                <div class="relative z-10 pt-10 text-center text-white">
+                    <div id="clock" class="text-7xl font-light tracking-tighter">12:00</div>
+                    <div id="date" class="text-sm opacity-80 mt-1 uppercase tracking-widest font-medium">Mon, Mar 25</div>
+                </div>
+
+                <div class="relative z-10 app-grid mt-10">
+                    <div class="app-icon" onclick="openApp('app-chat')">
+                        <div class="icon-shape bg-mordecai"><i class="fas fa-comment"></i></div>
+                        <span class="app-label">Park Chat</span>
+                    </div>
+                    <div class="app-icon" onclick="openApp('app-birbs')">
+                        <div class="icon-shape bg-birb"><i class="fas fa-kiwi-bird"></i></div>
+                        <span class="app-label">Birbs</span>
+                    </div>
+                    <div class="app-icon" onclick="openApp('app-notes')">
+                        <div class="icon-shape bg-rigby"><i class="fas fa-sticky-note"></i></div>
+                        <span class="app-label">Rigby Notes</span>
+                    </div>
+                    <div class="app-icon" onclick="openApp('app-camera')">
+                        <div class="icon-shape bg-emerald-500 text-white"><i class="fas fa-camera"></i></div>
+                        <span class="app-label">Camera</span>
+                    </div>
+                    <div class="app-icon" onclick="openApp('app-settings')">
+                        <div class="icon-shape bg-zinc-700 text-white"><i class="fas fa-cog"></i></div>
+                        <span class="app-label">Settings</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- APP 1: Park Chat -->
+            <div id="app-chat" class="app-ui">
+                <div class="app-header bg-mordecai text-black">
+                    <i class="fas fa-user-circle text-2xl"></i> Group: Park Slackers
+                </div>
+                <div id="chat-history">
+                    <div class="msg rcvd"><b>Mordo:</b> Dude, are you actually working right now?</div>
+                </div>
+                <div class="p-4 bg-black/20 flex gap-2">
+                    <input type="text" id="chat-input" class="flex-1 bg-white/10 rounded-full px-4 py-2 outline-none text-white placeholder-gray-400 border border-gray-600" placeholder="Type a message..." onkeypress="if(event.key==='Enter') sendMsg()">
+                    <button onclick="sendMsg()" class="w-10 h-10 bg-blue-500 rounded-full text-white flex justify-center items-center"><i class="fas fa-paper-plane"></i></button>
+                </div>
+            </div>
+
+            <!-- APP 2: Birbs Game -->
+            <div id="app-birbs" class="app-ui">
+                <div class="app-header bg-birb text-white flex justify-between">
+                    <span><i class="fas fa-kiwi-bird"></i> Yeet the Birb</span>
+                    <span id="score-display">Score: 0</span>
+                </div>
+                <div id="game-area" onclick="yeetBird()">
+                    <div class="absolute top-4 left-0 w-full text-center text-black font-bold z-10 pointer-events-none text-xl opacity-50">TAP ANYWHERE TO YEET</div>
+                    <div id="bird"><i class="fas fa-angry"></i></div>
+                    <div id="slingshot"></div>
+                    <div id="pig"><i class="fas fa-smile-beam text-green-900"></i></div>
+                    <div id="ground"></div>
+                </div>
+            </div>
+
+            <!-- APP 3: Notes -->
+            <div id="app-notes" class="app-ui">
+                <div class="app-header bg-rigby text-white">
+                    <i class="fas fa-sticky-note"></i> Excuses to give Benson
+                </div>
+                <textarea class="flex-1 bg-yellow-100 text-gray-800 p-6 text-lg outline-none resize-none font-medium leading-loose" placeholder="1. Say we had to fix the cart..."></textarea>
+            </div>
+
+            <!-- APP 4: Camera -->
+            <div id="app-camera" class="app-ui bg-black">
+                <div class="absolute top-10 left-5 text-white z-10 font-bold text-xl drop-shadow-md">Camera</div>
+                <video id="video-element" autoplay playsinline></video>
+                <div id="cam-fallback" class="absolute inset-0 flex items-center justify-center text-white p-8 text-center hidden">
+                    Allow camera access or check if your device supports it, bro.
+                </div>
+                <div class="camera-ui">
+                    <div class="shutter" onclick="snapPhoto()"></div>
+                </div>
+            </div>
+
+            <!-- APP 5: Settings -->
+            <div id="app-settings" class="app-ui">
+                <div class="app-header bg-zinc-800 text-white">
+                    <i class="fas fa-cog"></i> Settings
+                </div>
+                <div class="setting-row">
+                    <span class="text-lg"><i class="fas fa-moon mr-3 text-blue-400"></i> Dark Mode</span>
+                    <div class="toggle on" id="theme-toggle" onclick="toggleTheme()"></div>
+                </div>
+                <div class="setting-row">
+                    <span class="text-lg"><i class="fas fa-wifi mr-3 text-green-400"></i> Park Wi-Fi</span>
+                    <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+                </div>
+                <div class="p-6 opacity-50 text-center text-sm mt-auto">
+                    Droid Z OS v1.0<br>Designed for slackers.
+                </div>
+            </div>
+
+        </div>
+
+        <!-- System Navigation Bar -->
+        <div class="system-nav-bar">
+            <div class="nav-btn" onclick="closeApp()"><i class="fas fa-caret-left text-2xl"></i></div>
+            <div class="nav-btn" onclick="closeApp()"><i class="far fa-circle text-xl"></i></div>
+            <div class="nav-btn"><i class="fas fa-stop text-sm"></i></div>
+        </div>
+    </div>
+
+    <script>
+        // --- System Logic ---
+        function updateClock() {
+            const now = new Date();
+            let hours = now.getHours();
+            const ampm = hours >= 12 ? 'PM' : 'AM';
+            hours = hours % 12 || 12; // 12-hour format for Gen Z aesthetic
+            const minutes = now.getMinutes().toString().padStart(2, '0');
+            document.getElementById('clock').textContent = `${hours}:${minutes}`;
+            document.getElementById('date').textContent = now.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+        }
+        setInterval(updateClock, 1000);
+        updateClock();
+
+        let currentApp = null;
+        let streamRef = null;
+
+        function openApp(appId) {
+            document.getElementById(appId).classList.add('active');
+            currentApp = appId;
+            
+            // App specific inits
+            if(appId === 'app-camera') initCamera();
+            if(appId === 'app-birbs') resetGame();
+        }
+
+        function closeApp() {
+            if(!currentApp) return;
+            document.getElementById(currentApp).classList.remove('active');
+            
+            // App specific cleanups
+            if(currentApp === 'app-camera' && streamRef) {
+                streamRef.getTracks().forEach(track => track.stop());
+                document.getElementById('video-element').srcObject = null;
+            }
+            currentApp = null;
+        }
+
+        // --- Chat App Logic ---
+        const botReplies = [
+            "<b>Benson:</b> GET BACK TO WORK OR YOU'RE FIRED!!!",
+            "<b>Rigby:</b> Bro I'm literally playing video games rn, leave me alone.",
+            "<b>Mordo:</b> OOOOOOHHHHHHHHHH!",
+            "<b>Pops:</b> Good show! Jolly good show!",
+            "<b>Muscle Man:</b> You know who else is texting right now? MY MOM!"
+        ];
+
+        function sendMsg() {
+            const input = document.getElementById('chat-input');
+            const text = input.value.trim();
+            if(!text) return;
+
+            const hist = document.getElementById('chat-history');
+            hist.innerHTML += `<div class="msg sent">${text}</div>`;
+            input.value = '';
+            hist.scrollTop = hist.scrollHeight;
+
+            // Fake typing delay
+            setTimeout(() => {
+                const randomReply = botReplies[Math.floor(Math.random() * botReplies.length)];
+                hist.innerHTML += `<div class="msg rcvd">${randomReply}</div>`;
+                hist.scrollTop = hist.scrollHeight;
+            }, 1500);
+        }
+
+        // --- Birbs Game Logic ---
+        let score = 0;
+        let isYeeting = false;
+
+        function yeetBird() {
+            if(isYeeting) return;
+            isYeeting = true;
+            
+            const bird = document.getElementById('bird');
+            const pig = document.getElementById('pig');
+            
+            // CSS Animation
+            bird.style.transform = `translate(250px, -150px) rotate(360deg)`;
+            
+            setTimeout(() => {
+                // Collision effect
+                pig.innerHTML = '<i class="fas fa-dizzy text-red-900"></i>';
+                pig.style.transform = 'scale(0.8) rotate(20deg)';
+                score++;
+                document.getElementById('score-display').textContent = `Score: ${score}`;
+                
+                setTimeout(resetGame, 1000);
+            }, 500);
+        }
+
+        function resetGame() {
+            const bird = document.getElementById('bird');
+            const pig = document.getElementById('pig');
+            bird.style.transition = 'none';
+            bird.style.transform = 'translate(0, 0) rotate(0deg)';
+            
+            pig.innerHTML = '<i class="fas fa-smile-beam text-green-900"></i>';
+            pig.style.transform = 'none';
+            
+            setTimeout(() => {
+                bird.style.transition = 'all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+                isYeeting = false;
+            }, 50);
+        }
+
+        // --- Camera App Logic ---
+        async function initCamera() {
+            const video = document.getElementById('video-element');
+            const fallback = document.getElementById('cam-fallback');
+            try {
+                streamRef = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' } });
+                video.srcObject = streamRef;
+                fallback.classList.add('hidden');
+                video.classList.remove('hidden');
+            } catch (err) {
+                console.error("Camera error:", err);
+                video.classList.add('hidden');
+                fallback.classList.remove('hidden');
+            }
+        }
+
+        function snapPhoto() {
+            const shutter = document.querySelector('.shutter');
+            shutter.style.background = 'black';
+            setTimeout(() => shutter.style.background = 'white', 100);
+            
+            // Flash effect
+            const flash = document.createElement('div');
+            flash.style.position = 'absolute';
+            flash.style.inset = '0';
+            flash.style.background = 'white';
+            flash.style.zIndex = '50';
+            flash.style.transition = 'opacity 0.5s';
+            document.getElementById('app-camera').appendChild(flash);
+            
+            setTimeout(() => { flash.style.opacity = '0'; }, 50);
+            setTimeout(() => { flash.remove(); }, 500);
+        }
+
+        // --- Settings Logic ---
+        function toggleTheme() {
+            const toggle = document.getElementById('theme-toggle');
+            toggle.classList.toggle('on');
+            document.getElementById('viewport').classList.toggle('light-mode');
+            
+            // Adjust input styling for chat based on mode
+            const input = document.getElementById('chat-input');
+            if(toggle.classList.contains('on')) {
+                input.style.color = "white";
+                input.style.backgroundColor = "rgba(255,255,255,0.1)";
+            } else {
+                input.style.color = "black";
+                input.style.backgroundColor = "rgba(0,0,0,0.1)";
+            }
+        }
+    </script>
+</body>
+</html>
+
