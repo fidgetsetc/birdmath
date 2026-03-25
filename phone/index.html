@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Droid Z - Functional Edition</title>
+    <title>Droid Z OS - Fullscreen Edition</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
@@ -12,58 +12,77 @@
         :root {
             --android-bg: #121314;
             --text-main: #ffffff;
-            --nav-bg: rgba(0, 0, 0, 0.8);
+            --nav-bg: rgba(0, 0, 0, 0.6);
             --app-bg: #1a1c1e;
+            --accent: #8ab4f8;
+            --danger: #ff5252;
         }
 
-        .light-mode {
-            --android-bg: #e2e8f0;
-            --text-main: #000000;
-            --nav-bg: rgba(255, 255, 255, 0.8);
-            --app-bg: #ffffff;
-        }
-
-        body {
-            font-family: 'Google Sans', sans-serif;
-            background-color: #0d0d0d;
+        body, html {
             margin: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            font-family: 'Google Sans', sans-serif;
+            background-color: #000;
             overflow: hidden;
-            touch-action: manipulation;
+            touch-action: none; /* Prevent browser pull-to-refresh */
         }
 
-        #phone-shell {
-            width: 380px;
-            height: 780px;
-            background: #111;
-            border: 8px solid #222;
-            border-radius: 40px;
+        /* Fullscreen OS Container */
+        #os-root {
+            width: 100vw;
+            height: 100vh;
             position: relative;
-            box-shadow: 0 0 40px rgba(0,0,0,0.6);
-            overflow: hidden;
             display: flex;
             flex-direction: column;
-            transition: all 0.3s ease;
+            background: var(--android-bg);
+            color: var(--text-main);
         }
 
-        @media (max-width: 450px) {
-            #phone-shell {
-                width: 100vw;
-                height: 100vh;
-                border-radius: 0;
-                border: none;
-            }
+        /* Boot Screen */
+        #boot-screen {
+            position: absolute;
+            inset: 0;
+            background: #000;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 0.5s ease;
         }
 
-        /* Main Screen & Wallpaper */
+        .boot-logo {
+            font-size: 3rem;
+            font-weight: 700;
+            background: linear-gradient(45deg, #8ab4f8, #c2e7ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 30px;
+            letter-spacing: 2px;
+        }
+
+        #power-btn {
+            padding: 15px 40px;
+            border: 2px solid var(--accent);
+            border-radius: 30px;
+            color: var(--accent);
+            font-size: 1.2rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            background: transparent;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        #power-btn:active { background: var(--accent); color: #000; }
+
+        /* Wallpaper */
         .wallpaper {
             position: absolute;
             inset: 0;
-            background: linear-gradient(rgba(0,0,0,0.2), rgba(0,0,0,0.5)), 
-                        url('https://images.unsplash.com/photo-1614850523296-d8c1af93d400?auto=format&fit=crop&q=80&w=1000');
+            background: linear-gradient(to bottom, rgba(0,0,0,0.1), rgba(0,0,0,0.6)), 
+                        url('https://images.unsplash.com/photo-1614850523296-d8c1af93d400?auto=format&fit=crop&q=80&w=1920');
             background-size: cover;
             background-position: center;
             z-index: 1;
@@ -74,129 +93,47 @@
             position: relative;
             z-index: 10;
             overflow: hidden;
-            background: var(--android-bg);
-            color: var(--text-main);
         }
 
-        .screen {
-            position: absolute;
-            inset: 0;
-            padding: 40px 20px;
-            display: flex;
-            flex-direction: column;
-            transition: all 0.3s ease;
-            z-index: 10;
-        }
-
-        /* App Grid */
-        .app-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 20px;
-            margin-top: 20px;
-        }
-
-        .app-icon {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 8px;
-            cursor: pointer;
-        }
-
-        .icon-shape {
-            width: 62px;
-            height: 62px;
-            border-radius: 20px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 26px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-            transition: transform 0.1s;
-        }
-
-        .app-icon:active .icon-shape { transform: scale(0.85); }
-        .app-label { font-size: 11px; font-weight: 500; text-align: center; color: white; text-shadow: 0 1px 3px rgba(0,0,0,0.8); }
-
-        /* App Windows */
+        /* App UI Base */
         .app-ui {
             position: absolute;
             inset: 0;
             background: var(--app-bg);
             z-index: 20;
-            transform: translateX(100%);
-            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transform: translateY(100%);
+            transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
             display: flex;
             flex-direction: column;
         }
+        .app-ui.active { transform: translateY(0); }
 
-        .app-ui.active { transform: translateX(0); }
-
-        /* App Headers */
-        .app-header {
-            padding: 20px;
-            padding-top: 40px;
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            background: rgba(0,0,0,0.1);
-            font-size: 20px;
-            font-weight: 600;
+        /* Keyboard Styles */
+        #virtual-keyboard {
+            position: absolute;
+            bottom: 56px; /* Above nav bar */
+            left: 0;
+            width: 100%;
+            background: rgba(28, 28, 30, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 10px 5px;
+            z-index: 100;
+            transform: translateY(100%);
+            transition: transform 0.25s ease;
+            box-shadow: 0 -5px 20px rgba(0,0,0,0.5);
         }
-
-        /* --- Specific Apps --- */
-
-        /* Regular Chat */
-        #chat-history {
-            flex: 1;
-            overflow-y: auto;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
+        #virtual-keyboard.active { transform: translateY(0); }
+        .kb-row { display: flex; justify-content: center; gap: 6px; margin-bottom: 10px; max-width: 600px; margin-left: auto; margin-right: auto; }
+        .key {
+            background: #3a3a3c; color: white; flex: 1; height: 48px; border-radius: 8px;
+            display: flex; justify-content: center; align-items: center; font-size: 18px;
+            cursor: pointer; user-select: none; transition: background 0.1s;
         }
-        .msg { padding: 12px 16px; border-radius: 20px; max-width: 80%; font-size: 14px; }
-        .msg.sent { background: #0084ff; color: white; align-self: flex-end; border-bottom-right-radius: 4px; }
-        .msg.rcvd { background: #3e4042; color: white; align-self: flex-start; border-bottom-left-radius: 4px; }
-        .light-mode .msg.rcvd { background: #e4e6eb; color: black; }
+        .key:active { background: #666668; transform: scale(0.95); }
+        .key-special { flex: 1.5; background: #4a4a4c; }
+        .key-space { flex: 4; }
 
-        /* Birbs Game */
-        #game-area {
-            flex: 1;
-            position: relative;
-            background: #87CEEB; /* Sky blue */
-            overflow: hidden;
-        }
-        #ground { position: absolute; bottom: 0; width: 100%; height: 30%; background: #8B4513; border-top: 10px solid #228B22; }
-        #slingshot { position: absolute; bottom: 30%; left: 40px; width: 10px; height: 60px; background: #5c3a21; }
-        #bird {
-            position: absolute; bottom: calc(30% + 40px); left: 30px;
-            width: 30px; height: 30px; background: #ff0000; border-radius: 50%;
-            display: flex; justify-content: center; align-items: center; font-size: 12px;
-            transition: all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-            z-index: 2;
-        }
-        #pig {
-            position: absolute; bottom: 30%; right: 40px;
-            width: 35px; height: 35px; background: #32CD32; border-radius: 50%;
-            display: flex; justify-content: center; align-items: center; font-size: 16px;
-        }
-
-        /* Camera App */
-        #video-element { width: 100%; height: 100%; object-fit: cover; background: #000; }
-        .camera-ui { position: absolute; bottom: 30px; left: 0; width: 100%; display: flex; justify-content: center; }
-        .shutter { width: 70px; height: 70px; border-radius: 50%; background: white; border: 4px solid #ddd; cursor: pointer; }
-        .shutter:active { background: #ccc; transform: scale(0.95); }
-
-        /* Settings App */
-        .setting-row { display: flex; justify-content: space-between; padding: 20px; border-bottom: 1px solid rgba(128,128,128,0.2); }
-        .toggle { width: 50px; height: 26px; background: #ccc; border-radius: 13px; position: relative; cursor: pointer; transition: 0.3s; }
-        .toggle::after { content: ''; position: absolute; top: 2px; left: 2px; width: 22px; height: 22px; background: white; border-radius: 50%; transition: 0.3s; }
-        .toggle.on { background: #4CD964; }
-        .toggle.on::after { left: 26px; }
-
-        /* Navigation Bar */
+        /* Navigation Bar (Hollow shapes) */
         .system-nav-bar {
             height: 56px;
             background: var(--nav-bg);
@@ -204,291 +141,547 @@
             display: flex;
             justify-content: space-around;
             align-items: center;
-            z-index: 50;
+            z-index: 200;
+            border-top: 1px solid rgba(255,255,255,0.05);
+            padding: 0 20px;
         }
         .nav-btn {
-            width: 50px; height: 50px; display: flex; justify-content: center; align-items: center;
-            font-size: 18px; color: var(--text-main); cursor: pointer; border-radius: 50%;
+            width: 60px; height: 100%; display: flex; justify-content: center; align-items: center;
+            cursor: pointer; opacity: 0.7; transition: opacity 0.2s, background 0.2s;
         }
-        .nav-btn:active { background: rgba(128,128,128,0.3); }
+        .nav-btn:active { opacity: 1; background: rgba(255,255,255,0.1); border-radius: 30px; }
+        
+        /* Outline Icons */
+        .icon-back { border: solid white; border-width: 0 2px 2px 0; display: inline-block; padding: 6px; transform: rotate(135deg); }
+        .icon-home { border: 2px solid white; width: 20px; height: 20px; border-radius: 50%; }
+        .icon-recent { border: 2px solid white; width: 18px; height: 18px; border-radius: 4px; }
 
-        /* Colors */
-        .bg-mordecai { background: #6db3f2; color: #000; }
-        .bg-rigby { background: #8b5a2b; color: #fff; }
-        .bg-birb { background: #ff4b2b; color: #fff; }
+        /* App Grid Container */
+        .home-container {
+            position: relative; z-index: 10; height: 100%; display: flex; flex-direction: column; align-items: center;
+            max-width: 800px; margin: 0 auto; padding-top: 10vh;
+        }
+        .app-grid {
+            display: grid; grid-template-columns: repeat(4, 1fr); gap: 3vw; width: 100%; padding: 0 20px; margin-top: 40px;
+            max-width: 500px;
+        }
+        @media (min-width: 768px) { .app-grid { grid-template-columns: repeat(5, 1fr); max-width: 700px; } }
+
+        .app-icon { display: flex; flex-direction: column; align-items: center; gap: 8px; cursor: pointer; }
+        .icon-shape { 
+            width: 16vw; height: 16vw; max-width: 70px; max-height: 70px; border-radius: 22%; 
+            display: flex; justify-content: center; align-items: center; font-size: 28px; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.4); transition: transform 0.1s;
+        }
+        .app-icon:active .icon-shape { transform: scale(0.9); filter: brightness(0.8); }
+
+        /* Specific Apps */
+        .msg { padding: 12px 16px; border-radius: 20px; max-width: 85%; font-size: 15px; margin-bottom: 10px; line-height: 1.4; }
+        .msg.sent { background: var(--accent); color: #000; align-self: flex-end; border-bottom-right-radius: 4px; }
+        .msg.rcvd { background: #2d2f31; color: #fff; align-self: flex-start; border-bottom-left-radius: 4px; }
+
+        /* Phone App Animation */
+        @keyframes ringShake {
+            0% { transform: rotate(0deg); }
+            25% { transform: rotate(10deg); }
+            50% { transform: rotate(0deg); }
+            75% { transform: rotate(-10deg); }
+            100% { transform: rotate(0deg); }
+        }
+        .ringing { animation: ringShake 0.4s infinite; }
+
     </style>
 </head>
 <body>
 
-    <div id="phone-shell">
+    <div id="os-root">
+        <!-- Boot Screen (Requires interaction to unlock audio) -->
+        <div id="boot-screen">
+            <div class="boot-logo">DROID Z</div>
+            <button id="power-btn" onclick="bootOS()">Power On</button>
+        </div>
+
         <div class="main-viewport" id="viewport">
-            
             <!-- Home Screen -->
-            <div class="screen" id="home-screen">
-                <div class="wallpaper"></div>
-                
-                <div class="relative z-10 pt-10 text-center text-white">
-                    <div id="clock" class="text-7xl font-light tracking-tighter">12:00</div>
-                    <div id="date" class="text-sm opacity-80 mt-1 uppercase tracking-widest font-medium">Mon, Mar 25</div>
+            <div class="wallpaper"></div>
+            <div class="home-container" id="home-screen">
+                <div class="text-center text-white drop-shadow-lg">
+                    <div id="clock" class="text-8xl md:text-9xl font-light tracking-tighter">12:00</div>
+                    <div id="date" class="text-lg opacity-90 mt-2 uppercase tracking-widest font-medium">Wed, Mar 25</div>
                 </div>
 
-                <div class="relative z-10 app-grid mt-10">
+                <div class="app-grid">
+                    <div class="app-icon" onclick="openApp('app-phone')">
+                        <div class="icon-shape bg-green-500 text-white"><i class="fas fa-phone"></i></div>
+                        <span class="text-xs font-medium text-white drop-shadow-md">Phone</span>
+                    </div>
                     <div class="app-icon" onclick="openApp('app-chat')">
-                        <div class="icon-shape bg-mordecai"><i class="fas fa-comment"></i></div>
-                        <span class="app-label">Park Chat</span>
+                        <div class="icon-shape bg-blue-500 text-white"><i class="fas fa-comment"></i></div>
+                        <span class="text-xs font-medium text-white drop-shadow-md">Chat</span>
+                    </div>
+                    <div class="app-icon" onclick="openApp('app-playstore')">
+                        <div class="icon-shape bg-white text-green-600"><i class="fas fa-play"></i></div>
+                        <span class="text-xs font-medium text-white drop-shadow-md">Play Store</span>
                     </div>
                     <div class="app-icon" onclick="openApp('app-birbs')">
-                        <div class="icon-shape bg-birb"><i class="fas fa-kiwi-bird"></i></div>
-                        <span class="app-label">Birbs</span>
+                        <div class="icon-shape bg-red-600 text-white"><i class="fas fa-kiwi-bird"></i></div>
+                        <span class="text-xs font-medium text-white drop-shadow-md">Birbs</span>
                     </div>
-                    <div class="app-icon" onclick="openApp('app-notes')">
-                        <div class="icon-shape bg-rigby"><i class="fas fa-sticky-note"></i></div>
-                        <span class="app-label">Rigby Notes</span>
-                    </div>
-                    <div class="app-icon" onclick="openApp('app-camera')">
-                        <div class="icon-shape bg-emerald-500 text-white"><i class="fas fa-camera"></i></div>
-                        <span class="app-label">Camera</span>
+                    <div class="app-icon" onclick="openApp('app-clock')">
+                        <div class="icon-shape bg-indigo-500 text-white"><i class="far fa-clock"></i></div>
+                        <span class="text-xs font-medium text-white drop-shadow-md">Clock</span>
                     </div>
                     <div class="app-icon" onclick="openApp('app-settings')">
                         <div class="icon-shape bg-zinc-700 text-white"><i class="fas fa-cog"></i></div>
-                        <span class="app-label">Settings</span>
+                        <span class="text-xs font-medium text-white drop-shadow-md">Settings</span>
                     </div>
                 </div>
             </div>
 
-            <!-- APP 1: Park Chat -->
+            <!-- APP: Phone (Ringtone tester) -->
+            <div id="app-phone" class="app-ui bg-zinc-900">
+                <div id="incoming-call-ui" class="flex-1 flex flex-col items-center justify-center p-8">
+                    <div class="text-gray-400 mb-2">Incoming Call...</div>
+                    <div class="text-4xl font-bold text-white mb-12">Benson 😡</div>
+                    
+                    <div class="w-32 h-32 bg-red-500 rounded-full flex items-center justify-center text-5xl text-white mb-16 ringing">
+                        <i class="fas fa-gumball"></i> <!-- Pretend it's Benson's head -->
+                    </div>
+
+                    <div class="flex gap-16 w-full justify-center">
+                        <button onclick="answerCall()" class="w-20 h-20 bg-green-500 rounded-full flex items-center justify-center text-3xl text-white shadow-lg shadow-green-500/50 hover:scale-105 transition">
+                            <i class="fas fa-phone"></i>
+                        </button>
+                        <button onclick="declineCall()" class="w-20 h-20 bg-red-500 rounded-full flex items-center justify-center text-3xl text-white shadow-lg shadow-red-500/50 hover:scale-105 transition">
+                            <i class="fas fa-phone-slash"></i>
+                        </button>
+                    </div>
+                </div>
+                <div id="active-call-ui" class="hidden flex-1 flex flex-col items-center justify-center p-8">
+                    <div class="text-4xl font-bold text-white mb-4">Benson</div>
+                    <div class="text-green-400 mb-12">00:03</div>
+                    <div class="text-2xl text-center italic text-gray-300">"IF YOU TWO DON'T RAKE THOSE LEAVES YOU'RE FIRED!"</div>
+                    <button onclick="declineCall()" class="mt-16 w-20 h-20 bg-red-500 rounded-full flex items-center justify-center text-3xl text-white shadow-lg">
+                        <i class="fas fa-phone-slash"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- APP: Chat -->
             <div id="app-chat" class="app-ui">
-                <div class="app-header bg-mordecai text-black">
-                    <i class="fas fa-user-circle text-2xl"></i> Group: Park Slackers
+                <div class="p-5 bg-blue-600 text-white font-bold flex items-center gap-4 text-xl shadow-md z-10">
+                    <span>Group: The Park</span>
                 </div>
-                <div id="chat-history">
-                    <div class="msg rcvd"><b>Mordo:</b> Dude, are you actually working right now?</div>
+                <div id="chat-history" class="flex-1 overflow-y-auto p-5 flex flex-col bg-[#121212]">
+                    <div class="msg rcvd"><b>Mordo:</b> Bro you actually working today?</div>
                 </div>
-                <div class="p-4 bg-black/20 flex gap-2">
-                    <input type="text" id="chat-input" class="flex-1 bg-white/10 rounded-full px-4 py-2 outline-none text-white placeholder-gray-400 border border-gray-600" placeholder="Type a message..." onkeypress="if(event.key==='Enter') sendMsg()">
-                    <button onclick="sendMsg()" class="w-10 h-10 bg-blue-500 rounded-full text-white flex justify-center items-center"><i class="fas fa-paper-plane"></i></button>
-                </div>
-            </div>
-
-            <!-- APP 2: Birbs Game -->
-            <div id="app-birbs" class="app-ui">
-                <div class="app-header bg-birb text-white flex justify-between">
-                    <span><i class="fas fa-kiwi-bird"></i> Yeet the Birb</span>
-                    <span id="score-display">Score: 0</span>
-                </div>
-                <div id="game-area" onclick="yeetBird()">
-                    <div class="absolute top-4 left-0 w-full text-center text-black font-bold z-10 pointer-events-none text-xl opacity-50">TAP ANYWHERE TO YEET</div>
-                    <div id="bird"><i class="fas fa-angry"></i></div>
-                    <div id="slingshot"></div>
-                    <div id="pig"><i class="fas fa-smile-beam text-green-900"></i></div>
-                    <div id="ground"></div>
+                <div class="p-4 bg-[#1e1e1e] flex gap-3 pb-safe">
+                    <div id="chat-fake-input" class="flex-1 bg-black rounded-full px-5 py-3 text-gray-400 min-h-[48px] flex items-center border border-zinc-700 text-lg" onclick="toggleKeyboard(true, 'chat-input')">Type a message...</div>
+                    <button class="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center shrink-0" onclick="sendMsg()"><i class="fas fa-paper-plane"></i></button>
                 </div>
             </div>
 
-            <!-- APP 3: Notes -->
-            <div id="app-notes" class="app-ui">
-                <div class="app-header bg-rigby text-white">
-                    <i class="fas fa-sticky-note"></i> Excuses to give Benson
+            <!-- APP: Play Store -->
+            <div id="app-playstore" class="app-ui bg-[#121212]">
+                <div class="p-6 flex items-center gap-4 bg-[#1e1e1e] border-b border-zinc-800">
+                    <i class="fab fa-google-play text-2xl text-green-400"></i>
+                    <div class="text-xl font-bold">Play Store</div>
                 </div>
-                <textarea class="flex-1 bg-yellow-100 text-gray-800 p-6 text-lg outline-none resize-none font-medium leading-loose" placeholder="1. Say we had to fix the cart..."></textarea>
-            </div>
-
-            <!-- APP 4: Camera -->
-            <div id="app-camera" class="app-ui bg-black">
-                <div class="absolute top-10 left-5 text-white z-10 font-bold text-xl drop-shadow-md">Camera</div>
-                <video id="video-element" autoplay playsinline></video>
-                <div id="cam-fallback" class="absolute inset-0 flex items-center justify-center text-white p-8 text-center hidden">
-                    Allow camera access or check if your device supports it, bro.
-                </div>
-                <div class="camera-ui">
-                    <div class="shutter" onclick="snapPhoto()"></div>
-                </div>
-            </div>
-
-            <!-- APP 5: Settings -->
-            <div id="app-settings" class="app-ui">
-                <div class="app-header bg-zinc-800 text-white">
-                    <i class="fas fa-cog"></i> Settings
-                </div>
-                <div class="setting-row">
-                    <span class="text-lg"><i class="fas fa-moon mr-3 text-blue-400"></i> Dark Mode</span>
-                    <div class="toggle on" id="theme-toggle" onclick="toggleTheme()"></div>
-                </div>
-                <div class="setting-row">
-                    <span class="text-lg"><i class="fas fa-wifi mr-3 text-green-400"></i> Park Wi-Fi</span>
-                    <div class="toggle on" onclick="this.classList.toggle('on')"></div>
-                </div>
-                <div class="p-6 opacity-50 text-center text-sm mt-auto">
-                    Droid Z OS v1.0<br>Designed for slackers.
+                <div class="flex-1 overflow-y-auto p-6">
+                    <h3 class="text-gray-400 font-bold mb-4 uppercase tracking-wider text-sm">Suggested Games</h3>
+                    <div class="bg-[#1e1e1e] rounded-2xl p-4 flex items-center gap-4 mb-4">
+                        <div class="w-16 h-16 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-xl flex items-center justify-center text-3xl text-white"><i class="fas fa-ghost"></i></div>
+                        <div class="flex-1">
+                            <div class="font-bold text-lg">Rigby's Run</div>
+                            <div class="text-sm text-gray-400">Arcade • 4.8 ★</div>
+                        </div>
+                        <button class="bg-green-600/20 text-green-400 px-5 py-2 rounded-full font-bold" onclick="downloadApp(this)">Install</button>
+                    </div>
                 </div>
             </div>
 
+            <!-- APP: Clock (Alarm Tester) -->
+            <div id="app-clock" class="app-ui bg-black">
+                <div class="p-6 text-3xl font-bold pt-8">Alarms</div>
+                <div class="p-6 flex-1">
+                    <div class="bg-zinc-900 rounded-3xl p-6 flex justify-between items-center mb-4">
+                        <div>
+                            <div class="text-5xl font-light mb-1">06:00</div>
+                            <div class="text-gray-400">Wake up for work</div>
+                        </div>
+                        <div id="alarm-toggle" class="w-14 h-8 bg-zinc-700 rounded-full relative cursor-pointer" onclick="toggleAlarm(this)">
+                            <div class="w-6 h-6 bg-white rounded-full absolute top-1 left-1 transition-all"></div>
+                        </div>
+                    </div>
+                    <p class="text-center text-gray-500 mt-8 text-sm">Toggle the switch to test the alarm sound.</p>
+                </div>
+            </div>
+
+            <!-- APP: Birbs (Mini Game) -->
+            <div id="app-birbs" class="app-ui bg-sky-300">
+                <div class="p-4 bg-red-600 text-white flex justify-between items-center shadow-lg z-10">
+                    <span class="font-bold text-lg"><i class="fas fa-kiwi-bird mr-2"></i> Yeet Birb</span>
+                    <span id="birb-score" class="bg-black/20 px-4 py-1 rounded-full font-bold">Score: 0</span>
+                </div>
+                <div class="flex-1 relative overflow-hidden flex flex-col items-center" onclick="yeetBirb()">
+                    <div class="mt-20 text-sky-800/50 font-bold text-2xl uppercase tracking-widest text-center">Tap anywhere<br>to Yeet</div>
+                    <div id="bird-obj" class="absolute bottom-20 left-10 w-12 h-12 bg-red-600 rounded-full flex items-center justify-center text-white text-2xl shadow-lg transition-all duration-500 z-20"><i class="fas fa-angry"></i></div>
+                    <div id="pig-obj" class="absolute bottom-20 right-10 w-14 h-14 bg-green-500 rounded-full flex items-center justify-center text-white text-2xl shadow-lg z-10"><i class="fas fa-smile"></i></div>
+                    <div class="absolute bottom-0 w-full h-16 bg-[#8B4513] border-t-8 border-[#228B22]"></div>
+                </div>
+            </div>
+
+            <!-- APP: Settings (Battery Tester) -->
+            <div id="app-settings" class="app-ui bg-[#121212]">
+                <div class="p-6 text-3xl font-bold pt-8 border-b border-zinc-800">Settings</div>
+                <div class="p-6 flex-1 overflow-y-auto">
+                    
+                    <div class="mb-8">
+                        <div class="text-sm text-gray-400 font-bold uppercase tracking-wider mb-3">Device Status</div>
+                        <div class="bg-[#1e1e1e] rounded-2xl p-5 flex items-center gap-4">
+                            <i class="fas fa-battery-half text-3xl text-green-400" id="batt-icon"></i>
+                            <div class="flex-1">
+                                <div class="font-bold text-xl" id="batt-level">100%</div>
+                                <div class="text-gray-400 text-sm" id="batt-status">Fetching battery API...</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-8">
+                        <div class="text-sm text-gray-400 font-bold uppercase tracking-wider mb-3">Sound Triggers (Testing)</div>
+                        <div class="grid grid-cols-2 gap-3">
+                            <button class="bg-[#1e1e1e] p-4 rounded-xl text-left hover:bg-zinc-800" onclick="playSnd('charge')">
+                                <i class="fas fa-bolt text-yellow-400 mb-2 text-xl"></i><br>Test Charging
+                            </button>
+                            <button class="bg-[#1e1e1e] p-4 rounded-xl text-left hover:bg-zinc-800" onclick="playSnd('low')">
+                                <i class="fas fa-battery-empty text-red-500 mb-2 text-xl"></i><br>Test Low Battery
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div> <!-- End Main Viewport -->
+
+        <!-- Virtual Keyboard -->
+        <div id="virtual-keyboard">
+            <div class="kb-row">
+                <div class="key" onclick="handleKey('q')">q</div><div class="key" onclick="handleKey('w')">w</div><div class="key" onclick="handleKey('e')">e</div><div class="key" onclick="handleKey('r')">r</div><div class="key" onclick="handleKey('t')">t</div><div class="key" onclick="handleKey('y')">y</div><div class="key" onclick="handleKey('u')">u</div><div class="key" onclick="handleKey('i')">i</div><div class="key" onclick="handleKey('o')">o</div><div class="key" onclick="handleKey('p')">p</div>
+            </div>
+            <div class="kb-row">
+                <div class="key" onclick="handleKey('a')">a</div><div class="key" onclick="handleKey('s')">s</div><div class="key" onclick="handleKey('d')">d</div><div class="key" onclick="handleKey('f')">f</div><div class="key" onclick="handleKey('g')">g</div><div class="key" onclick="handleKey('h')">h</div><div class="key" onclick="handleKey('j')">j</div><div class="key" onclick="handleKey('k')">k</div><div class="key" onclick="handleKey('l')">l</div>
+            </div>
+            <div class="kb-row">
+                <div class="key key-special" onclick="handleKey('SHIFT')"><i class="fas fa-arrow-up"></i></div>
+                <div class="key" onclick="handleKey('z')">z</div><div class="key" onclick="handleKey('x')">x</div><div class="key" onclick="handleKey('c')">c</div><div class="key" onclick="handleKey('v')">v</div><div class="key" onclick="handleKey('b')">b</div><div class="key" onclick="handleKey('n')">n</div><div class="key" onclick="handleKey('m')">m</div>
+                <div class="key key-special" onclick="handleKey('BACKSPACE')"><i class="fas fa-backspace"></i></div>
+            </div>
+            <div class="kb-row">
+                <div class="key">?123</div>
+                <div class="key key-space" onclick="handleKey(' ')">space</div>
+                <div class="key bg-blue-600" onclick="submitKeyboard()">done</div>
+            </div>
         </div>
 
-        <!-- System Navigation Bar -->
+        <!-- Android Nav Bar (Hollow Outlines) -->
         <div class="system-nav-bar">
-            <div class="nav-btn" onclick="closeApp()"><i class="fas fa-caret-left text-2xl"></i></div>
-            <div class="nav-btn" onclick="closeApp()"><i class="far fa-circle text-xl"></i></div>
-            <div class="nav-btn"><i class="fas fa-stop text-sm"></i></div>
+            <div class="nav-btn" onclick="sysBack()"><i class="icon-back"></i></div>
+            <div class="nav-btn" onclick="sysHome()"><div class="icon-home"></div></div>
+            <div class="nav-btn" onclick="sysRecents()"><div class="icon-recent"></div></div>
         </div>
     </div>
 
+    <!-- Preloaded Audio Elements -->
+    <audio id="snd-ring" src="https://files.catbox.moe/heuxm7.ogg" loop preload="auto"></audio>
+    <audio id="snd-notif" src="https://files.catbox.moe/l7jjh7.ogg" preload="auto"></audio>
+    <audio id="snd-alarm" src="https://files.catbox.moe/jd0fxm.ogg" loop preload="auto"></audio>
+    <audio id="snd-tap" src="https://files.catbox.moe/lpueqe.ogg" preload="auto"></audio>
+    <audio id="snd-key" src="https://files.catbox.moe/xw2z8a.ogg" preload="auto"></audio>
+    <audio id="snd-charge" src="https://files.catbox.moe/qqyo2v.ogg" preload="auto"></audio>
+    <audio id="snd-low" src="https://files.catbox.moe/tub39d.ogg" preload="auto"></audio>
+
     <script>
-        // --- System Logic ---
-        function updateClock() {
-            const now = new Date();
-            let hours = now.getHours();
-            const ampm = hours >= 12 ? 'PM' : 'AM';
-            hours = hours % 12 || 12; // 12-hour format for Gen Z aesthetic
-            const minutes = now.getMinutes().toString().padStart(2, '0');
-            document.getElementById('clock').textContent = `${hours}:${minutes}`;
-            document.getElementById('date').textContent = now.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
-        }
-        setInterval(updateClock, 1000);
-        updateClock();
+        const audio = {
+            ring: document.getElementById('snd-ring'),
+            notif: document.getElementById('snd-notif'),
+            alarm: document.getElementById('snd-alarm'),
+            tap: document.getElementById('snd-tap'),
+            key: document.getElementById('snd-key'),
+            charge: document.getElementById('snd-charge'),
+            low: document.getElementById('snd-low')
+        };
 
-        let currentApp = null;
-        let streamRef = null;
-
-        function openApp(appId) {
-            document.getElementById(appId).classList.add('active');
-            currentApp = appId;
-            
-            // App specific inits
-            if(appId === 'app-camera') initCamera();
-            if(appId === 'app-birbs') resetGame();
-        }
-
-        function closeApp() {
-            if(!currentApp) return;
-            document.getElementById(currentApp).classList.remove('active');
-            
-            // App specific cleanups
-            if(currentApp === 'app-camera' && streamRef) {
-                streamRef.getTracks().forEach(track => track.stop());
-                document.getElementById('video-element').srcObject = null;
+        // --- Core OS Functions ---
+        function playSnd(name) {
+            if(audio[name]) {
+                if (name !== 'ring' && name !== 'alarm') {
+                    audio[name].currentTime = 0; // Reset short sounds to allow rapid firing
+                }
+                audio[name].play().catch(e => console.log("Audio play blocked."));
             }
-            currentApp = null;
         }
 
-        // --- Chat App Logic ---
-        const botReplies = [
-            "<b>Benson:</b> GET BACK TO WORK OR YOU'RE FIRED!!!",
-            "<b>Rigby:</b> Bro I'm literally playing video games rn, leave me alone.",
-            "<b>Mordo:</b> OOOOOOHHHHHHHHHH!",
-            "<b>Pops:</b> Good show! Jolly good show!",
-            "<b>Muscle Man:</b> You know who else is texting right now? MY MOM!"
-        ];
+        function stopSnd(name) {
+            if(audio[name]) {
+                audio[name].pause();
+                audio[name].currentTime = 0;
+            }
+        }
 
+        // Global Tap Sound (Attached to common interactables)
+        document.addEventListener('pointerdown', (e) => {
+            if(e.target.closest('.app-icon, .nav-btn, button, .toggle-switch')) {
+                playSnd('tap');
+            }
+        });
+
+        function bootOS() {
+            // Unlocks audio context on mobile/browsers
+            playSnd('charge'); // Play charge sound on boot per instructions
+            const bs = document.getElementById('boot-screen');
+            bs.style.opacity = '0';
+            setTimeout(() => { bs.style.display = 'none'; }, 500);
+            initBatteryAPI();
+        }
+
+        // --- System Navigation ---
+        let openApps = [];
+
+        function openApp(id) {
+            document.getElementById(id).classList.add('active');
+            if(!openApps.includes(id)) openApps.push(id);
+            toggleKeyboard(false);
+
+            if(id === 'app-phone') startIncomingCall();
+        }
+
+        function sysHome() {
+            openApps.forEach(id => document.getElementById(id).classList.remove('active'));
+            openApps = [];
+            toggleKeyboard(false);
+            stopSnd('ring');
+            stopSnd('alarm');
+            resetPhoneApp();
+            resetAlarmToggle();
+        }
+
+        function sysBack() {
+            toggleKeyboard(false);
+            if(openApps.length > 0) {
+                const topApp = openApps.pop();
+                document.getElementById(topApp).classList.remove('active');
+                if(topApp === 'app-phone') { stopSnd('ring'); resetPhoneApp(); }
+                if(topApp === 'app-clock') { stopSnd('alarm'); resetAlarmToggle(); }
+            }
+        }
+
+        function sysRecents() {
+            if(openApps.length > 0) {
+                const topApp = document.getElementById(openApps[openApps.length - 1]);
+                topApp.style.transform = "scale(0.9) translateY(5%) rounded-[30px]";
+                setTimeout(() => topApp.style.transform = "translateY(0)", 300);
+            }
+        }
+
+        // --- Clock / Time ---
+        setInterval(() => {
+            const n = new Date();
+            let h = n.getHours();
+            const m = n.getMinutes().toString().padStart(2, '0');
+            document.getElementById('clock').innerText = `${h%12||12}:${m}`;
+            document.getElementById('date').innerText = n.toLocaleDateString('en-US', {weekday:'short', month:'short', day:'numeric'});
+        }, 1000);
+
+        // --- Keyboard Logic ---
+        let currentInputTarget = null;
+        let isShift = false;
+
+        function toggleKeyboard(show, targetId) {
+            const kb = document.getElementById('virtual-keyboard');
+            if(show) {
+                kb.classList.add('active');
+                currentInputTarget = document.getElementById('chat-fake-input'); // Hardcoded for chat currently
+            } else {
+                kb.classList.remove('active');
+            }
+        }
+
+        function handleKey(key) {
+            playSnd('key');
+            if(!currentInputTarget) return;
+
+            let text = currentInputTarget.innerText;
+            if (text === 'Type a message...') text = '';
+
+            if(key === 'BACKSPACE') {
+                currentInputTarget.innerText = text.slice(0, -1);
+            } else if(key === 'SHIFT') {
+                isShift = !isShift;
+                const keys = document.querySelectorAll('.kb-row .key:not(.key-special):not(.key-space)');
+                keys.forEach(k => {
+                    if(k.innerText.length === 1) k.innerText = isShift ? k.innerText.toUpperCase() : k.innerText.toLowerCase();
+                });
+            } else {
+                currentInputTarget.innerText = text + (isShift ? key.toUpperCase() : key.toLowerCase());
+                if(isShift) handleKey('SHIFT'); // auto lowercase after 1 char
+            }
+            if(currentInputTarget.innerText === '') currentInputTarget.innerText = 'Type a message...';
+        }
+
+        function submitKeyboard() {
+            if(currentInputTarget && currentInputTarget.id === 'chat-fake-input') sendMsg();
+            toggleKeyboard(false);
+        }
+
+        // Physical Keyboard Support
+        window.addEventListener('keydown', (e) => {
+            if(currentInputTarget && document.getElementById('virtual-keyboard').classList.contains('active')) {
+                if(e.key === 'Backspace') { e.preventDefault(); handleKey('BACKSPACE'); }
+                else if(e.key === 'Enter') { e.preventDefault(); submitKeyboard(); }
+                else if(e.key.length === 1) { handleKey(e.key); }
+            }
+        });
+
+        // --- Battery API Integration ---
+        function initBatteryAPI() {
+            if ('getBattery' in navigator) {
+                navigator.getBattery().then(function(battery) {
+                    updateBatteryUI(battery);
+
+                    // Listeners
+                    battery.addEventListener('chargingchange', function() {
+                        updateBatteryUI(battery);
+                        if(battery.charging) playSnd('charge'); // Plays when plugged in
+                    });
+
+                    battery.addEventListener('levelchange', function() {
+                        updateBatteryUI(battery);
+                        // Trigger low battery sound if it hits exactly 20% or drops below and isn't charging
+                        if(battery.level <= 0.20 && !battery.charging) playSnd('low');
+                    });
+                });
+            } else {
+                document.getElementById('batt-status').innerText = "Battery API not supported on this browser/device.";
+            }
+        }
+
+        function updateBatteryUI(battery) {
+            const level = Math.round(battery.level * 100);
+            document.getElementById('batt-level').innerText = level + '%';
+            document.getElementById('batt-status').innerText = battery.charging ? 'Plugged In / Charging' : 'On Battery Power';
+            
+            const icon = document.getElementById('batt-icon');
+            icon.className = 'fas text-3xl ';
+            if(battery.charging) { icon.classList.add('fa-battery-charging', 'text-yellow-400'); }
+            else if(level > 75) { icon.classList.add('fa-battery-full', 'text-green-400'); }
+            else if(level > 40) { icon.classList.add('fa-battery-half', 'text-green-400'); }
+            else if(level > 15) { icon.classList.add('fa-battery-quarter', 'text-orange-400'); }
+            else { icon.classList.add('fa-battery-empty', 'text-red-500'); }
+        }
+
+        // --- App Specific Logic ---
+
+        // Phone App
+        function startIncomingCall() {
+            resetPhoneApp();
+            playSnd('ring'); // Loops automatically via HTML tag
+        }
+        function answerCall() {
+            stopSnd('ring');
+            document.getElementById('incoming-call-ui').classList.add('hidden');
+            document.getElementById('active-call-ui').classList.remove('hidden');
+            document.getElementById('active-call-ui').classList.add('flex');
+        }
+        function declineCall() {
+            stopSnd('ring');
+            sysBack();
+        }
+        function resetPhoneApp() {
+            document.getElementById('incoming-call-ui').classList.remove('hidden');
+            document.getElementById('active-call-ui').classList.add('hidden');
+            document.getElementById('active-call-ui').classList.remove('flex');
+        }
+
+        // Chat App
         function sendMsg() {
-            const input = document.getElementById('chat-input');
-            const text = input.value.trim();
-            if(!text) return;
-
+            const input = document.getElementById('chat-fake-input');
             const hist = document.getElementById('chat-history');
+            const text = input.innerText;
+            if(text === '' || text === 'Type a message...') return;
+
             hist.innerHTML += `<div class="msg sent">${text}</div>`;
-            input.value = '';
+            input.innerText = 'Type a message...';
             hist.scrollTop = hist.scrollHeight;
 
-            // Fake typing delay
             setTimeout(() => {
-                const randomReply = botReplies[Math.floor(Math.random() * botReplies.length)];
-                hist.innerHTML += `<div class="msg rcvd">${randomReply}</div>`;
+                playSnd('notif');
+                const replies = ["Bro...", "Benson's mad.", "I'm playing Birbs rn.", "W"];
+                hist.innerHTML += `<div class="msg rcvd"><b>Rigby:</b> ${replies[Math.floor(Math.random()*replies.length)]}</div>`;
                 hist.scrollTop = hist.scrollHeight;
             }, 1500);
         }
 
-        // --- Birbs Game Logic ---
-        let score = 0;
-        let isYeeting = false;
-
-        function yeetBird() {
-            if(isYeeting) return;
-            isYeeting = true;
-            
-            const bird = document.getElementById('bird');
-            const pig = document.getElementById('pig');
-            
-            // CSS Animation
-            bird.style.transform = `translate(250px, -150px) rotate(360deg)`;
-            
+        // Play Store
+        function downloadApp(btn) {
+            btn.innerText = "Installing...";
+            btn.classList.add('opacity-50');
             setTimeout(() => {
-                // Collision effect
-                pig.innerHTML = '<i class="fas fa-dizzy text-red-900"></i>';
-                pig.style.transform = 'scale(0.8) rotate(20deg)';
-                score++;
-                document.getElementById('score-display').textContent = `Score: ${score}`;
-                
-                setTimeout(resetGame, 1000);
-            }, 500);
+                playSnd('notif');
+                btn.innerText = "Open";
+                btn.classList.remove('opacity-50');
+                btn.classList.replace('bg-green-600/20', 'bg-blue-600/20');
+                btn.classList.replace('text-green-400', 'text-blue-400');
+            }, 2500);
         }
 
-        function resetGame() {
-            const bird = document.getElementById('bird');
-            const pig = document.getElementById('pig');
-            bird.style.transition = 'none';
-            bird.style.transform = 'translate(0, 0) rotate(0deg)';
-            
-            pig.innerHTML = '<i class="fas fa-smile-beam text-green-900"></i>';
-            pig.style.transform = 'none';
-            
-            setTimeout(() => {
-                bird.style.transition = 'all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
-                isYeeting = false;
-            }, 50);
-        }
-
-        // --- Camera App Logic ---
-        async function initCamera() {
-            const video = document.getElementById('video-element');
-            const fallback = document.getElementById('cam-fallback');
-            try {
-                streamRef = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' } });
-                video.srcObject = streamRef;
-                fallback.classList.add('hidden');
-                video.classList.remove('hidden');
-            } catch (err) {
-                console.error("Camera error:", err);
-                video.classList.add('hidden');
-                fallback.classList.remove('hidden');
-            }
-        }
-
-        function snapPhoto() {
-            const shutter = document.querySelector('.shutter');
-            shutter.style.background = 'black';
-            setTimeout(() => shutter.style.background = 'white', 100);
-            
-            // Flash effect
-            const flash = document.createElement('div');
-            flash.style.position = 'absolute';
-            flash.style.inset = '0';
-            flash.style.background = 'white';
-            flash.style.zIndex = '50';
-            flash.style.transition = 'opacity 0.5s';
-            document.getElementById('app-camera').appendChild(flash);
-            
-            setTimeout(() => { flash.style.opacity = '0'; }, 50);
-            setTimeout(() => { flash.remove(); }, 500);
-        }
-
-        // --- Settings Logic ---
-        function toggleTheme() {
-            const toggle = document.getElementById('theme-toggle');
-            toggle.classList.toggle('on');
-            document.getElementById('viewport').classList.toggle('light-mode');
-            
-            // Adjust input styling for chat based on mode
-            const input = document.getElementById('chat-input');
-            if(toggle.classList.contains('on')) {
-                input.style.color = "white";
-                input.style.backgroundColor = "rgba(255,255,255,0.1)";
+        // Clock / Alarm
+        function toggleAlarm(el) {
+            const isActive = el.children[0].style.left === '28px';
+            if(isActive) {
+                el.children[0].style.left = '4px';
+                el.classList.replace('bg-blue-500', 'bg-zinc-700');
+                stopSnd('alarm');
             } else {
-                input.style.color = "black";
-                input.style.backgroundColor = "rgba(0,0,0,0.1)";
+                el.children[0].style.left = '28px';
+                el.classList.replace('bg-zinc-700', 'bg-blue-500');
+                playSnd('alarm');
             }
+        }
+        function resetAlarmToggle() {
+            const el = document.getElementById('alarm-toggle');
+            el.children[0].style.left = '4px';
+            el.classList.replace('bg-blue-500', 'bg-zinc-700');
+        }
+
+        // Birbs Game
+        let birbScore = 0;
+        function yeetBirb() {
+            const bird = document.getElementById('bird-obj');
+            const pig = document.getElementById('pig-obj');
+            
+            // Yeet trajectory
+            bird.style.transform = `translate(${window.innerWidth * 0.4}px, -${window.innerHeight * 0.2}px) rotate(360deg)`;
+            
+            setTimeout(() => {
+                birbScore++;
+                document.getElementById('birb-score').innerText = `Score: ${birbScore}`;
+                pig.innerHTML = '<i class="fas fa-dizzy"></i>';
+                pig.classList.replace('bg-green-500', 'bg-red-500');
+                pig.style.transform = "scale(1.3)";
+                
+                // Reset
+                setTimeout(() => {
+                    pig.innerHTML = '<i class="fas fa-smile"></i>';
+                    pig.classList.replace('bg-red-500', 'bg-green-500');
+                    pig.style.transform = "";
+                    bird.style.transition = "none";
+                    bird.style.transform = "translate(0,0) rotate(0deg)";
+                    setTimeout(() => bird.style.transition = "all 0.5s", 50);
+                }, 400);
+            }, 500);
         }
     </script>
 </body>
 </html>
+
 
