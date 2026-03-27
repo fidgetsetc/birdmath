@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Locked Crop View</title>
+    <style>
+        /* THE SETUP:
+           We're using a container with overflow hidden to act as a "window".
+           The iframe is pushed up by 100px so the top part stays hidden.
+        */
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            width: 100%;
+            overflow: hidden;
+            background-color: #000;
+            font-family: system-ui, -apple-system, sans-serif;
+        }
+
+        .container {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            /* We add 100px to the height so the bottom isn't cut off 
+               after we shift the whole thing up.
+            */
+            height: calc(100vh + 100px);
+            /* This is the 100px cutoff magic */
+            margin-top: -100px;
+            border: none;
+        }
+
+        /* Minimalist "Loaded" indicator that fades out */
+        #status {
+            position: fixed;
+            bottom: 10px;
+            right: 10px;
+            color: rgba(255,255,255,0.3);
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- 
+             CHANGE THE LINK BELOW 
+             Just swap the 'src' value to whatever site you want locked in.
+        -->
+        <iframe 
+            src="https://en.m.wikipedia.org/wiki/List_of_Angry_Birds_characters" 
+            title="Locked Content"
+            loading="lazy">
+        </iframe>
+    </div>
+
+    <div id="status">Secure Link Active</div>
+
+    <script>
+        // Log a little easter egg for the real ones
+        console.log("Who else wants a cool iframe? MY MOM!");
+        
+        window.onload = () => {
+            setTimeout(() => {
+                document.getElementById('status').style.opacity = '0';
+            }, 3000);
+        };
+    </script>
+</body>
+</html>
+
