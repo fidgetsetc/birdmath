@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Z-Tok: The FYP</title>
+    <title>VidScroll | The FYP</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
@@ -12,7 +12,7 @@
             color: #fff;
             margin: 0;
             overflow: hidden;
-            font-family: 'Inter', sans-serif;
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
         }
         .video-container {
             height: 100vh;
@@ -20,6 +20,7 @@
             scroll-snap-type: y mandatory;
             overflow-y: scroll;
             scrollbar-width: none;
+            -ms-overflow-style: none;
         }
         .video-container::-webkit-scrollbar {
             display: none;
@@ -44,17 +45,17 @@
             bottom: 0;
             left: 0;
             width: 100%;
-            padding: 80px 20px 20px 20px;
-            background: linear-gradient(transparent, rgba(0,0,0,0.8));
+            padding: 100px 20px 40px 20px;
+            background: linear-gradient(transparent, rgba(0,0,0,0.9));
             pointer-events: none;
         }
         .side-bar {
             position: absolute;
-            right: 15px;
-            bottom: 120px;
+            right: 12px;
+            bottom: 100px;
             display: flex;
             flex-direction: column;
-            gap: 25px;
+            gap: 20px;
             align-items: center;
             z-index: 10;
         }
@@ -64,292 +65,260 @@
             color: white;
             cursor: pointer;
             text-align: center;
-            transition: transform 0.2s;
+            transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
-        .icon-btn:active { transform: scale(0.9); }
-        .icon-btn i { font-size: 28px; }
-        .icon-btn span { font-size: 12px; display: block; margin-top: 4px; font-weight: 600; }
+        .icon-btn:active { transform: scale(0.8); }
+        .icon-btn i { font-size: 32px; filter: drop-shadow(0 2px 8px rgba(0,0,0,0.6)); }
+        .icon-btn span { font-size: 13px; display: block; margin-top: 4px; font-weight: 700; text-shadow: 0 2px 4px rgba(0,0,0,0.9); }
         
         .modal {
             position: fixed;
             bottom: 0;
             left: 0;
             right: 0;
-            background: #1a1a1a;
-            border-top-left-radius: 20px;
-            border-top-right-radius: 20px;
-            height: 60%;
+            background: #0f172a; /* Midnight Blue like Mordecai */
+            border-top-left-radius: 24px;
+            border-top-right-radius: 24px;
+            height: 75%;
             z-index: 50;
             transform: translateY(100%);
-            transition: transform 0.3s ease-out;
-            padding: 20px;
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            padding: 24px;
             display: flex;
             flex-direction: column;
+            box-shadow: 0 -10px 40px rgba(0,0,0,0.5);
         }
         .modal.open { transform: translateY(0); }
         
         .name-prompt {
             position: fixed;
             inset: 0;
-            background: rgba(0,0,0,0.9);
+            background: radial-gradient(circle, #1e293b 0%, #020617 100%);
             z-index: 100;
             display: flex;
             align-items: center;
             justify-content: center;
+            backdrop-filter: blur(20px);
         }
         
-        .red-dot { color: #ff3b5c; }
-        .active-fav { color: #facd31; }
+        .active-heart { color: #f43f5e !important; }
+        .active-fav { color: #fbbf24 !important; }
+
+        @keyframes pop {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.4); }
+            100% { transform: scale(1); }
+        }
+        .animate-pop { animation: pop 0.3s ease; }
+
+        .logo-text {
+            font-family: 'Black Ops One', cursive, sans-serif;
+            letter-spacing: -1px;
+        }
     </style>
 </head>
 <body>
 
-    <!-- Username Prompt -->
-    <div id="namePrompt" class="name-prompt">
-        <div class="bg-zinc-900 p-8 rounded-2xl w-80 text-center border border-zinc-800">
-            <h2 class="text-xl font-bold mb-4">What's your @?</h2>
-            <input type="text" id="usernameInput" placeholder="Enter name..." class="w-full bg-zinc-800 border-none p-3 rounded-lg mb-4 text-white outline-none focus:ring-2 ring-pink-500">
-            <button onclick="saveName()" class="w-full bg-[#ff3b5c] text-white font-bold py-3 rounded-lg hover:opacity-90">Let's Go</button>
+    <!-- Onboarding -->
+    <div id="onboarding" class="name-prompt">
+        <div class="bg-slate-900/80 p-10 rounded-[2.5rem] w-full max-w-sm text-center border border-slate-700 shadow-2xl backdrop-blur-xl">
+            <div class="mb-8 inline-block relative">
+                <div class="absolute inset-0 bg-blue-500 blur-2xl opacity-20 animate-pulse"></div>
+                <i class="fas fa-bolt text-6xl text-blue-400 relative"></i>
+            </div>
+            <h1 class="text-4xl font-black mb-2 italic tracking-tighter text-white">VidScroll</h1>
+            <p class="text-slate-400 text-sm mb-8 font-medium">Who's watching? (Don't be a Slacka)</p>
+            <input type="text" id="userInput" placeholder="your @handle" class="w-full bg-slate-800/50 border-2 border-slate-700 p-4 rounded-2xl mb-4 text-white outline-none focus:border-blue-500 transition-all font-bold text-center">
+            <button onclick="startScrolling()" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-black py-4 rounded-2xl transition-all active:scale-95 shadow-lg shadow-blue-900/20">LET'S GOOOO</button>
         </div>
     </div>
 
-    <!-- Video Feed -->
-    <div id="videoContainer" class="video-container">
-        <!-- Videos will be injected here -->
+    <!-- Feed -->
+    <div id="feed" class="video-container">
+        <!-- Content injected via JS -->
     </div>
 
-    <!-- Comment Modal -->
+    <!-- Comments -->
     <div id="commentModal" class="modal">
-        <div class="flex justify-between items-center mb-4">
-            <h3 class="font-bold text-sm" id="commentCountHeader">0 comments</h3>
-            <button onclick="closeComments()" class="text-zinc-400"><i class="fas fa-times"></i></button>
+        <div class="flex justify-between items-center mb-6">
+            <div class="flex items-center gap-2">
+                <span class="bg-blue-500/20 text-blue-400 px-3 py-1 rounded-full text-xs font-black uppercase tracking-widest">Comments</span>
+                <span class="text-slate-400 text-sm font-bold" id="commentCount">0</span>
+            </div>
+            <button onclick="closeComments()" class="text-slate-500 hover:text-white transition-colors"><i class="fas fa-chevron-down text-xl"></i></button>
         </div>
-        <div id="commentList" class="flex-1 overflow-y-auto mb-4 space-y-4 pr-2">
-            <!-- Comments injected here -->
+        
+        <div id="commentList" class="flex-1 overflow-y-auto space-y-6 custom-scrollbar">
+            <!-- Comments here -->
         </div>
-        <div class="flex gap-2">
-            <input type="text" id="newCommentInput" placeholder="Add a comment..." class="flex-1 bg-zinc-800 p-3 rounded-full outline-none text-sm">
-            <button onclick="postComment()" class="text-pink-500 font-bold px-2">Post</button>
+
+        <div class="flex gap-3 items-center mt-6 pt-4 border-t border-slate-800">
+            <div id="currentAvatar" class="w-10 h-10 rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center font-black text-sm shadow-lg">?</div>
+            <div class="flex-1 relative">
+                <input type="text" id="commentInput" placeholder="Add a comment..." class="w-full bg-slate-800/80 p-4 rounded-2xl outline-none text-sm border border-slate-700 focus:border-blue-500/50 pr-12 transition-all">
+                <button onclick="submitComment()" class="absolute right-3 top-1/2 -translate-y-1/2 text-blue-400 font-black text-sm hover:text-blue-300">SEND</button>
+            </div>
         </div>
     </div>
 
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getFirestore, doc, setDoc, getDoc, collection, addDoc, onSnapshot, query, updateDoc, increment, deleteDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-        import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    <script>
+        const content = [
+            { id: "v1", src: "https://archive.org/download/v15044gf0000d739penog65i3lldaps0/download.mp4", author: "@scrappy73", desc: "pov: you drank the special soda 🥤", likes: 21405, comments: [], favs: 102 },
+            { id: "v2", src: "https://archive.org/download/v15044gf0000d739penog65i3lldaps0/v12025gd0000d71b2dnog65v0japu44g.mp4", author: "@vickyj", desc: "This security guard is definitely a Skips main", likes: 8933, comments: [], favs: 502 },
+            { id: "v3", src: "https://archive.org/download/v15044gf0000d7347mfog65heg5vvbug/v12044gd0000d7347mfog65heg5vvbug.mp4", author: "@pmd", desc: "Benson is gonna be so mad if we don't finish this", likes: 45200, comments: [], favs: 1204 },
+            { id: "v4", src: "https://archive.org/download/v15044gf0000d739penog65i3lldaps0/v15025gf0000d72a94fog65p6o5cjvi0.mp4", author: "@jermii", desc: "Me when Rigby takes the last burger", likes: 1244, comments: [], favs: 88 },
+            { id: "v5", src: "https://archive.org/download/v15044gf0000d739penog65i3lldaps0/v15044gf0000d739penog65i3lldaps0.mp4", author: "@geozoom", desc: "Is this the smallest park in the city? 🌳", likes: 3500, comments: [], favs: 211 }
+        ].sort(() => Math.random() - 0.5);
 
-        // CONFIG
-        const firebaseConfig = JSON.parse(__firebase_config);
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'ztok-v1';
+        let user = localStorage.getItem('vidscroll_user') || "";
+        let currentVid = null;
+        let likedVids = new Set();
+        let favVids = new Set();
 
-        // VIDEO DATA (IDENTIFIED BY URL)
-        const videos = [
-            { id: "v1", url: "https://archive.org/download/v15044gf0000d739penog65i3lldaps0/download.mp4", title: "Who drank my 🫪🫪🫪🫪🫪", user: "@scrappy73 on Sora" },
-            { id: "v2", url: "https://archive.org/download/v15044gf0000d739penog65i3lldaps0/v12025gd0000d71b2dnog65v0japu44g.mp4", title: "THE CURIOUS DISNEY SECURITY GUARD PART 2", user: "@victoriajames19850 on TT" },
-            { id: "v3", url: "https://archive.org/download/v15044gf0000d739penog65i3lldaps0/v12044gd0000d7347mfog65heg5vvbug.mp4", title: "POV: You've been sleepy all day and you suddenly get all your energy back when it strikes 12.", user: "@pmdamiann on TT" },
-            { id: "v4", url: "https://archive.org/download/v15044gf0000d739penog65i3lldaps0/v15025gf0000d72a94fog65p6o5cjvi0.mp4", title: "What possessed him to do this", user: "@jermii9000 on TT" },
-            { id: "v5", url: "https://archive.org/download/v15044gf0000d739penog65i3lldaps0/v15044gf0000d739penog65i3lldaps0.mp4", title: "What IL Walmart is the smallest", user: "@geozoom3 on TT" }
-        ].sort(() => Math.random() - 0.5); // RANDOMIZED FEED
-
-        let currentUser = null;
-        let currentUsername = localStorage.getItem('ztok_user') || "";
-        let currentVideoId = null;
-
-        // AUTH & INIT
-        async function init() {
-            await signInAnonymously(auth);
-            onAuthStateChanged(auth, (user) => {
-                if (user) {
-                    currentUser = user;
-                    if (currentUsername) {
-                        document.getElementById('namePrompt').style.display = 'none';
-                    }
-                }
-            });
-            renderFeed();
+        function startScrolling() {
+            const val = document.getElementById('userInput').value.trim();
+            if (val) {
+                user = val.startsWith('@') ? val : '@' + val;
+                localStorage.setItem('vidscroll_user', user);
+                document.getElementById('onboarding').style.display = 'none';
+                document.getElementById('currentAvatar').innerText = user[1].toUpperCase();
+            }
         }
 
-        window.saveName = () => {
-            const input = document.getElementById('usernameInput').value.trim();
-            if (input) {
-                currentUsername = input;
-                localStorage.setItem('ztok_user', input);
-                document.getElementById('namePrompt').style.display = 'none';
-            }
-        };
-
-        // RENDER FEED
-        function renderFeed() {
-            const container = document.getElementById('videoContainer');
-            container.innerHTML = videos.map(v => `
-                <div class="video-card" id="card-${v.id}">
-                    <video loop playsinline onclick="togglePlay(this)">
-                        <source src="${v.url}" type="video/mp4">
+        function render() {
+            const container = document.getElementById('feed');
+            container.innerHTML = content.map(v => `
+                <div class="video-card" id="vid-${v.id}">
+                    <video loop playsinline onclick="toggle(this)">
+                        <source src="${v.src}" type="video/mp4">
                     </video>
                     
                     <div class="side-bar">
-                        <button class="icon-btn" onclick="handleLike('${v.id}')">
-                            <i class="fas fa-heart" id="like-icon-${v.id}"></i>
-                            <span id="like-count-${v.id}">0</span>
+                        <button class="icon-btn" onclick="like('${v.id}')">
+                            <i class="fas fa-heart" id="li-${v.id}"></i>
+                            <span id="lc-${v.id}">${format(v.likes)}</span>
                         </button>
-                        <button class="icon-btn" onclick="openComments('${v.id}')">
+                        <button class="icon-btn" onclick="openComms('${v.id}')">
                             <i class="fas fa-comment-dots"></i>
-                            <span id="comm-count-${v.id}">0</span>
+                            <span id="cc-${v.id}">${v.comments.length}</span>
                         </button>
-                        <button class="icon-btn" onclick="handleFav('${v.id}')">
-                            <i class="fas fa-bookmark" id="fav-icon-${v.id}"></i>
-                            <span id="fav-count-${v.id}">0</span>
+                        <button class="icon-btn" onclick="fav('${v.id}')">
+                            <i class="fas fa-bookmark" id="fi-${v.id}"></i>
+                            <span id="fc-${v.id}">${v.favs}</span>
                         </button>
+                        <div class="w-12 h-12 rounded-full border-2 border-white overflow-hidden shadow-lg mt-2">
+                             <div class="w-full h-full bg-gradient-to-tr from-blue-400 to-indigo-600 flex items-center justify-center font-black text-xs">VS</div>
+                        </div>
                     </div>
 
                     <div class="overlay">
-                        <h3 class="font-bold text-lg mb-1">@${v.user}</h3>
-                        <p class="text-sm opacity-90">${v.title}</p>
+                        <div class="flex items-center gap-2 mb-2">
+                            <h3 class="font-black text-lg tracking-tight">${v.author}</h3>
+                            <span class="bg-blue-500 text-[10px] px-1.5 py-0.5 rounded font-black">PRO</span>
+                        </div>
+                        <p class="text-[15px] leading-relaxed text-slate-200 font-medium">${v.desc}</p>
                     </div>
                 </div>
             `).join('');
 
-            // Set up intersection observer for autoplay
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    const video = entry.target.querySelector('video');
-                    if (entry.isIntersecting) {
-                        video.play().catch(() => {});
-                        listenToStats(entry.target.id.split('-')[1]);
-                    } else {
-                        video.pause();
-                    }
+            const obs = new IntersectionObserver((es) => {
+                es.forEach(e => {
+                    const v = e.target.querySelector('video');
+                    if (e.isIntersecting) v.play().catch(() => {});
+                    else v.pause();
                 });
-            }, { threshold: 0.8 });
+            }, { threshold: 0.7 });
 
-            document.querySelectorAll('.video-card').forEach(card => observer.observe(card));
+            document.querySelectorAll('.video-card').forEach(c => obs.observe(c));
         }
 
-        // FIRESTORE STATS LISTENERS
-        const activeUnsubscribers = {};
-        function listenToStats(vidId) {
-            if (activeUnsubscribers[vidId]) return;
-
-            const videoDoc = doc(db, 'artifacts', appId, 'public', 'data', 'videos', vidId);
-            const userLikeDoc = doc(db, 'artifacts', appId, 'users', currentUser.uid, 'likes', vidId);
-            const userFavDoc = doc(db, 'artifacts', appId, 'users', currentUser.uid, 'favs', vidId);
-
-            // Listen to total stats
-            onSnapshot(videoDoc, (snapshot) => {
-                const data = snapshot.exists() ? snapshot.data() : { likes: 0, comms: 0, favs: 0 };
-                document.getElementById(`like-count-${vidId}`).innerText = data.likes || 0;
-                document.getElementById(`comm-count-${vidId}`).innerText = data.comms || 0;
-                document.getElementById(`fav-count-${vidId}`).innerText = data.favs || 0;
-            });
-
-            // Listen to personal like state
-            onSnapshot(userLikeDoc, (snapshot) => {
-                const icon = document.getElementById(`like-icon-${vidId}`);
-                if (snapshot.exists()) icon.classList.add('red-dot');
-                else icon.classList.remove('red-dot');
-            });
-
-            // Listen to personal fav state
-            onSnapshot(userFavDoc, (snapshot) => {
-                const icon = document.getElementById(`fav-icon-${vidId}`);
-                if (snapshot.exists()) icon.classList.add('active-fav');
-                else icon.classList.remove('active-fav');
-            });
-
-            activeUnsubscribers[vidId] = true;
-        }
-
-        // ACTIONS
-        window.handleLike = async (vidId) => {
-            if (!currentUser) return;
-            const likeRef = doc(db, 'artifacts', appId, 'users', currentUser.uid, 'likes', vidId);
-            const statsRef = doc(db, 'artifacts', appId, 'public', 'data', 'videos', vidId);
-            
-            const snap = await getDoc(likeRef);
-            if (snap.exists()) {
-                await deleteDoc(likeRef);
-                await setDoc(statsRef, { likes: increment(-1) }, { merge: true });
+        window.like = (id) => {
+            const v = content.find(x => x.id === id);
+            const icon = document.getElementById(`li-${id}`);
+            if (likedVids.has(id)) {
+                likedVids.delete(id);
+                v.likes--;
+                icon.classList.remove('active-heart', 'animate-pop');
             } else {
-                await setDoc(likeRef, { t: Date.now() });
-                await setDoc(statsRef, { likes: increment(1) }, { merge: true });
+                likedVids.add(id);
+                v.likes++;
+                icon.classList.add('active-heart', 'animate-pop');
             }
+            document.getElementById(`lc-${id}`).innerText = format(v.likes);
         };
 
-        window.handleFav = async (vidId) => {
-            if (!currentUser) return;
-            const favRef = doc(db, 'artifacts', appId, 'users', currentUser.uid, 'favs', vidId);
-            const statsRef = doc(db, 'artifacts', appId, 'public', 'data', 'videos', vidId);
-            
-            const snap = await getDoc(favRef);
-            if (snap.exists()) {
-                await deleteDoc(favRef);
-                await setDoc(statsRef, { favs: increment(-1) }, { merge: true });
+        window.fav = (id) => {
+            const v = content.find(x => x.id === id);
+            const icon = document.getElementById(`fi-${id}`);
+            if (favVids.has(id)) {
+                favVids.delete(id);
+                v.favs--;
+                icon.classList.remove('active-fav', 'animate-pop');
             } else {
-                await setDoc(favRef, { t: Date.now() });
-                await setDoc(statsRef, { favs: increment(1) }, { merge: true });
+                favVids.add(id);
+                v.favs++;
+                icon.classList.add('active-fav', 'animate-pop');
             }
+            document.getElementById(`fc-${id}`).innerText = format(v.favs);
         };
 
-        // COMMENTS LOGIC
-        let currentCommentUnsub = null;
-        window.openComments = (vidId) => {
-            currentVideoId = vidId;
+        window.openComms = (id) => {
+            currentVid = id;
             document.getElementById('commentModal').classList.add('open');
+            updateComms();
+        };
+
+        function updateComms() {
+            const v = content.find(x => x.id === currentVid);
             const list = document.getElementById('commentList');
-            const countHeader = document.getElementById('commentCountHeader');
+            document.getElementById('commentCount').innerText = v.comments.length;
             
-            if (currentCommentUnsub) currentCommentUnsub();
-
-            const q = collection(db, 'artifacts', appId, 'public', 'data', 'comments', vidId, 'list');
-            currentCommentUnsub = onSnapshot(q, (snapshot) => {
-                const comments = snapshot.docs.map(d => d.data()).sort((a,b) => b.t - a.t);
-                countHeader.innerText = `${comments.length} comments`;
-                list.innerHTML = comments.map(c => `
-                    <div class="flex gap-3">
-                        <div class="w-8 h-8 rounded-full bg-zinc-700 flex items-center justify-center text-xs font-bold">
-                            ${(c.user || '?')[0].toUpperCase()}
-                        </div>
-                        <div>
-                            <p class="text-zinc-400 text-xs font-bold">@${c.user || 'anon'}</p>
-                            <p class="text-sm">${c.text}</p>
-                        </div>
+            list.innerHTML = v.comments.length ? v.comments.map(c => `
+                <div class="flex gap-4 items-start">
+                    <div class="w-10 h-10 shrink-0 rounded-2xl bg-slate-800 border border-slate-700 flex items-center justify-center font-bold text-blue-400">
+                        ${c.user[1].toUpperCase()}
                     </div>
-                `).join('');
-            });
+                    <div class="flex-1">
+                        <div class="flex items-center gap-2 mb-1">
+                            <p class="text-blue-400 text-xs font-black">${c.user}</p>
+                            <span class="text-[10px] text-slate-600 font-bold">${c.ts}</span>
+                        </div>
+                        <p class="text-sm text-slate-300 font-medium leading-relaxed">${c.text}</p>
+                    </div>
+                </div>
+            `).reverse().join('') : `<div class="h-full flex flex-col items-center justify-center text-slate-700 text-center py-10">
+                <i class="fas fa-ghost text-4xl mb-4 opacity-20"></i>
+                <p class="font-bold opacity-50 italic">Ghost town in here... say something!</p>
+            </div>`;
+        }
+
+        window.closeComments = () => document.getElementById('commentModal').classList.remove('open');
+
+        window.submitComment = () => {
+            const el = document.getElementById('commentInput');
+            const txt = el.value.trim();
+            if (!txt || !currentVid) return;
+
+            const v = content.find(x => x.id === currentVid);
+            v.comments.push({ user: user || '@rigby', text: txt, ts: 'NOW' });
+            document.getElementById(`cc-${currentVid}`).innerText = v.comments.length;
+            updateComms();
+            el.value = '';
         };
 
-        window.closeComments = () => {
-            document.getElementById('commentModal').classList.remove('open');
-            if (currentCommentUnsub) currentCommentUnsub();
-        };
+        window.toggle = (v) => v.paused ? v.play() : v.pause();
+        function format(n) { return n >= 1000 ? (n/1000).toFixed(1) + 'k' : n; }
 
-        window.postComment = async () => {
-            const text = document.getElementById('newCommentInput').value.trim();
-            if (!text || !currentVideoId) return;
+        document.getElementById('commentInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') submitComment();
+        });
 
-            const statsRef = doc(db, 'artifacts', appId, 'public', 'data', 'videos', currentVideoId);
-            const listRef = collection(db, 'artifacts', appId, 'public', 'data', 'comments', currentVideoId, 'list');
+        if (user) {
+            document.getElementById('onboarding').style.display = 'none';
+            document.getElementById('currentAvatar').innerText = user[1].toUpperCase();
+        }
 
-            await addDoc(listRef, {
-                text: text,
-                user: currentUsername || 'anon',
-                userId: currentUser.uid,
-                t: Date.now()
-            });
-
-            await setDoc(statsRef, { comms: increment(1) }, { merge: true });
-            document.getElementById('newCommentInput').value = '';
-        };
-
-        window.togglePlay = (video) => {
-            if (video.paused) video.play();
-            else video.pause();
-        };
-
-        init();
+        render();
     </script>
 </body>
 </html>
