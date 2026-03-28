@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Z-Tok: The FYP</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body {
+            background-color: #000;
+            color: #fff;
+            margin: 0;
+            overflow: hidden;
+            font-family: 'Inter', sans-serif;
+        }
+        .video-container {
+            height: 100vh;
+            width: 100vw;
+            scroll-snap-type: y mandatory;
+            overflow-y: scroll;
+            scrollbar-width: none;
+        }
+        .video-container::-webkit-scrollbar {
+            display: none;
+        }
+        .video-card {
+            height: 100vh;
+            width: 100vw;
+            scroll-snap-align: start;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #000;
+        }
+        video {
+            height: 100%;
+            width: 100%;
+            object-fit: cover;
+        }
+        .overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            padding: 80px 20px 20px 20px;
+            background: linear-gradient(transparent, rgba(0,0,0,0.8));
+            pointer-events: none;
+        }
+        .side-bar {
+            position: absolute;
+            right: 15px;
+            bottom: 120px;
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+            align-items: center;
+            z-index: 10;
+        }
+        .icon-btn {
+            background: none;
+            border: none;
+            color: white;
+            cursor: pointer;
+            text-align: center;
+            transition: transform 0.2s;
+        }
+        .icon-btn:active { transform: scale(0.9); }
+        .icon-btn i { font-size: 28px; }
+        .icon-btn span { font-size: 12px; display: block; margin-top: 4px; font-weight: 600; }
+        
+        .modal {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: #1a1a1a;
+            border-top-left-radius: 20px;
+            border-top-right-radius: 20px;
+            height: 60%;
+            z-index: 50;
+            transform: translateY(100%);
+            transition: transform 0.3s ease-out;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+        }
+        .modal.open { transform: translateY(0); }
+        
+        .name-prompt {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.9);
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .red-dot { color: #ff3b5c; }
+        .active-fav { color: #facd31; }
+    </style>
+</head>
+<body>
+
+    <!-- Username Prompt -->
+    <div id="namePrompt" class="name-prompt">
+        <div class="bg-zinc-900 p-8 rounded-2xl w-80 text-center border border-zinc-800">
+            <h2 class="text-xl font-bold mb-4">What's your @?</h2>
+            <input type="text" id="usernameInput" placeholder="Enter name..." class="w-full bg-zinc-800 border-none p-3 rounded-lg mb-4 text-white outline-none focus:ring-2 ring-pink-500">
+            <button onclick="saveName()" class="w-full bg-[#ff3b5c] text-white font-bold py-3 rounded-lg hover:opacity-90">Let's Go</button>
+        </div>
+    </div>
+
+    <!-- Video Feed -->
+    <div id="videoContainer" class="video-container">
+        <!-- Videos will be injected here -->
+    </div>
+
+    <!-- Comment Modal -->
+    <div id="commentModal" class="modal">
+        <div class="flex justify-between items-center mb-4">
+            <h3 class="font-bold text-sm" id="commentCountHeader">0 comments</h3>
+            <button onclick="closeComments()" class="text-zinc-400"><i class="fas fa-times"></i></button>
+        </div>
+        <div id="commentList" class="flex-1 overflow-y-auto mb-4 space-y-4 pr-2">
+            <!-- Comments injected here -->
+        </div>
+        <div class="flex gap-2">
+            <input type="text" id="newCommentInput" placeholder="Add a comment..." class="flex-1 bg-zinc-800 p-3 rounded-full outline-none text-sm">
+            <button onclick="postComment()" class="text-pink-500 font-bold px-2">Post</button>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getFirestore, doc, setDoc, getDoc, collection, addDoc, onSnapshot, query, updateDoc, increment, deleteDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+
+        // CONFIG
+        const firebaseConfig = JSON.parse(__firebase_config);
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'ztok-v1';
+
+        // VIDEO DATA (IDENTIFIED BY URL)
+        const videos = [
+            { id: "v1", url: "https://archive.org/download/v15044gf0000d739penog65i3lldaps0/download.mp4", title: "Who drank my 🫪🫪🫪🫪🫪", user: "@scrappy73 on Sora" },
+            { id: "v2", url: "https://archive.org/download/v15044gf0000d739penog65i3lldaps0/v12025gd0000d71b2dnog65v0japu44g.mp4", title: "THE CURIOUS DISNEY SECURITY GUARD PART 2", user: "@victoriajames19850 on TT" },
+            { id: "v3", url: "https://archive.org/download/v15044gf0000d739penog65i3lldaps0/v12044gd0000d7347mfog65heg5vvbug.mp4", title: "POV: You've been sleepy all day and you suddenly get all your energy back when it strikes 12.", user: "@pmdamiann on TT" },
+            { id: "v4", url: "https://archive.org/download/v15044gf0000d739penog65i3lldaps0/v15025gf0000d72a94fog65p6o5cjvi0.mp4", title: "What possessed him to do this", user: "@jermii9000 on TT" },
+            { id: "v5", url: "https://archive.org/download/v15044gf0000d739penog65i3lldaps0/v15044gf0000d739penog65i3lldaps0.mp4", title: "What IL Walmart is the smallest", user: "@geozoom3 on TT" }
+        ].sort(() => Math.random() - 0.5); // RANDOMIZED FEED
+
+        let currentUser = null;
+        let currentUsername = localStorage.getItem('ztok_user') || "";
+        let currentVideoId = null;
+
+        // AUTH & INIT
+        async function init() {
+            await signInAnonymously(auth);
+            onAuthStateChanged(auth, (user) => {
+                if (user) {
+                    currentUser = user;
+                    if (currentUsername) {
+                        document.getElementById('namePrompt').style.display = 'none';
+                    }
+                }
+            });
+            renderFeed();
+        }
+
+        window.saveName = () => {
+            const input = document.getElementById('usernameInput').value.trim();
+            if (input) {
+                currentUsername = input;
+                localStorage.setItem('ztok_user', input);
+                document.getElementById('namePrompt').style.display = 'none';
+            }
+        };
+
+        // RENDER FEED
+        function renderFeed() {
+            const container = document.getElementById('videoContainer');
+            container.innerHTML = videos.map(v => `
+                <div class="video-card" id="card-${v.id}">
+                    <video loop playsinline onclick="togglePlay(this)">
+                        <source src="${v.url}" type="video/mp4">
+                    </video>
+                    
+                    <div class="side-bar">
+                        <button class="icon-btn" onclick="handleLike('${v.id}')">
+                            <i class="fas fa-heart" id="like-icon-${v.id}"></i>
+                            <span id="like-count-${v.id}">0</span>
+                        </button>
+                        <button class="icon-btn" onclick="openComments('${v.id}')">
+                            <i class="fas fa-comment-dots"></i>
+                            <span id="comm-count-${v.id}">0</span>
+                        </button>
+                        <button class="icon-btn" onclick="handleFav('${v.id}')">
+                            <i class="fas fa-bookmark" id="fav-icon-${v.id}"></i>
+                            <span id="fav-count-${v.id}">0</span>
+                        </button>
+                    </div>
+
+                    <div class="overlay">
+                        <h3 class="font-bold text-lg mb-1">@${v.user}</h3>
+                        <p class="text-sm opacity-90">${v.title}</p>
+                    </div>
+                </div>
+            `).join('');
+
+            // Set up intersection observer for autoplay
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    const video = entry.target.querySelector('video');
+                    if (entry.isIntersecting) {
+                        video.play().catch(() => {});
+                        listenToStats(entry.target.id.split('-')[1]);
+                    } else {
+                        video.pause();
+                    }
+                });
+            }, { threshold: 0.8 });
+
+            document.querySelectorAll('.video-card').forEach(card => observer.observe(card));
+        }
+
+        // FIRESTORE STATS LISTENERS
+        const activeUnsubscribers = {};
+        function listenToStats(vidId) {
+            if (activeUnsubscribers[vidId]) return;
+
+            const videoDoc = doc(db, 'artifacts', appId, 'public', 'data', 'videos', vidId);
+            const userLikeDoc = doc(db, 'artifacts', appId, 'users', currentUser.uid, 'likes', vidId);
+            const userFavDoc = doc(db, 'artifacts', appId, 'users', currentUser.uid, 'favs', vidId);
+
+            // Listen to total stats
+            onSnapshot(videoDoc, (snapshot) => {
+                const data = snapshot.exists() ? snapshot.data() : { likes: 0, comms: 0, favs: 0 };
+                document.getElementById(`like-count-${vidId}`).innerText = data.likes || 0;
+                document.getElementById(`comm-count-${vidId}`).innerText = data.comms || 0;
+                document.getElementById(`fav-count-${vidId}`).innerText = data.favs || 0;
+            });
+
+            // Listen to personal like state
+            onSnapshot(userLikeDoc, (snapshot) => {
+                const icon = document.getElementById(`like-icon-${vidId}`);
+                if (snapshot.exists()) icon.classList.add('red-dot');
+                else icon.classList.remove('red-dot');
+            });
+
+            // Listen to personal fav state
+            onSnapshot(userFavDoc, (snapshot) => {
+                const icon = document.getElementById(`fav-icon-${vidId}`);
+                if (snapshot.exists()) icon.classList.add('active-fav');
+                else icon.classList.remove('active-fav');
+            });
+
+            activeUnsubscribers[vidId] = true;
+        }
+
+        // ACTIONS
+        window.handleLike = async (vidId) => {
+            if (!currentUser) return;
+            const likeRef = doc(db, 'artifacts', appId, 'users', currentUser.uid, 'likes', vidId);
+            const statsRef = doc(db, 'artifacts', appId, 'public', 'data', 'videos', vidId);
+            
+            const snap = await getDoc(likeRef);
+            if (snap.exists()) {
+                await deleteDoc(likeRef);
+                await setDoc(statsRef, { likes: increment(-1) }, { merge: true });
+            } else {
+                await setDoc(likeRef, { t: Date.now() });
+                await setDoc(statsRef, { likes: increment(1) }, { merge: true });
+            }
+        };
+
+        window.handleFav = async (vidId) => {
+            if (!currentUser) return;
+            const favRef = doc(db, 'artifacts', appId, 'users', currentUser.uid, 'favs', vidId);
+            const statsRef = doc(db, 'artifacts', appId, 'public', 'data', 'videos', vidId);
+            
+            const snap = await getDoc(favRef);
+            if (snap.exists()) {
+                await deleteDoc(favRef);
+                await setDoc(statsRef, { favs: increment(-1) }, { merge: true });
+            } else {
+                await setDoc(favRef, { t: Date.now() });
+                await setDoc(statsRef, { favs: increment(1) }, { merge: true });
+            }
+        };
+
+        // COMMENTS LOGIC
+        let currentCommentUnsub = null;
+        window.openComments = (vidId) => {
+            currentVideoId = vidId;
+            document.getElementById('commentModal').classList.add('open');
+            const list = document.getElementById('commentList');
+            const countHeader = document.getElementById('commentCountHeader');
+            
+            if (currentCommentUnsub) currentCommentUnsub();
+
+            const q = collection(db, 'artifacts', appId, 'public', 'data', 'comments', vidId, 'list');
+            currentCommentUnsub = onSnapshot(q, (snapshot) => {
+                const comments = snapshot.docs.map(d => d.data()).sort((a,b) => b.t - a.t);
+                countHeader.innerText = `${comments.length} comments`;
+                list.innerHTML = comments.map(c => `
+                    <div class="flex gap-3">
+                        <div class="w-8 h-8 rounded-full bg-zinc-700 flex items-center justify-center text-xs font-bold">
+                            ${(c.user || '?')[0].toUpperCase()}
+                        </div>
+                        <div>
+                            <p class="text-zinc-400 text-xs font-bold">@${c.user || 'anon'}</p>
+                            <p class="text-sm">${c.text}</p>
+                        </div>
+                    </div>
+                `).join('');
+            });
+        };
+
+        window.closeComments = () => {
+            document.getElementById('commentModal').classList.remove('open');
+            if (currentCommentUnsub) currentCommentUnsub();
+        };
+
+        window.postComment = async () => {
+            const text = document.getElementById('newCommentInput').value.trim();
+            if (!text || !currentVideoId) return;
+
+            const statsRef = doc(db, 'artifacts', appId, 'public', 'data', 'videos', currentVideoId);
+            const listRef = collection(db, 'artifacts', appId, 'public', 'data', 'comments', currentVideoId, 'list');
+
+            await addDoc(listRef, {
+                text: text,
+                user: currentUsername || 'anon',
+                userId: currentUser.uid,
+                t: Date.now()
+            });
+
+            await setDoc(statsRef, { comms: increment(1) }, { merge: true });
+            document.getElementById('newCommentInput').value = '';
+        };
+
+        window.togglePlay = (video) => {
+            if (video.paused) video.play();
+            else video.pause();
+        };
+
+        init();
+    </script>
+</body>
+</html>
+
