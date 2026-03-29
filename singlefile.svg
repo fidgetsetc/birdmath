@@ -1,41 +1,27 @@
-<svg width="100%" height="100%" viewBox="0 0 800 600" xmlns="http://www.w3.org/2000/svg">
-<!-- Background for that clean look -->
-<rect width="100%" height="100%" fill="#1a1a1a" />
-<text id="status" x="50%" y="50%" text-anchor="middle" fill="#ff4b2b" font-family="sans-serif" font-weight="bold" font-size="20">
-FETCHING BIRDMATH SOURCE...
-</text>
-<foreignObject id="wrapper" x="0" y="0" width="100%" height="100%" visibility="hidden">
-<div xmlns="http://www.w3.org/1999/xhtml" style="width: 100%; height: 100%; margin: 0; padding: 0;">
-<iframe id="app-frame" style="width: 100%; height: 100%; border: none; background: white;"></iframe>
-</div>
-</foreignObject>
-<script type="application/ecmascript">
-<![CDATA[
-(async function() {
-const status = document.getElementById('status');
-const wrapper = document.getElementById('wrapper');
-const frame = document.getElementById('app-frame');
-const url = 'https://cdn.jsdelivr.net/gh/fidgetsetc/birdmath@main/singlefile.html';
-  try {
-    const response = await fetch(url);
-    if (!response.ok) throw new Error(&#39;Network error&#39;);
-    const code = await response.text();
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="600">
+  <foreignObject width="100%" height="100%">
+    <body xmlns="http://www.w3.org/1999/xhtml" style="margin: 0; padding: 0; width: 100%; height: 100%;">
+      <iframe id="birdmath-frame" style="width: 100%; height: 100%; border: none;"></iframe>
+    </body>
+  </foreignObject>
 
-    // Create the blob portal
-    const blob = new Blob([code], { type: &#39;text/html&#39; });
-    const blobUrl = URL.createObjectURL(blob);
-
-    frame.onload = () =&gt; {
-      status.setAttribute(&#39;visibility&#39;, &#39;hidden&#39;);
-      wrapper.setAttribute(&#39;visibility&#39;, &#39;visible&#39;);
-    };
-
-    frame.src = blobUrl;
-  } catch (e) {
-    status.textContent = &quot;ERROR: &quot; + e.message;
-    status.setAttribute(&#39;fill&#39;, &#39;#ff0000&#39;);
-  }
-})();
-]]&gt;
-</script>
+  <script>
+    <![CDATA[
+      (async () => {
+        try {
+          const response = await fetch('https://cdn.jsdelivr.net/gh/fidgetsetc/birdmath@main/singlefile.html');
+          const htmlContent = await response.text();
+          
+          // Create the blob and generate the URL
+          const blob = new Blob([htmlContent], { type: 'text/html' });
+          const blobUrl = URL.createObjectURL(blob);
+          
+          // Inject it into the iframe
+          document.getElementById('birdmath-frame').src = blobUrl;
+        } catch (err) {
+          console.error('L fetch fail:', err);
+        }
+      })();
+    ]]>
+  </script>
 </svg>
