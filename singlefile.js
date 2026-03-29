@@ -1,0 +1,595 @@
+// It's a .js to prevent blocking. Works with singlefile.svg.
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EPIX | SF</title>
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <style>
+    :root {
+      --bg-color: #1a1a1a;
+      --primary-color: #4287f5;
+      --secondary-color: #61dafb;
+      --text-color: #ffffff;
+      --card-bg: rgba(45, 49, 56, 0.9);
+      --button-bg: #61dafb;
+      --button-hover-bg: #21a1f1;
+      --danger-color: #ff4757;
+      --success-color: #2ed573;
+    }
+
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      font-family: 'Roboto', sans-serif;
+      margin: 0;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+      box-sizing: border-box;
+      overflow-x: hidden;
+      transition: background 0.5s ease;
+    }
+
+    /* Disclaimer Modal Styles */
+    #disclaimer-overlay {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.85);
+      z-index: 9999;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      backdrop-filter: blur(8px);
+    }
+    .disclaimer-box {
+      background: var(--card-bg);
+      border: 3px solid var(--primary-color);
+      padding: 30px;
+      border-radius: 20px;
+      max-width: 500px;
+      width: 90%;
+      text-align: center;
+      box-shadow: 0 0 30px rgba(66, 135, 245, 0.4);
+    }
+    .disclaimer-box h2 {
+      font-family: 'Press Start 2P', cursive;
+      font-size: 1.2em;
+      color: var(--primary-color);
+      margin-bottom: 20px;
+    }
+    .disclaimer-box p {
+      line-height: 1.6;
+      margin-bottom: 25px;
+      color: #eee;
+    }
+    .disclaimer-footer {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 15px;
+    }
+    .never-show-label {
+      font-size: 0.8em;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    #bg-video-container {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      z-index: -2; overflow: hidden; display: none;
+    }
+    #bg-video-container video {
+      min-width: 100%; min-height: 100%;
+      width: auto; height: auto;
+      position: absolute; top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      object-fit: cover;
+    }
+    #bg-image-overlay {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      z-index: -3;
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
+    }
+
+    header { margin-bottom: 30px; width: 100%; max-width: 1000px; text-align: center; position: relative; }
+
+    h1 {
+      font-family: 'Press Start 2P', cursive;
+      color: var(--primary-color);
+      font-size: 2.5em;
+      margin-bottom: 15px;
+      text-shadow: -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000, 2px 2px 0 #000, 4px 4px 0 #000;
+      letter-spacing: 2px;
+    }
+
+    .abandoned-text {
+      color: #fff;
+      font-style: italic;
+      margin-bottom: 10px;
+      font-size: 0.9em;
+      background: rgba(0,0,0,0.6);
+      padding: 6px 12px;
+      border-radius: 4px;
+      display: inline-block;
+      text-shadow: 1px 1px 2px #000;
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+
+    #tabs-container {
+      display: flex;
+      justify-content: center;
+      width: 100%;
+      max-width: 900px;
+      margin-bottom: 30px;
+      background-color: var(--card-bg);
+      backdrop-filter: blur(10px);
+      border-radius: 16px;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.1);
+      position: sticky;
+      top: 10px;
+      z-index: 1000;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+    }
+
+    .tab-button {
+      flex: 1;
+      padding: 18px;
+      background-color: transparent;
+      color: var(--text-color);
+      border: none;
+      font-family: 'Press Start 2P', cursive;
+      font-size: 0.6em;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      border-bottom: 3px solid transparent;
+    }
+
+    .tab-button.active { 
+      background-color: rgba(255,255,255,0.05); 
+      color: var(--button-bg);
+      border-bottom-color: var(--button-bg);
+    }
+
+    .tab-content { display: none; width: 100%; max-width: 1400px; padding: 10px; box-sizing: border-box; }
+    .tab-content.active { display: block; }
+
+    .games-container { display: flex; flex-wrap: wrap; justify-content: center; gap: 25px; }
+
+    .game-card {
+      background-color: var(--card-bg);
+      backdrop-filter: blur(5px);
+      border-radius: 16px;
+      padding: 18px;
+      width: 200px;
+      text-align: center;
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      border: 1px solid rgba(255,255,255,0.05);
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    }
+    .game-card:hover { transform: translateY(-10px); border-color: var(--secondary-color); }
+    .game-card img { width: 100%; height: 120px; object-fit: cover; border-radius: 10px; margin-bottom: 12px; background: #000; }
+    
+    .play-btn {
+      background: var(--button-bg);
+      color: #000;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: 800;
+      width: 100%;
+      margin-top: auto;
+      text-transform: uppercase;
+    }
+    
+    .search-container { width: 100%; max-width: 600px; margin: 0 auto 25px auto; }
+    input[type="text"] {
+        width: 100%;
+        padding: 15px 20px;
+        background: var(--card-bg);
+        border: 2px solid rgba(255, 255, 255, 0.1);
+        border-radius: 12px;
+        color: white;
+        outline: none;
+        box-sizing: border-box;
+    }
+
+    #background3DCanvas { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -1; pointer-events: none; }
+    
+    .player-overlay {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.98); z-index: 5000; display: none;
+      flex-direction: column; align-items: center; justify-content: center;
+    }
+    .player-overlay.active { display: flex; }
+    .iframe-wrapper { width: 95%; height: 85%; background: #000; border-radius: 12px; overflow: hidden; border: 2px solid var(--primary-color); position: relative; }
+    #gameFrame { width: 100%; height: 100%; border: none; }
+    
+    .studio-container {
+      background: var(--card-bg);
+      padding: 30px;
+      border-radius: 20px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 30px;
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+    .theme-list { margin-top: 20px; max-height: 350px; overflow-y: auto; background: rgba(0,0,0,0.3); border-radius: 12px; padding: 10px; }
+    .theme-item { display: flex; justify-content: space-between; align-items: center; padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.05); }
+    .mini-btn { padding: 6px 12px; font-size: 10px; border-radius: 6px; border: none; cursor: pointer; font-weight: bold; }
+    
+    .mute-toggle {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        background: rgba(0,0,0,0.3);
+        padding: 8px 15px;
+        border-radius: 20px;
+        font-size: 0.8em;
+        margin-bottom: 10px;
+        border: 1px solid rgba(255,255,255,0.1);
+        cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div id="disclaimer-overlay">
+    <div class="disclaimer-box">
+      <h2>Single File</h2>
+      <p>This version of EPIX is single file. Some games and apps may not work as expected. We will work on fixing them. Updates may also be behind. For the best experience, we do recommend using a static version.</p>
+      <div class="disclaimer-footer">
+        <label class="never-show-label">
+          <input type="checkbox" id="never-show-check"> NEVER SHOW AGAIN
+        </label>
+        <button class="play-btn" onclick="dismissDisclaimer()">Got it</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="bg-image-overlay"></div>
+  <div id="bg-video-container"><video id="bg-video" loop muted playsinline></video></div>
+  <canvas id="background3DCanvas"></canvas>
+  <audio id="theme-audio" loop></audio>
+  <audio id="nav-audio"></audio>
+
+  <header>
+    <h1>EPIX</h1>
+    <div class="abandoned-text">SF</div>
+  </header>
+
+  <nav id="tabs-container">
+    <button id="btn-apps" class="tab-button active" onclick="showTab('apps')">Apps</button>
+    <button id="btn-games" class="tab-button" onclick="showTab('games')">Games</button>
+    <button id="btn-videos" class="tab-button" onclick="showTab('videos')">Videos</button>
+    <button id="btn-studio" class="tab-button" onclick="showTab('studio')">Themes</button>
+  </nav>
+
+  <div id="content-wrapper" style="width:100%; display:flex; flex-direction:column; align-items:center;">
+    <div id="apps" class="tab-content active">
+        <div style="display: flex; justify-content: center;">
+            <label class="mute-toggle">
+                <input type="checkbox" id="browser-mute-check" onchange="handleBrowserMute()"> Mute BGM in Apps
+            </label>
+        </div>
+        <div class="search-container">
+            <input type="text" id="appsSearch" placeholder="Search apps..." oninput="filterApps()">
+        </div>
+        <div class="games-container" id="new-apps-container"></div>
+    </div>
+    
+    <div id="games" class="tab-content">
+      <div class="search-container">
+          <input type="text" id="gameSearch" placeholder="Search games..." oninput="filterGames()">
+      </div>
+      <div class="games-container" id="new-games-container"></div>
+    </div>
+
+    <div id="videos" class="tab-content">
+      <div class="search-container">
+          <input type="text" id="videoSearch" placeholder="Search videos..." oninput="filterVideos()">
+      </div>
+      <div class="games-container" id="new-videos-container"></div>
+    </div>
+
+    <div id="studio" class="tab-content">
+      <div class="studio-container">
+        <div>
+          <h3 style="font-family: 'Press Start 2P', cursive; font-size: 0.8em;">Theme Studio</h3>
+          <div style="margin-bottom: 15px;">
+            <label>Name</label>
+            <input type="text" id="studio-theme-name" style="background:#000; color:white;">
+          </div>
+          <div style="margin-bottom: 15px;">
+            <label>Background URL (IMG/GIF/MP4)</label>
+            <input type="text" id="studio-bg-img" oninput="updateStudioPreview()" style="background:#000; color:white;">
+          </div>
+          <div style="margin-bottom: 15px;">
+            <label>BGM URL</label>
+            <input type="text" id="studio-bg-music" oninput="updateStudioPreview()" style="background:#000; color:white;">
+          </div>
+          <div style="margin-bottom: 15px;">
+            <label>Nav Sound URL</label>
+            <input type="text" id="studio-bg-nav" oninput="updateStudioPreview()" style="background:#000; color:white;">
+          </div>
+          <div style="margin-bottom: 15px;">
+            <label>Accent</label>
+            <input type="color" id="studio-accent" value="#61dafb" oninput="updateStudioPreview()" style="width:100%;">
+          </div>
+          <button class="play-btn" onclick="saveNewTheme()">Add to Library</button>
+        </div>
+        <div>
+          <h3 style="font-family: 'Press Start 2P', cursive; font-size: 0.8em;">Library</h3>
+          <div class="theme-list" id="theme-library-list"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="gamePlayer" class="player-overlay">
+    <div class="iframe-wrapper" id="frameWrapper"></div>
+    <div style="margin-top:20px; display: flex; gap: 15px;">
+      <button class="mini-btn" style="background:var(--primary-color); color:black; padding:10px 20px;" onclick="toggleFullScreen()">Full Screen</button>
+      <button class="mini-btn" style="background:var(--danger-color); color:white; padding:10px 20px;" onclick="closeGame()">Close</button>
+    </div>
+  </div>
+
+<script>
+  // Full Restored Database
+  const NEW_APPS = [
+    { name: 'Suggest to EPIX', url: 'https://docs.google.com/forms/d/e/1FAIpQLSem_Q1dxVUADGCsAMkQwtp-JgflRmi_kmrqa9t_NB3Fi3wCqw/viewform', img: 'https://static.vecteezy.com/system/resources/thumbnails/013/570/470/small/illustration-of-voting-and-suggestion-critici-hand-putting-white-paper-into-ballot-box-free-vector.jpg' },
+    { name: 'Web Browser', url: 'https://storage.googleapis.com/canvas-lms/index.html#/search', img: 'https://storage.googleapis.com/gweb-uniblog-publish-prod/images/1_-_Cover.width-1300.png' },
+    { name: 'Browser Settings', url: 'https://cdn.jsdelivr.net/gh/fidgetsetc/birdmath@main/schoolwork/other/bset.html', img: 'https://preview.redd.it/windows-settings-icon-v0-wwp9814f6o9e1.png?width=640&crop=smart&auto=webp&s=6d393f5cc37af740dd64399e42459343ea435c60' },
+    { name: 'Terminal', url: 'https://cdn.jsdelivr.net/gh/fidgetsetc/birdmath@main/cmd/index.html', img: 'https://cdn.dribbble.com/userupload/20822754/file/original-cd50415ce6ef260ee787b52cc9d5f553.png?resize=752x&vertical=center' },
+    { name: 'Android but Gemini AI', url: 'https://cdn.jsdelivr.net/gh/fidgetsetc/birdmath@main/phone/index.html', img: 'https://files.catbox.moe/sh07h7.png' },
+    { name: 'VidScroll (EPIX)', url: 'https://cdn.jsdelivr.net/gh/fidgetsetc/birdmath@main/vid/scroll/index.html', img: 'https://media.istockphoto.com/id/1411416036/video/person-using-social-media-app-on-smartphone-looking-at-live-stream-videos-realistic-feed.jpg?s=640x640&k=20&c=lqMYgjLU39MDjvox29ESaaXuot-Hy02WtWai2-Y4lXE=' },
+    { name: 'Custom HTML', url: 'custom?PGgxIHN0eWxlPSJjb2xvcjpibGFjazsgdGV4dC1hbGlnbjpjZW50ZXI7IG1hcmdpbi10b3A6IDUwJjsiPkhlbGxvIFdvcmxkPC9oMT4=', img: 'https://img.icons8.com/clouds/100/code.png' }
+  ];
+
+  const NEW_GAMES = [
+    { name: 'Minecrft 1.8 WASM', url: 'https://cdn.jsdelivr.net/gh/fidgetsetc/birdmath@main/schoolwork/mine.html', img: 'https://assets.nintendo.com/image/upload/ar_16:9,c_lpad,w_1240/b_white/f_auto/q_auto/ncom/software/switch/70010000000964/a28a81253e919298beab2295e39a56b7a5140ef15abdb56135655e5c221b2a3a' },
+    { name: 'Minecrft Pocket 0.6.1 alpha WASM', url: 'https://cdn.jsdelivr.net/gh/fidgetsetc/birdmath@main/pocket/index.html', img: 'https://assets.nintendo.com/image/upload/ar_16:9,c_lpad,w_1240/b_white/f_auto/q_auto/ncom/software/switch/70010000000964/a28a81253e919298beab2295e39a56b7a5140ef15abdb56135655e5c221b2a3a' },
+    { name: 'Angry Birds', url: 'https://cdn.jsdelivr.net/gh/fidgetsetc/birdmath@main/swf/ab/index.html', img: 'https://www.angrybirds.com/wp-content/uploads/2022/06/AB_Classic_1920x1080_TitlePicture_Vector-1300x731.png' },
+    { name: 'Bad Piggies', url: 'custom?PHNjcmlwdCBhc3luYyBzcmM9Imh0dHBzOi8vd3d3Lmdvb2dsZXRhZ21hbmFnZXIuY29tL2d0YWcvanM/aWQ9Ry1MNzg1NlAzVk5UIj48L3NjcmlwdD4KPHNjcmlwdD4KICB3aW5kb3cuZGF0YUxheWVyID0gd2luZG93LmRhdGFMYXllciB8fCBbXTsKICBmdW5jdGlvbiBndGFnKCl7ZGF0YUxheWVyLnB1c2goYXJndW1lbnRzKTt9CiAgZ3RhZygnanMnLCBuZXcgRGF0ZSgpKTsKCiAgZ3RhZygnY29uZmlnJywgJ0ctTDc4NTZQM1ZOVCcpOwo8L3NjcmlwdD48IURPQ1RZUEUgaHRtbD4KPGh0bWwgbGFuZz0iZW4tdXMiPgoKPGhlYWQ+Cgk8YmFzZSBocmVmPSJodHRwczovL2Nkbi5qc2RlbGl2ci5uZXQvZ2gvNjctRmFjdG9yeS93ZWItcG9ydHNAbWFpbi9iYWRwaWdnaWVzLyI+Cgk8bWV0YSBjaGFyc2V0PSJ1dGYtOCI+Cgk8bWV0YSBodHRwLWVxdWl2PSJDb250ZW50LVR5cGUiIGNvbnRlbnQ9InRleHQvaHRtbDsgY2hhcnNldD11dGYtOCI+Cgk8dGl0bGU+VW5pdHkgV2ViR0wgUGxheWVyIHwgQmFkIFBpZ2dpZXM8L3RpdGxlPgoJPGxpbmsgcmVsPSJzaG9ydGN1dCBpY29uIiBocmVmPSJUZW1wbGF0ZURhdGEvZmF2aWNvbi5pY28iPgoJPGxpbmsgcmVsPSJzdHlsZXNoZWV0IiBocmVmPSJUZW1wbGF0ZURhdGEvc3R5bGUuY3NzIj4KCTxzY3JpcHQgc3JjPSJUZW1wbGF0ZURhdGEvVW5pdHlQcm9ncmVzcy5qcyI+PC9zY3JpcHQ+Cgk8sc2NyaXB0IHNyYz0iQnVpbGQvVW5pdHlMb2FkZXIuanMiPjwvc2NyaXB0PgoJPHN0eWxlPgoJCWh0bWwsIGJvZHkgewoJCQltYXJnaW46IDA7CgkJCXBhZGRpbmc6IDA7CgkJCXdpZHRoOiAxMDAlOwoJCQloZWlnaHQ6IDEwMCU7CgkJCW92ZXJmbG93OiBoaWRkZW47CgkJfQoKCQkud2ViZ2wtY29udGVudCB7CgkJCXdpZHRoOiAxMDAlOwoJCQloZWlnaHQ6IDEwMCU7CgkJfQoKCQkjZ2FtZUNvbnRhaW5lciB7CgkJCXdpZHRoOiAxMDB2dzsKCQkJaGVpZ2h0OiAxMDB2aDsKCQl9Cgk8L3N0eWxlPgoJPHNjcmlwdD4KCQl2YXIgZ2FtZUluc3RhbmNlID0gVW5pdHlMb2FkZXIuaW5zdGFudGlhdGUoImdhbWVDb250YWluZXIiLCAiQnVpbGQvQmFkIFBpZ2dpZXMuanNvbiIsIHsKCQkJb25Qcm9ncmVzczogVW5pdHlQcm9ncmVzcwoJCX0pOwoJPC9zY3JpcHQ+CjwvaGVhZD4KCjxib2R5IHN0eWxlPSJiYWNrZ3JvdW5kLWNvbG9yOmJsYWNrOyI+Cgk8ZGl2IGNsYXNzPSJ3ZWJnbC1jb250ZW50Ij4KCQk8ZGl2IGlkPSJnYW1lQ29udGFpbmVyIj48L2Rpdj4KCTwvZGl2Pgo8L2JvZHk+Cgo8L2h0bWw+', img: 'https://i.ytimg.com/vi/YsCpDaSooWA/maxresdefault.jpg' },
+    { name: 'Clash of Vikings', url: 'https://york.cadou.ro.cdn.cloudflare.net/db/html/clash_royale/index.html', img: 'https://play-lh.googleusercontent.com/UOJ0N42bDu2lUbZIx4n9UCnHtnY5IEyG1jOLXByCbbCvi6wammxVR4XC9endWA5rAA=w526-h296-rw' },
+    { name: 'Cookie Clicker', url: 'https://york.cadou.ro.cdn.cloudflare.net/db/html/cookie_clicker/index.html', img: 'https://image.api.playstation.com/vulcan/ap/rnd/202507/0723/5bf9ed682a32f58b4546da14f58aa87b6a5f0665b0471fff.png' },
+    { name: 'Bit Life', url: 'https://york.cadou.ro.cdn.cloudflare.net/db2/2025/more/e-life-simulation/pre.html', img: 'https://bitlife-game.io/data/image/bit-life-simulator.jpg' },
+    { name: 'Block Blast', url: 'https://york.cadou.ro.cdn.cloudflare.net/db/html/blocky_puzzle/index.html', img: 'https://m.media-amazon.com/images/I/A1OGHmQseNL.png' },
+    { name: '1v1. lol', url: 'https://york.cadou.ro.cdn.cloudflare.net/db/html/1v1lol/index.html', img: 'https://images.crazygames.com/auto-covers/1v1-lol_1x1.png?auto=format,compress&q=75&cs=strip' },
+    { name: 'FNAF 1', url: 'https://york.cadou.ro.cdn.cloudflare.net/db/html/fnaf/index.html', img: 'https://cdn-0001.qstv.on.epicgames.com/BSAQaGMyfLgZkMqceu/image/landscape_comp.jpeg' },
+    { name: 'FNAF 2', url: 'https://york.cadou.ro.cdn.cloudflare.net/db/html/fnaf2/index.html', img: 'https://cdn-0001.qstv.on.epicgames.com/BSAQaGMyfLgZkMqceu/image/landscape_comp.jpeg' },
+    { name: 'FNAF 3', url: 'https://york.cadou.ro.cdn.cloudflare.net/db/html/fnaf3/index.html', img: 'https://cdn-0001.qstv.on.epicgames.com/BSAQaGMyfLgZkMqceu/image/landscape_comp.jpeg' },
+    { name: 'FNAF 4', url: 'https://york.cadou.ro.cdn.cloudflare.net/db/html/fnaf4/index.html', img: 'https://cdn-0001.qstv.on.epicgames.com/BSAQaGMyfLgZkMqceu/image/landscape_comp.jpeg' },
+    { name: 'FNAF Sister Location', url: 'https://york.cadou.ro.cdn.cloudflare.net/db/html/fnaf5/index.html', img: 'https://cdn-0001.qstv.on.epicgames.com/BSAQaGMyfLgZkMqceu/image/landscape_comp.jpeg' },
+    { name: 'Gun Spin', url: 'https://york.cadou.ro.cdn.cloudflare.net/db/html/gun_spin/index.html', img: 'https://avatars.mds.yandex.net/get-games/1881364/2a0000018a84536f8f204850647e286df2e9/orig' },
+    { name: 'FNF', url: 'https://york.cadou.ro.cdn.cloudflare.net/db/html/friday_night_funkin/index.html', img: 'https://friday-nightfunkin.io/upload/imgs/friday-night-funkin.jpg' },
+    { name: 'Geometry Dash', url: './schoolwork/gd.html', img: 'https://i.redd.it/dorae3yhjqhb1.jpg' },
+    { name: 'Run 1', url: 'https://york.cadou.ro.cdn.cloudflare.net/db2/2024/flash/run-1/pre.html', img: 'https://static.wikia.nocookie.net/run1438/images/8/8b/Level_1_Run_1.png' },
+    { name: 'Run 3', url: 'https://york.cadou.ro.cdn.cloudflare.net/db/html/run3/index.html', img: 'https://static.keygames.com/7/89667/48385/672x448/run-3.webp' },
+    { name: 'Fortzone', url: 'https://york.cadou.ro.cdn.cloudflare.net/db2/2025/more/fort-battle-royale/pre.html', img: 'https://dropinblog.net/34253310/files/featured/imagem-2024-09-26-103919931.png' },
+    { name: 'Drift Boss', url: 'https://york.cadou.ro.cdn.cloudflare.net/db/html/drift_boss/index.html', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR2482zI6ELy-1JDrFwuaMJqA3SUwJQDZKhLw&s' },
+    { name: 'Stack Fire Ball', url: 'https://york.cadou.ro.cdn.cloudflare.net/db2/2021/unity/stack-fire-ball/pre.html', img: 'https://s3.amazonaws.com/kzs3files/kidzsearchgl-stack-fire-ball-ks120414-161732-img.png' },
+    { name: 'Among Us', url: 'https://cdn.jsdelivr.net/gh/fidgetsetc/birdmath@main/schoolwork/index.html', img: 'https://static1.colliderimages.com/wordpress/wp-content/uploads/2024/03/among-us-social-featured.jpg' },
+    { name: 'Flappy Bird', url: 'https://cdn.jsdelivr.net/gh/fidgetsetc/birdmath@main/schoolwork/flappybird.html', img: 'https://d112y698adiu2z.cloudfront.net/photos/production/software_photos/002/474/827/datas/original.jpg' },
+    { name: 'Fist Punch', url: 'https://cdn.jsdelivr.net/gh/fidgetsetc/birdmath@main/swf/fist/index.html', img: 'https://static.wikia.nocookie.net/theregularshow/images/c/c1/Fist_Punch.JPG/' }
+  ];
+
+  const NEW_VIDEOS = [
+    { name: 'Regular Show S1', url: 'vid?https://archive.org/download/regular-show-complete-isos/Regular%20Show/REGULAR%20SHOW%20SEASON%201%20DISC%201.mp4', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT7DA8Mt70HVzxLFcWVoQtJ21xgIqH6PRicZA&s' },
+    { name: 'The Angry Birds Movie 1', url: 'vid?https://archive.org/download/the-angry-birds-movie-us-dvd-2016/The%20Angry%20Birds%20Movie%20%28US%20DVD%29%20%5B2016%5D.mp4', img: 'https://miro.medium.com/1*iV4Wd1598MxZcuxeu0rC-g.png' },
+    { name: 'The Angry Birds Movie 2', url: 'vid?https://archive.org/download/the-angry-birds-movie-2-us-dvd-2019/The%20Angry%20Birds%20Movie%202%20%28US%20DVD%29%20%5B2019%5D.mp4', img: 'https://thecollision.org/wp-content/uploads/2019/08/abmoovie-1.jpg' },
+    { name: 'A Minecraft Movie', url: 'vid?https://archive.org/download/a-minecraft-movie_202510/A%20Minecraft%20Movie.ia.mp4', img: 'https://www.minecraft-movie.com/assets/images/mobilebanner.jpg' },
+    { name: 'Bringus Studios Compilation', url: 'vid?https://archive.org/download/bringus-studios-over-3-hours-of-gaming-on-cursed-devices-to-conk-out-to/Bringus%20Studios%20-%20Over%203%20Hours%20of%20Gaming%20On%20Cursed%20Devices%20to%20Conk%20Out%20To.mp4', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ7yJaZJiIpYMSCdXyGEmev_HvW8TI-D07XzVaMV3d1Iw&s' }
+  ];
+
+  let themeLibrary = [];
+  try {
+      const saved = localStorage.getItem('epix_library');
+      themeLibrary = saved ? JSON.parse(saved) : [{ id: 'default', name: 'Standard', color: '#61dafb', img: '', music: '', navSound: '' }];
+  } catch(e) { themeLibrary = [{ id: 'default', name: 'Standard', color: '#61dafb', img: '', music: '', navSound: '' }]; }
+
+  // Disclaimer Logic
+  function checkDisclaimer() {
+      const skip = localStorage.getItem('epix_skip_disclaimer');
+      if (skip !== 'true') {
+          document.getElementById('disclaimer-overlay').style.display = 'flex';
+      }
+  }
+
+  function dismissDisclaimer() {
+      const neverShow = document.getElementById('never-show-check').checked;
+      if (neverShow) {
+          localStorage.setItem('epix_skip_disclaimer', 'true');
+      }
+      document.getElementById('disclaimer-overlay').style.display = 'none';
+  }
+
+  // Logic functions
+  function renderApps(list = NEW_APPS) {
+    const container = document.getElementById('new-apps-container');
+    container.innerHTML = '';
+    list.forEach(a => {
+        const card = document.createElement('div');
+        card.className = 'game-card';
+        card.innerHTML = `<img src="${a.img}"><h3>${a.name}</h3><button class="play-btn" onclick="launch('${a.url}')">Open</button>`;
+        container.appendChild(card);
+    });
+  }
+  function renderGames(list = NEW_GAMES) {
+    const container = document.getElementById('new-games-container');
+    container.innerHTML = '';
+    list.forEach(g => {
+        const card = document.createElement('div');
+        card.className = 'game-card';
+        card.innerHTML = `<img src="${g.img}"><h3>${g.name}</h3><button class="play-btn" onclick="launch('${g.url}')">Play</button>`;
+        container.appendChild(card);
+    });
+  }
+  function renderVideos(list = NEW_VIDEOS) {
+    const container = document.getElementById('new-videos-container');
+    container.innerHTML = '';
+    list.forEach(v => {
+        const card = document.createElement('div');
+        card.className = 'game-card';
+        card.innerHTML = `<img src="${v.img}"><h3>${v.name}</h3><button class="play-btn" onclick="launch('${v.url}')">Watch</button>`;
+        container.appendChild(card);
+    });
+  }
+
+  function filterApps() { const q = document.getElementById('appsSearch').value.toLowerCase(); renderApps(NEW_APPS.filter(a => a.name.toLowerCase().includes(q))); }
+  function filterGames() { const q = document.getElementById('gameSearch').value.toLowerCase(); renderGames(NEW_GAMES.filter(g => g.name.toLowerCase().includes(q))); }
+  function filterVideos() { const q = document.getElementById('videoSearch').value.toLowerCase(); renderVideos(NEW_VIDEOS.filter(v => v.name.toLowerCase().includes(q))); }
+
+  async function launch(u) {
+    const audio = document.getElementById('theme-audio');
+    audio.pause();
+    const wrapper = document.getElementById('frameWrapper');
+    wrapper.innerHTML = ''; 
+
+    if (u.startsWith('vid?')) {
+        wrapper.innerHTML = `<video src="${u.split('?')[1]}" controls autoplay style="width:100%; height:100%;"></video>`;
+    } 
+    else if (u.startsWith('custom?')) {
+        const iframe = document.createElement('iframe');
+        iframe.id = 'gameFrame';
+        wrapper.appendChild(iframe);
+        const doc = iframe.contentWindow.document;
+        doc.open(); doc.write(atob(u.split('?')[1])); doc.close();
+    }
+    else {
+        const iframe = document.createElement('iframe');
+        iframe.id = 'gameFrame';
+        iframe.allowFullscreen = true;
+        wrapper.appendChild(iframe);
+        
+        if (u.includes('cdn.jsdelivr.net')) {
+            try {
+                const response = await fetch(u);
+                const htmlCode = await response.text();
+                const doc = iframe.contentWindow.document;
+                doc.open(); doc.write(htmlCode); doc.close();
+            } catch (err) { iframe.src = u; }
+        } else {
+            iframe.src = u;
+        }
+    }
+    document.getElementById('gamePlayer').classList.add('active');
+  }
+
+  function closeGame() {
+    document.getElementById('frameWrapper').innerHTML = '';
+    document.getElementById('gamePlayer').classList.remove('active');
+    handleBrowserMute();
+  }
+
+  function toggleFullScreen() {
+    const wrapper = document.getElementById('frameWrapper');
+    if (wrapper.requestFullscreen) wrapper.requestFullscreen();
+  }
+
+  function handleBrowserMute() {
+      const isMuted = document.getElementById('browser-mute-check').checked;
+      const audio = document.getElementById('theme-audio');
+      const currentTab = document.querySelector('.tab-content.active').id;
+      if (currentTab === 'apps' && isMuted) {
+          audio.pause();
+      } else if (audio.src && !document.getElementById('gamePlayer').classList.contains('active')) {
+          audio.play().catch(() => {});
+      }
+  }
+
+  function showTab(t) {
+    const navAudio = document.getElementById('nav-audio');
+    if (navAudio.src) { navAudio.currentTime = 0; navAudio.play().catch(()=>{}); }
+    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+    document.querySelectorAll('.tab-button').forEach(b => b.classList.remove('active'));
+    document.getElementById(t).classList.add('active');
+    document.getElementById('btn-' + t).classList.add('active');
+    handleBrowserMute();
+  }
+
+  function renderThemeLibrary() {
+    const list = document.getElementById('theme-library-list');
+    list.innerHTML = '';
+    themeLibrary.forEach(t => {
+        const item = document.createElement('div');
+        item.className = 'theme-item';
+        item.innerHTML = `<span>${t.name}</span><button class="mini-btn" style="background:${t.color};" onclick="applyThemeById('${t.id}')">Apply</button>`;
+        list.appendChild(item);
+    });
+  }
+
+  function applyThemeById(id) {
+    const t = themeLibrary.find(x => x.id === id);
+    if(t) {
+        document.getElementById('bg-image-overlay').style.backgroundImage = t.img ? `url('${t.img}')` : 'none';
+        document.getElementById('theme-audio').src = t.music || '';
+        document.getElementById('nav-audio').src = t.navSound || '';
+        document.documentElement.style.setProperty('--primary-color', t.color);
+        document.documentElement.style.setProperty('--button-bg', t.color);
+        handleBrowserMute();
+    }
+  }
+
+  function saveNewTheme() {
+    const theme = {
+        id: Date.now().toString(),
+        name: document.getElementById('studio-theme-name').value || "New Theme",
+        img: document.getElementById('studio-bg-img').value,
+        music: document.getElementById('studio-bg-music').value,
+        navSound: document.getElementById('studio-bg-nav').value,
+        color: document.getElementById('studio-accent').value
+    };
+    themeLibrary.push(theme);
+    localStorage.setItem('epix_library', JSON.stringify(themeLibrary));
+    renderThemeLibrary();
+  }
+
+  function init3D() {
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('background3DCanvas'), alpha: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    const cubes = [];
+    const geometry = new THREE.BoxGeometry(1, 1, 1);
+    const material = new THREE.MeshBasicMaterial({ color: 0x61dafb, wireframe: true, transparent: true, opacity: 0.1 });
+    for(let i = 0; i < 15; i++) {
+        const cube = new THREE.Mesh(geometry, material);
+        cube.position.set((Math.random()-0.5)*15, (Math.random()-0.5)*15, (Math.random()-0.5)*10);
+        scene.add(cube); cubes.push(cube);
+    }
+    camera.position.z = 8;
+    function anim() {
+        requestAnimationFrame(anim);
+        cubes.forEach(c => { c.rotation.x += 0.01; c.rotation.y += 0.01; });
+        renderer.render(scene, camera);
+    }
+    anim();
+  }
+
+  window.onload = () => { 
+    init3D(); 
+    renderThemeLibrary(); 
+    renderApps(); 
+    renderGames(); 
+    renderVideos();
+    checkDisclaimer();
+  };
+</script>
+</body>
+</html>
+
