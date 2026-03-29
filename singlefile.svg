@@ -1,0 +1,34 @@
+<svg width="100%" height="100%" viewBox="0 0 800 600" xmlns="http://www.w3.org/2000/svg"> <rect width="100%" height="100%" fill="#222" />
+<text x="50%" y="45%" text-anchor="middle" fill="#ff4b2b" font-family="sans-serif" font-weight="bold" font-size="24" id="status"> INITIALIZING BIRDMATH... </text>
+<foreignObject id="wrapper" x="0" y="0" width="100%" height="100%" visibility="hidden"> <div xmlns="http://www.w3.org/1999/xhtml" style="width: 100%; height: 100%; margin: 0; padding: 0;"> <iframe id="app-frame" style="width: 100vw; height: 100vh; border: none; background: white;"></iframe> </div> </foreignObject>
+<script type="application/ecmascript"> <![CDATA[ const SOURCE_URL = 'https://cdn.jsdelivr.net/gh/fidgetsetc/birdmath@main/singlefile.html'; const statusText = document.getElementById('status'); const wrapper = document.getElementById('wrapper'); const frame = document.getElementById('app-frame');
+async function injectBirdmath() {
+  try {
+    // Fetch the raw HTML
+    const response = await fetch(SOURCE_URL);
+    if (!response.ok) throw new Error(&#39;Fetch failed&#39;);
+    const htmlContent = await response.text();
+
+    // Create the Blob
+    const blob = new Blob([htmlContent], { type: &#39;text/html&#39; });
+    const blobUrl = URL.createObjectURL(blob);
+
+    // Put it in the frame and show it
+    frame.src = blobUrl;
+    
+    frame.onload = () =&gt; {
+      statusText.setAttribute(&#39;visibility&#39;, &#39;hidden&#39;);
+      wrapper.setAttribute(&#39;visibility&#39;, &#39;visible&#39;);
+    };
+  } catch (err) {
+    statusText.textContent = &quot;L + RATIO + ERROR: &quot; + err.message;
+    statusText.setAttribute(&#39;fill&#39;, &#39;red&#39;);
+  }
+}
+
+// Execute
+injectBirdmath();
+]]&gt;
+
+</script>
+</svg>
