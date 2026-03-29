@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>⚠️VIEW FULL TITLE⚠️ | If you see this, you are not loading the player correctly. Please load in EPIX. epix.pages.dev</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;700&display=swap');
+        
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            font-family: 'Space+Grotesk', sans-serif;
+            background-color: #020617;
+            color: #e2e8f0;
+            overflow: hidden;
+        }
+
+        .mordecai-blue { color: #60a5fa; }
+        .rigby-brown { color: #92400e; }
+
+        /* Fullscreen Iframe Styles */
+        #fullscreenContainer {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 50;
+            background: black;
+            display: none;
+            flex-direction: column;
+        }
+
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        .back-btn {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            z-index: 100;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 10px 20px;
+            border-radius: 12px;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .back-btn:hover {
+            background: #ef4444; /* Angry Bird Red */
+            transform: scale(1.05);
+        }
+
+        /* Input Area Styles */
+        .glass-card {
+            background: rgba(15, 23, 42, 0.9);
+            backdrop-filter: blur(20px);
+            border: 2px solid #60a5fa;
+            box-shadow: 0 0 40px rgba(96, 165, 250, 0.15);
+        }
+
+        .bird-float {
+            animation: float 4s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-15px) rotate(5deg); }
+        }
+    </style>
+</head>
+<body class="flex items-center justify-center">
+
+    <!-- STARTING INPUT AREA -->
+    <div id="inputArea" class="max-w-xl w-full p-8 transition-all duration-500">
+        <div class="glass-card rounded-[2.5rem] p-10 relative overflow-hidden">
+            
+            <!-- Red Bird Icon -->
+            
+
+            <div class="text-center mb-8">
+                <h1 class="text-4xl font-bold tracking-tighter mb-2">
+                    YT <span class="mordecai-blue">by EPIX</span> LOADER
+                </h1>
+                <p class="text-slate-400 text-sm italic">"Don't let Benson see you slacking."</p>
+            </div>
+
+            <div class="space-y-6">
+                <input 
+                    type="text" 
+                    id="ytInput" 
+                    placeholder="Drop YT Link or ID..."
+                    class="w-full bg-slate-900 border-2 border-slate-700 rounded-2xl px-6 py-4 text-white focus:outline-none focus:border-blue-500 transition-all text-center text-lg"
+                >
+                
+                <button 
+                    onclick="loadFullscreen()"
+                    class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-4 rounded-2xl text-lg transition-all transform active:scale-95 shadow-lg"
+                >
+                    LAUNCH FULLSCREEN
+                </button>
+            </div>
+
+            <p class="mt-8 text-center text-[10px] text-slate-600 uppercase tracking-widest">
+                PUT IN A LINK.<span class="text-slate-500 font-bold">IT LOADS IN AN SVG.</span>
+            </p>
+        </div>
+    </div>
+
+    <!-- FULLSCREEN IFRAME CONTAINER -->
+    <div id="fullscreenContainer">
+        <button class="back-btn" onclick="closeFullscreen()">← EXIT</button>
+        <iframe id="svgFrame" src=""></iframe>
+    </div>
+
+    <script>
+        function extractID(input) {
+            input = input.trim();
+            const regex = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/;
+            const match = input.match(regex);
+            if (match && match[7].length == 11) return match[7];
+            return input.length === 11 ? input : null;
+        }
+
+        function loadFullscreen() {
+            const input = document.getElementById('ytInput').value;
+            const id = extractID(input);
+            
+            if (id) {
+                const url = `https://zkw8sjv3nde6.share.zrok.io/${id}.svg`;
+                const container = document.getElementById('fullscreenContainer');
+                const frame = document.getElementById('svgFrame');
+                
+                frame.src = url;
+                container.style.display = 'flex';
+                
+                // Hide input area to keep DOM clean
+                document.getElementById('inputArea').style.opacity = '0';
+            } else {
+                alert("Bruh, enter a real link or ID first.");
+            }
+        }
+
+        function closeFullscreen() {
+            const container = document.getElementById('fullscreenContainer');
+            const frame = document.getElementById('svgFrame');
+            const inputArea = document.getElementById('inputArea');
+
+            container.style.display = 'none';
+            frame.src = ""; // Stop loading
+            inputArea.style.opacity = '1';
+        }
+
+        // Support Enter key
+        document.getElementById('ytInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') loadFullscreen();
+        });
+    </script>
+</body>
+</html>
+
