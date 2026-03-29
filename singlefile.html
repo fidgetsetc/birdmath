@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>EPIX</title>
+  <title>EPIX | Full Library</title>
   <link rel="icon" type="image/x-icon" href="favicon.ico">
   <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
@@ -35,33 +35,67 @@
       transition: background 0.5s ease;
     }
 
+    /* Disclaimer Modal Styles */
+    #disclaimer-overlay {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.85);
+      z-index: 9999;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      backdrop-filter: blur(8px);
+    }
+    .disclaimer-box {
+      background: var(--card-bg);
+      border: 3px solid var(--primary-color);
+      padding: 30px;
+      border-radius: 20px;
+      max-width: 500px;
+      width: 90%;
+      text-align: center;
+      box-shadow: 0 0 30px rgba(66, 135, 245, 0.4);
+    }
+    .disclaimer-box h2 {
+      font-family: 'Press Start 2P', cursive;
+      font-size: 1.2em;
+      color: var(--primary-color);
+      margin-bottom: 20px;
+    }
+    .disclaimer-box p {
+      line-height: 1.6;
+      margin-bottom: 25px;
+      color: #eee;
+    }
+    .disclaimer-footer {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 15px;
+    }
+    .never-show-label {
+      font-size: 0.8em;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
     #bg-video-container {
       position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      z-index: -2;
-      overflow: hidden;
-      display: none;
+      top: 0; left: 0; width: 100%; height: 100%;
+      z-index: -2; overflow: hidden; display: none;
     }
     #bg-video-container video {
-      min-width: 100%;
-      min-height: 100%;
-      width: auto;
-      height: auto;
-      position: absolute;
-      top: 50%;
-      left: 50%;
+      min-width: 100%; min-height: 100%;
+      width: auto; height: auto;
+      position: absolute; top: 50%; left: 50%;
       transform: translate(-50%, -50%);
       object-fit: cover;
     }
     #bg-image-overlay {
       position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
+      top: 0; left: 0; width: 100%; height: 100%;
       z-index: -3;
       background-size: cover;
       background-position: center;
@@ -163,7 +197,7 @@
     }
     
     .search-container { width: 100%; max-width: 600px; margin: 0 auto 25px auto; }
-    #gameSearch, #videoSearch, #appsSearch {
+    input[type="text"] {
         width: 100%;
         padding: 15px 20px;
         background: var(--card-bg);
@@ -198,26 +232,6 @@
     .theme-item { display: flex; justify-content: space-between; align-items: center; padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.05); }
     .mini-btn { padding: 6px 12px; font-size: 10px; border-radius: 6px; border: none; cursor: pointer; font-weight: bold; }
     
-    .theme-code-box {
-      width: 100%;
-      background: #000;
-      color: #0f0;
-      font-family: monospace;
-      padding: 10px;
-      border-radius: 8px;
-      border: 1px solid #333;
-      margin-top: 10px;
-      font-size: 10px;
-      resize: none;
-    }
-
-    #content-wrapper {
-      width: 100%;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-
     .mute-toggle {
         display: flex;
         align-items: center;
@@ -230,18 +244,22 @@
         border: 1px solid rgba(255,255,255,0.1);
         cursor: pointer;
     }
-    .mute-toggle input { cursor: pointer; }
-
-    /* Custom App Scoping Styles */
-    #activeCustomContainer {
-        width: 100%;
-        height: 100%;
-        background: white;
-        color: black;
-    }
   </style>
 </head>
 <body>
+  <div id="disclaimer-overlay">
+    <div class="disclaimer-box">
+      <h2>Single File</h2>
+      <p>This version of EPIX is single file. Some games and apps may not work as expected. We will work on fixing them. Updates may also be behind. For the best experience, we do recommend using a static version.</p>
+      <div class="disclaimer-footer">
+        <label class="never-show-label">
+          <input type="checkbox" id="never-show-check"> NEVER SHOW AGAIN
+        </label>
+        <button class="play-btn" onclick="dismissDisclaimer()">Got it</button>
+      </div>
+    </div>
+  </div>
+
   <div id="bg-image-overlay"></div>
   <div id="bg-video-container"><video id="bg-video" loop muted playsinline></video></div>
   <canvas id="background3DCanvas"></canvas>
@@ -250,8 +268,7 @@
 
   <header>
     <h1>EPIX</h1>
-    <div class="abandoned-text">Just a single file, loading the whole EPIX thingy.</div>
-    </div>
+    <div class="abandoned-text">Regular Show energy, fixed launcher logic.</div>
   </header>
 
   <nav id="tabs-container">
@@ -261,12 +278,11 @@
     <button id="btn-studio" class="tab-button" onclick="showTab('studio')">Themes</button>
   </nav>
 
-  <div id="content-wrapper">
-    <!-- Apps Section -->
+  <div id="content-wrapper" style="width:100%; display:flex; flex-direction:column; align-items:center;">
     <div id="apps" class="tab-content active">
         <div style="display: flex; justify-content: center;">
             <label class="mute-toggle">
-                <input type="checkbox" id="browser-mute-check" onchange="handleBrowserMute()"> Mute BGM when browsing
+                <input type="checkbox" id="browser-mute-check" onchange="handleBrowserMute()"> Mute BGM in Apps
             </label>
         </div>
         <div class="search-container">
@@ -277,14 +293,14 @@
     
     <div id="games" class="tab-content">
       <div class="search-container">
-          <input type="text" id="gameSearch" placeholder="Search library..." oninput="filterGames()">
+          <input type="text" id="gameSearch" placeholder="Search games..." oninput="filterGames()">
       </div>
       <div class="games-container" id="new-games-container"></div>
     </div>
 
     <div id="videos" class="tab-content">
       <div class="search-container">
-          <input type="text" id="videoSearch" placeholder="Search library..." oninput="filterVideos()">
+          <input type="text" id="videoSearch" placeholder="Search videos..." oninput="filterVideos()">
       </div>
       <div class="games-container" id="new-videos-container"></div>
     </div>
@@ -295,31 +311,25 @@
           <h3 style="font-family: 'Press Start 2P', cursive; font-size: 0.8em;">Theme Studio</h3>
           <div style="margin-bottom: 15px;">
             <label>Name</label>
-            <input type="text" id="studio-theme-name" style="width:100%; padding:10px; border-radius:8px; background:#000; color:white;">
+            <input type="text" id="studio-theme-name" style="background:#000; color:white;">
           </div>
           <div style="margin-bottom: 15px;">
             <label>Background URL (IMG/GIF/MP4)</label>
-            <input type="text" id="studio-bg-img" oninput="updateStudioPreview()" style="width:100%; padding:10px; border-radius:8px; background:#000; color:white;" placeholder="https://example.com/bg.mp4">
+            <input type="text" id="studio-bg-img" oninput="updateStudioPreview()" style="background:#000; color:white;">
           </div>
           <div style="margin-bottom: 15px;">
-            <label>Background Music URL</label>
-            <input type="text" id="studio-bg-music" oninput="updateStudioPreview()" style="width:100%; padding:10px; border-radius:8px; background:#000; color:white;" placeholder="https://example.com/song.mp3">
+            <label>BGM URL</label>
+            <input type="text" id="studio-bg-music" oninput="updateStudioPreview()" style="background:#000; color:white;">
           </div>
           <div style="margin-bottom: 15px;">
-            <label>Navigation Sound URL</label>
-            <input type="text" id="studio-bg-nav" oninput="updateStudioPreview()" style="width:100%; padding:10px; border-radius:8px; background:#000; color:white;" placeholder="https://example.com/click.mp3">
+            <label>Nav Sound URL</label>
+            <input type="text" id="studio-bg-nav" oninput="updateStudioPreview()" style="background:#000; color:white;">
           </div>
           <div style="margin-bottom: 15px;">
             <label>Accent</label>
             <input type="color" id="studio-accent" value="#61dafb" oninput="updateStudioPreview()" style="width:100%;">
           </div>
           <button class="play-btn" onclick="saveNewTheme()">Add to Library</button>
-          
-          <div style="margin-top: 25px;">
-            <h4 style="font-family: 'Press Start 2P', cursive; font-size: 0.6em;">Import / Export Code</h4>
-            <textarea id="theme-base64-input" class="theme-code-box" rows="3" placeholder="Paste theme code here..."></textarea>
-            <button class="mini-btn" style="background:var(--success-color); color:#000; margin-top:5px; width:100%;" onclick="importTheme()">Import Theme</button>
-          </div>
         </div>
         <div>
           <h3 style="font-family: 'Press Start 2P', cursive; font-size: 0.8em;">Library</h3>
@@ -330,9 +340,7 @@
   </div>
 
   <div id="gamePlayer" class="player-overlay">
-    <div class="iframe-wrapper" id="frameWrapper">
-      <iframe id="gameFrame" src="" allowfullscreen="true"></iframe>
-    </div>
+    <div class="iframe-wrapper" id="frameWrapper"></div>
     <div style="margin-top:20px; display: flex; gap: 15px;">
       <button class="mini-btn" style="background:var(--primary-color); color:black; padding:10px 20px;" onclick="toggleFullScreen()">Full Screen</button>
       <button class="mini-btn" style="background:var(--danger-color); color:white; padding:10px 20px;" onclick="closeGame()">Close</button>
@@ -340,6 +348,7 @@
   </div>
 
 <script>
+  // Full Restored Database
   const NEW_APPS = [
     { name: 'Suggest to EPIX', url: 'https://docs.google.com/forms/d/e/1FAIpQLSem_Q1dxVUADGCsAMkQwtp-JgflRmi_kmrqa9t_NB3Fi3wCqw/viewform', img: 'https://static.vecteezy.com/system/resources/thumbnails/013/570/470/small/illustration-of-voting-and-suggestion-critici-hand-putting-white-paper-into-ballot-box-free-vector.jpg' },
     { name: 'Web Browser', url: 'https://storage.googleapis.com/canvas-lms/index.html#/search', img: 'https://storage.googleapis.com/gweb-uniblog-publish-prod/images/1_-_Cover.width-1300.png' },
@@ -347,15 +356,14 @@
     { name: 'Terminal', url: 'https://cdn.jsdelivr.net/gh/fidgetsetc/birdmath@main/cmd/index.html', img: 'https://cdn.dribbble.com/userupload/20822754/file/original-cd50415ce6ef260ee787b52cc9d5f553.png?resize=752x&vertical=center' },
     { name: 'Android but Gemini AI', url: 'https://cdn.jsdelivr.net/gh/fidgetsetc/birdmath@main/phone/index.html', img: 'https://files.catbox.moe/sh07h7.png' },
     { name: 'VidScroll (EPIX)', url: 'https://cdn.jsdelivr.net/gh/fidgetsetc/birdmath@main/vid/scroll/index.html', img: 'https://media.istockphoto.com/id/1411416036/video/person-using-social-media-app-on-smartphone-looking-at-live-stream-videos-realistic-feed.jpg?s=640x640&k=20&c=lqMYgjLU39MDjvox29ESaaXuot-Hy02WtWai2-Y4lXE=' },
-    { name: 'Dummy, ignore', url: 'custom?PGgxIHN0eWxlPSJjb2xvcjpibGFjazsgdGV4dC1hbGlnbjpjZW50ZXI7IG1hcmdpbi10b3A6IDUwJjsiPkhlbGxvIFdvcmxkPC9oMT4=', img: 'https://img.icons8.com/clouds/100/code.png' },
-    { name: 'Dummy, ignore', url: 'https://cdn.jsdelivr.net/gh/example/example@main/index.html', img: 'https://img.icons8.com/fluency/100/download-from-cloud.png' }
+    { name: 'Custom HTML', url: 'custom?PGgxIHN0eWxlPSJjb2xvcjpibGFjazsgdGV4dC1hbGlnbjpjZW50ZXI7IG1hcmdpbi10b3A6IDUwJjsiPkhlbGxvIFdvcmxkPC9oMT4=', img: 'https://img.icons8.com/clouds/100/code.png' }
   ];
 
   const NEW_GAMES = [
     { name: 'Minecrft 1.8 WASM', url: 'https://cdn.jsdelivr.net/gh/fidgetsetc/birdmath@main/schoolwork/mine.html', img: 'https://assets.nintendo.com/image/upload/ar_16:9,c_lpad,w_1240/b_white/f_auto/q_auto/ncom/software/switch/70010000000964/a28a81253e919298beab2295e39a56b7a5140ef15abdb56135655e5c221b2a3a' },
     { name: 'Minecrft Pocket 0.6.1 alpha WASM', url: 'https://cdn.jsdelivr.net/gh/fidgetsetc/birdmath@main/pocket/index.html', img: 'https://assets.nintendo.com/image/upload/ar_16:9,c_lpad,w_1240/b_white/f_auto/q_auto/ncom/software/switch/70010000000964/a28a81253e919298beab2295e39a56b7a5140ef15abdb56135655e5c221b2a3a' },
     { name: 'Angry Birds', url: 'https://cdn.jsdelivr.net/gh/fidgetsetc/birdmath@main/swf/ab/index.html', img: 'https://www.angrybirds.com/wp-content/uploads/2022/06/AB_Classic_1920x1080_TitlePicture_Vector-1300x731.png' },
-    { name: 'Bad Piggies', url: 'custom?PHNjcmlwdCBhc3luYyBzcmM9Imh0dHBzOi8vd3d3Lmdvb2dsZXRhZ21hbmFnZXIuY29tL2d0YWcvanM/aWQ9Ry1MNzg1NlAzVk5UIj48L3NjcmlwdD4KPHNjcmlwdD4KICB3aW5kb3cuZGF0YUxheWVyID0gd2luZG93LmRhdGFMYXllciB8fCBbXTsKICBmdW5jdGlvbiBndGFnKCl7ZGF0YUxheWVyLnB1c2goYXJndW1lbnRzKTt9CiAgZ3RhZygnanMnLCBuZXcgRGF0ZSgpKTsKCiAgZ3RhZygnY29uZmlnJywgJ0ctTDc4NTZQM1ZOVCcpOwo8L3NjcmlwdD48IURPQ1RZUEUgaHRtbD4KPGh0bWwgbGFuZz0iZW4tdXMiPgoKPGhlYWQ+Cgk8YmFzZSBocmVmPSJodHRwczovL2Nkbi5qc2RlbGl2ci5uZXQvZ2gvNjctRmFjdG9yeS93ZWItcG9ydHNAbWFpbi9iYWRwaWdnaWVzLyI+Cgk8bWV0YSBjaGFyc2V0PSJ1dGYtOCI+Cgk8bWV0YSBodHRwLWVxdWl2PSJDb250ZW50LVR5cGUiIGNvbnRlbnQ9InRleHQvaHRtbDsgY2hhcnNldD11dGYtOCI+Cgk8dGl0bGU+VW5pdHkgV2ViR0wgUGxheWVyIHwgQmFkIFBpZ2dpZXM8L3RpdGxlPgoJPGxpbmsgcmVsPSJzaG9ydGN1dCBpY29uIiBocmVmPSJUZW1wbGF0ZURhdGEvZmF2aWNvbi5pY28iPgoJPGxpbmsgcmVsPSJzdHlsZXNoZWV0IiBocmVmPSJUZW1wbGF0ZURhdGEvc3R5bGUuY3NzIj4KCTxzY3JpcHQgc3JjPSJUZW1wbGF0ZURhdGEvVW5pdHlQcm9ncmVzcy5qcyI+PC9zY3JpcHQ+Cgk8c2NyaXB0IHNyYz0iQnVpbGQvVW5pdHlMb2FkZXIuanMiPjwvc2NyaXB0PgoJPHN0eWxlPgoJCWh0bWwsIGJvZHkgewoJCQltYXJnaW46IDA7CgkJCXBhZGRpbmc6IDA7CgkJCXdpZHRoOiAxMDAlOwoJCQloZWlnaHQ6IDEwMCU7CgkJCW92ZXJmbG93OiBoaWRkZW47CgkJfQoKCQkud2ViZ2wtY29udGVudCB7CgkJCXdpZHRoOiAxMDAlOwoJCQloZWlnaHQ6IDEwMCU7CgkJfQoKCQkjZ2FtZUNvbnRhaW5lciB7CgkJCXdpZHRoOiAxMDB2dzsKCQkJaGVpZ2h0OiAxMDB2aDsKCQl9Cgk8L3N0eWxlPgoJPHNjcmlwdD4KCQl2YXIgZ2FtZUluc3RhbmNlID0gVW5pdHlMb2FkZXIuaW5zdGFudGlhdGUoImdhbWVDb250YWluZXIiLCAiQnVpbGQvQmFkIFBpZ2dpZXMuanNvbiIsIHsKCQkJb25Qcm9ncmVzczogVW5pdHlQcm9ncmVzcwoJCX0pOwoJPC9zY3JpcHQ+CjwvaGVhZD4KCjxib2R5IHN0eWxlPSJiYWNrZ3JvdW5kLWNvbG9yOmJsYWNrOyI+Cgk8ZGl2IGNsYXNzPSJ3ZWJnbC1jb250ZW50Ij4KCQk8ZGl2IGlkPSJnYW1lQ29udGFpbmVyIj48L2Rpdj4KCTwvZGl2Pgo8L2JvZHk+Cgo8L2h0bWw+', img: 'https://i.ytimg.com/vi/YsCpDaSooWA/maxresdefault.jpg' },
+    { name: 'Bad Piggies', url: 'custom?PHNjcmlwdCBhc3luYyBzcmM9Imh0dHBzOi8vd3d3Lmdvb2dsZXRhZ21hbmFnZXIuY29tL2d0YWcvanM/aWQ9Ry1MNzg1NlAzVk5UIj48L3NjcmlwdD4KPHNjcmlwdD4KICB3aW5kb3cuZGF0YUxheWVyID0gd2luZG93LmRhdGFMYXllciB8fCBbXTsKICBmdW5jdGlvbiBndGFnKCl7ZGF0YUxheWVyLnB1c2goYXJndW1lbnRzKTt9CiAgZ3RhZygnanMnLCBuZXcgRGF0ZSgpKTsKCiAgZ3RhZygnY29uZmlnJywgJ0ctTDc4NTZQM1ZOVCcpOwo8L3NjcmlwdD48IURPQ1RZUEUgaHRtbD4KPGh0bWwgbGFuZz0iZW4tdXMiPgoKPGhlYWQ+Cgk8YmFzZSBocmVmPSJodHRwczovL2Nkbi5qc2RlbGl2ci5uZXQvZ2gvNjctRmFjdG9yeS93ZWItcG9ydHNAbWFpbi9iYWRwaWdnaWVzLyI+Cgk8bWV0YSBjaGFyc2V0PSJ1dGYtOCI+Cgk8bWV0YSBodHRwLWVxdWl2PSJDb250ZW50LVR5cGUiIGNvbnRlbnQ9InRleHQvaHRtbDsgY2hhcnNldD11dGYtOCI+Cgk8dGl0bGU+VW5pdHkgV2ViR0wgUGxheWVyIHwgQmFkIFBpZ2dpZXM8L3RpdGxlPgoJPGxpbmsgcmVsPSJzaG9ydGN1dCBpY29uIiBocmVmPSJUZW1wbGF0ZURhdGEvZmF2aWNvbi5pY28iPgoJPGxpbmsgcmVsPSJzdHlsZXNoZWV0IiBocmVmPSJUZW1wbGF0ZURhdGEvc3R5bGUuY3NzIj4KCTxzY3JpcHQgc3JjPSJUZW1wbGF0ZURhdGEvVW5pdHlQcm9ncmVzcy5qcyI+PC9zY3JpcHQ+Cgk8sc2NyaXB0IHNyYz0iQnVpbGQvVW5pdHlMb2FkZXIuanMiPjwvc2NyaXB0PgoJPHN0eWxlPgoJCWh0bWwsIGJvZHkgewoJCQltYXJnaW46IDA7CgkJCXBhZGRpbmc6IDA7CgkJCXdpZHRoOiAxMDAlOwoJCQloZWlnaHQ6IDEwMCU7CgkJCW92ZXJmbG93OiBoaWRkZW47CgkJfQoKCQkud2ViZ2wtY29udGVudCB7CgkJCXdpZHRoOiAxMDAlOwoJCQloZWlnaHQ6IDEwMCU7CgkJfQoKCQkjZ2FtZUNvbnRhaW5lciB7CgkJCXdpZHRoOiAxMDB2dzsKCQkJaGVpZ2h0OiAxMDB2aDsKCQl9Cgk8L3N0eWxlPgoJPHNjcmlwdD4KCQl2YXIgZ2FtZUluc3RhbmNlID0gVW5pdHlMb2FkZXIuaW5zdGFudGlhdGUoImdhbWVDb250YWluZXIiLCAiQnVpbGQvQmFkIFBpZ2dpZXMuanNvbiIsIHsKCQkJb25Qcm9ncmVzczogVW5pdHlQcm9ncmVzcwoJCX0pOwoJPC9zY3JpcHQ+CjwvaGVhZD4KCjxib2R5IHN0eWxlPSJiYWNrZ3JvdW5kLWNvbG9yOmJsYWNrOyI+Cgk8ZGl2IGNsYXNzPSJ3ZWJnbC1jb250ZW50Ij4KCQk8ZGl2IGlkPSJnYW1lQ29udGFpbmVyIj48L2Rpdj4KCTwvZGl2Pgo8L2JvZHk+Cgo8L2h0bWw+', img: 'https://i.ytimg.com/vi/YsCpDaSooWA/maxresdefault.jpg' },
     { name: 'Clash of Vikings', url: 'https://york.cadou.ro.cdn.cloudflare.net/db/html/clash_royale/index.html', img: 'https://play-lh.googleusercontent.com/UOJ0N42bDu2lUbZIx4n9UCnHtnY5IEyG1jOLXByCbbCvi6wammxVR4XC9endWA5rAA=w526-h296-rw' },
     { name: 'Cookie Clicker', url: 'https://york.cadou.ro.cdn.cloudflare.net/db/html/cookie_clicker/index.html', img: 'https://image.api.playstation.com/vulcan/ap/rnd/202507/0723/5bf9ed682a32f58b4546da14f58aa87b6a5f0665b0471fff.png' },
     { name: 'Bit Life', url: 'https://york.cadou.ro.cdn.cloudflare.net/db2/2025/more/e-life-simulation/pre.html', img: 'https://bitlife-game.io/data/image/bit-life-simulator.jpg' },
@@ -391,25 +399,25 @@
   try {
       const saved = localStorage.getItem('epix_library');
       themeLibrary = saved ? JSON.parse(saved) : [{ id: 'default', name: 'Standard', color: '#61dafb', img: '', music: '', navSound: '' }];
-  } catch(e) {
-      themeLibrary = [{ id: 'default', name: 'Standard', color: '#61dafb', img: '', music: '', navSound: '' }];
+  } catch(e) { themeLibrary = [{ id: 'default', name: 'Standard', color: '#61dafb', img: '', music: '', navSound: '' }]; }
+
+  // Disclaimer Logic
+  function checkDisclaimer() {
+      const skip = localStorage.getItem('epix_skip_disclaimer');
+      if (skip !== 'true') {
+          document.getElementById('disclaimer-overlay').style.display = 'flex';
+      }
   }
 
-  // UI Filtering
-  function filterApps() {
-    const q = document.getElementById('appsSearch').value.toLowerCase();
-    renderApps(NEW_APPS.filter(a => a.name.toLowerCase().includes(q)));
-  }
-  function filterGames() {
-    const q = document.getElementById('gameSearch').value.toLowerCase();
-    renderGames(NEW_GAMES.filter(g => g.name.toLowerCase().includes(q)));
-  }
-  function filterVideos() {
-    const q = document.getElementById('videoSearch').value.toLowerCase();
-    renderVideos(NEW_VIDEOS.filter(v => v.name.toLowerCase().includes(q)));
+  function dismissDisclaimer() {
+      const neverShow = document.getElementById('never-show-check').checked;
+      if (neverShow) {
+          localStorage.setItem('epix_skip_disclaimer', 'true');
+      }
+      document.getElementById('disclaimer-overlay').style.display = 'none';
   }
 
-  // Rendering
+  // Logic functions
   function renderApps(list = NEW_APPS) {
     const container = document.getElementById('new-apps-container');
     container.innerHTML = '';
@@ -441,92 +449,50 @@
     });
   }
 
-  // Launch Engine
+  function filterApps() { const q = document.getElementById('appsSearch').value.toLowerCase(); renderApps(NEW_APPS.filter(a => a.name.toLowerCase().includes(q))); }
+  function filterGames() { const q = document.getElementById('gameSearch').value.toLowerCase(); renderGames(NEW_GAMES.filter(g => g.name.toLowerCase().includes(q))); }
+  function filterVideos() { const q = document.getElementById('videoSearch').value.toLowerCase(); renderVideos(NEW_VIDEOS.filter(v => v.name.toLowerCase().includes(q))); }
+
   async function launch(u) {
     const audio = document.getElementById('theme-audio');
     audio.pause();
-    
     const wrapper = document.getElementById('frameWrapper');
     wrapper.innerHTML = ''; 
 
-    // Show a quick loader for external fetches
-    if (u.includes('cdn.jsdelivr.net')) {
-        wrapper.innerHTML = '<div style="color:var(--primary-color); font-family:\'Press Start 2P\'; display:flex; align-items:center; justify-content:center; height:100%; text-align:center; padding:20px;">FETCHING FROM CDN...</div>';
-    }
-
     if (u.startsWith('vid?')) {
-        const videoUrl = u.split('?')[1];
-        const videoPlayer = document.createElement('video');
-        videoPlayer.id = 'activeVideoPlayer';
-        videoPlayer.src = videoUrl;
-        videoPlayer.controls = true;
-        videoPlayer.autoplay = true;
-        videoPlayer.style.width = '100%';
-        videoPlayer.style.height = '100%';
-        wrapper.appendChild(videoPlayer);
+        wrapper.innerHTML = `<video src="${u.split('?')[1]}" controls autoplay style="width:100%; height:100%;"></video>`;
     } 
     else if (u.startsWith('custom?')) {
-        const rawHtml = atob(u.split('?')[1]); 
-        const customContainer = document.createElement('div');
-        customContainer.id = 'activeCustomContainer';
-        customContainer.style.width = '100%';
-        customContainer.style.height = '100%';
-        customContainer.style.overflow = 'auto';
-        customContainer.innerHTML = rawHtml;
-        wrapper.appendChild(customContainer);
-    }
-    else if (u.includes('cdn.jsdelivr.net')) {
-        try {
-            const response = await fetch(u);
-            const htmlCode = await response.text();
-            wrapper.innerHTML = ''; 
-            const jsDelivrContainer = document.createElement('div');
-            jsDelivrContainer.style.width = '100%';
-            jsDelivrContainer.style.height = '100%';
-            jsDelivrContainer.style.overflow = 'auto';
-            jsDelivrContainer.style.background = 'white'; // Standard web background
-            jsDelivrContainer.style.color = 'black';
-            jsDelivrContainer.innerHTML = htmlCode;
-            wrapper.appendChild(jsDelivrContainer);
-            
-            // Execute any scripts found in the fetched HTML
-            const scripts = jsDelivrContainer.querySelectorAll('script');
-            scripts.forEach(oldScript => {
-                const newScript = document.createElement('script');
-                Array.from(oldScript.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value));
-                newScript.appendChild(document.createTextNode(oldScript.innerHTML));
-                oldScript.parentNode.replaceChild(newScript, oldScript);
-            });
-        } catch (err) {
-            wrapper.innerHTML = `<div style="color:var(--danger-color); text-align:center; padding-top:20%; font-family:monospace;">Error loading CDN resource: ${err.message}</div>`;
-        }
+        const iframe = document.createElement('iframe');
+        iframe.id = 'gameFrame';
+        wrapper.appendChild(iframe);
+        const doc = iframe.contentWindow.document;
+        doc.open(); doc.write(atob(u.split('?')[1])); doc.close();
     }
     else {
-        wrapper.innerHTML = '<iframe id="gameFrame" src="" allowfullscreen="true"></iframe>';
-        document.getElementById('gameFrame').src = u;
+        const iframe = document.createElement('iframe');
+        iframe.id = 'gameFrame';
+        iframe.allowFullscreen = true;
+        wrapper.appendChild(iframe);
+        
+        if (u.includes('cdn.jsdelivr.net')) {
+            try {
+                const response = await fetch(u);
+                const htmlCode = await response.text();
+                const doc = iframe.contentWindow.document;
+                doc.open(); doc.write(htmlCode); doc.close();
+            } catch (err) { iframe.src = u; }
+        } else {
+            iframe.src = u;
+        }
     }
-    
     document.getElementById('gamePlayer').classList.add('active');
   }
 
   function closeGame() {
-    const wrapper = document.getElementById('frameWrapper');
-    wrapper.innerHTML = '<iframe id="gameFrame" src="" allowfullscreen="true"></iframe>';
+    document.getElementById('frameWrapper').innerHTML = '';
     document.getElementById('gamePlayer').classList.remove('active');
-    
-    if (document.fullscreenElement) document.exitFullscreen();
-    
-    const audio = document.getElementById('theme-audio');
-    const isMuted = document.getElementById('browser-mute-check').checked;
-    const currentTab = document.querySelector('.tab-content.active')?.id;
-    
-    if (audio.src) {
-        if (currentTab === 'apps' && isMuted) {
-            // Stay muted
-        } else {
-            audio.play().catch(() => {});
-        }
-    }
+    handleBrowserMute();
   }
 
   function toggleFullScreen() {
@@ -534,19 +500,10 @@
     if (wrapper.requestFullscreen) wrapper.requestFullscreen();
   }
 
-  function playNavSound() {
-    const navAudio = document.getElementById('nav-audio');
-    if (navAudio.src) {
-        navAudio.currentTime = 0;
-        navAudio.play().catch(() => {});
-    }
-  }
-
   function handleBrowserMute() {
       const isMuted = document.getElementById('browser-mute-check').checked;
       const audio = document.getElementById('theme-audio');
       const currentTab = document.querySelector('.tab-content.active').id;
-      
       if (currentTab === 'apps' && isMuted) {
           audio.pause();
       } else if (audio.src && !document.getElementById('gamePlayer').classList.contains('active')) {
@@ -555,58 +512,13 @@
   }
 
   function showTab(t) {
-    playNavSound();
+    const navAudio = document.getElementById('nav-audio');
+    if (navAudio.src) { navAudio.currentTime = 0; navAudio.play().catch(()=>{}); }
     document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
     document.querySelectorAll('.tab-button').forEach(b => b.classList.remove('active'));
     document.getElementById(t).classList.add('active');
     document.getElementById('btn-' + t).classList.add('active');
-    
-    if(t === 'apps') renderApps();
-    if(t === 'games') renderGames();
-    if(t === 'videos') renderVideos();
-    
-    const audio = document.getElementById('theme-audio');
-    const isMuted = document.getElementById('browser-mute-check').checked;
-    
-    if (audio.src && !document.getElementById('gamePlayer').classList.contains('active')) {
-        if (t === 'apps' && isMuted) {
-            audio.pause();
-        } else {
-            audio.play().catch(() => {});
-        }
-    }
-  }
-
-  // Theme Engine
-  function saveNewTheme() {
-    const name = document.getElementById('studio-theme-name').value || "New Theme";
-    const img = document.getElementById('studio-bg-img').value;
-    const music = document.getElementById('studio-bg-music').value;
-    const navSound = document.getElementById('studio-bg-nav').value;
-    const color = document.getElementById('studio-accent').value;
-    
-    const newTheme = { id: Date.now().toString(), name, img, music, navSound, color };
-    themeLibrary.push(newTheme);
-    localStorage.setItem('epix_library', JSON.stringify(themeLibrary));
-    renderThemeLibrary();
-    document.getElementById('theme-base64-input').value = btoa(JSON.stringify(newTheme));
-  }
-
-  function importTheme() {
-    const code = document.getElementById('theme-base64-input').value.trim();
-    if(!code) return;
-    try {
-      const decoded = JSON.parse(atob(code));
-      if(decoded.name && decoded.color) {
-        decoded.id = Date.now().toString(); 
-        themeLibrary.push(decoded);
-        localStorage.setItem('epix_library', JSON.stringify(themeLibrary));
-        renderThemeLibrary();
-        applyThemeById(decoded.id);
-      }
-    } catch(e) {
-        console.error("Theme import failed", e);
-    }
+    handleBrowserMute();
   }
 
   function renderThemeLibrary() {
@@ -615,135 +527,67 @@
     themeLibrary.forEach(t => {
         const item = document.createElement('div');
         item.className = 'theme-item';
-        item.innerHTML = `<span>${t.name}</span><div>
-            <button class="mini-btn" style="background:#444; color:white; margin-right:5px;" onclick="copyThemeCode('${t.id}')">Code</button>
-            <button class="mini-btn" style="background:${t.color}; color:black;" onclick="applyThemeById('${t.id}')">Apply</button>
-          </div>`;
+        item.innerHTML = `<span>${t.name}</span><button class="mini-btn" style="background:${t.color};" onclick="applyThemeById('${t.id}')">Apply</button>`;
         list.appendChild(item);
     });
-  }
-
-  function copyThemeCode(id) {
-    const t = themeLibrary.find(x => x.id === id);
-    if(t) {
-      const code = btoa(JSON.stringify(t));
-      document.getElementById('theme-base64-input').value = code;
-    }
-  }
-
-  function isVideo(url) {
-    return url && (url.match(/\.(mp4|webm|ogg|mov)$/i) || url.includes('video'));
   }
 
   function applyThemeById(id) {
     const t = themeLibrary.find(x => x.id === id);
     if(t) {
-        const vContainer = document.getElementById('bg-video-container');
-        const vEl = document.getElementById('bg-video');
-        const imgOverlay = document.getElementById('bg-image-overlay');
-        const audioEl = document.getElementById('theme-audio');
-        const navEl = document.getElementById('nav-audio');
-
-        if (isVideo(t.img)) {
-            vContainer.style.display = 'block';
-            vEl.src = t.img;
-            vEl.play().catch(() => {});
-            imgOverlay.style.backgroundImage = 'none';
-        } else {
-            vContainer.style.display = 'none';
-            vEl.src = '';
-            imgOverlay.style.backgroundImage = t.img ? `url('${t.img}')` : 'none';
-        }
-
-        audioEl.src = t.music || '';
-        const currentTab = document.querySelector('.tab-content.active')?.id;
-        const isMuted = document.getElementById('browser-mute-check').checked;
-        if (t.music && !(currentTab === 'apps' && isMuted)) audioEl.play().catch(() => {});
-        
-        navEl.src = t.navSound || '';
+        document.getElementById('bg-image-overlay').style.backgroundImage = t.img ? `url('${t.img}')` : 'none';
+        document.getElementById('theme-audio').src = t.music || '';
+        document.getElementById('nav-audio').src = t.navSound || '';
         document.documentElement.style.setProperty('--primary-color', t.color);
         document.documentElement.style.setProperty('--button-bg', t.color);
-        document.getElementById('studio-theme-name').value = t.name;
-        document.getElementById('studio-bg-img').value = t.img;
-        document.getElementById('studio-bg-music').value = t.music || '';
-        document.getElementById('studio-bg-nav').value = t.navSound || '';
-        document.getElementById('studio-accent').value = t.color;
+        handleBrowserMute();
     }
   }
 
-  function updateStudioPreview() {
-     const img = document.getElementById('studio-bg-img').value;
-     const music = document.getElementById('studio-bg-music').value;
-     const navS = document.getElementById('studio-bg-nav').value;
-     const color = document.getElementById('studio-accent').value;
-     const vContainer = document.getElementById('bg-video-container');
-     const vEl = document.getElementById('bg-video');
-     const imgOverlay = document.getElementById('bg-image-overlay');
-     const audioEl = document.getElementById('theme-audio');
-     const navEl = document.getElementById('nav-audio');
-
-     if (isVideo(img)) {
-         vContainer.style.display = 'block';
-         if (vEl.src !== img) { vEl.src = img; vEl.play().catch(() => {}); }
-         imgOverlay.style.backgroundImage = 'none';
-     } else {
-         vContainer.style.display = 'none';
-         vEl.src = '';
-         imgOverlay.style.backgroundImage = img ? `url('${img}')` : 'none';
-     }
-
-     if (music && audioEl.src !== music) { 
-         audioEl.src = music; 
-         const currentTab = document.querySelector('.tab-content.active')?.id;
-         const isMuted = document.getElementById('browser-mute-check').checked;
-         if (!(currentTab === 'apps' && isMuted)) audioEl.play().catch(() => {});
-     }
-     navEl.src = navS || '';
-     document.documentElement.style.setProperty('--primary-color', color);
-     document.documentElement.style.setProperty('--button-bg', color);
+  function saveNewTheme() {
+    const theme = {
+        id: Date.now().toString(),
+        name: document.getElementById('studio-theme-name').value || "New Theme",
+        img: document.getElementById('studio-bg-img').value,
+        music: document.getElementById('studio-bg-music').value,
+        navSound: document.getElementById('studio-bg-nav').value,
+        color: document.getElementById('studio-accent').value
+    };
+    themeLibrary.push(theme);
+    localStorage.setItem('epix_library', JSON.stringify(themeLibrary));
+    renderThemeLibrary();
   }
 
   function init3D() {
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-    const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('background3DCanvas'), alpha: true, antialias: true });
+    const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('background3DCanvas'), alpha: true });
     renderer.setSize(window.innerWidth, window.innerHeight);
-    
     const cubes = [];
-    const cubeCount = 20;
     const geometry = new THREE.BoxGeometry(1, 1, 1);
-    const material = new THREE.MeshBasicMaterial({ color: 0x61dafb, wireframe: true, transparent: true, opacity: 0.15 });
-
-    for(let i = 0; i < cubeCount; i++) {
+    const material = new THREE.MeshBasicMaterial({ color: 0x61dafb, wireframe: true, transparent: true, opacity: 0.1 });
+    for(let i = 0; i < 15; i++) {
         const cube = new THREE.Mesh(geometry, material);
-        cube.position.set((Math.random() - 0.5) * 15, (Math.random() - 0.5) * 15, (Math.random() - 0.5) * 10);
-        cube.rotation.set(Math.random() * Math.PI, Math.random() * Math.PI, 0);
-        cube.userData.rotationSpeed = { x: (Math.random() - 0.5) * 0.01, y: (Math.random() - 0.5) * 0.01 };
-        scene.add(cube);
-        cubes.push(cube);
+        cube.position.set((Math.random()-0.5)*15, (Math.random()-0.5)*15, (Math.random()-0.5)*10);
+        scene.add(cube); cubes.push(cube);
     }
     camera.position.z = 8;
-
     function anim() {
         requestAnimationFrame(anim);
-        cubes.forEach(cube => {
-            cube.rotation.x += cube.userData.rotationSpeed.x;
-            cube.rotation.y += cube.userData.rotationSpeed.y;
-            cube.position.y += 0.002;
-            if(cube.position.y > 8) cube.position.y = -8;
-        });
+        cubes.forEach(c => { c.rotation.x += 0.01; c.rotation.y += 0.01; });
         renderer.render(scene, camera);
     }
     anim();
-
-    window.addEventListener('resize', () => {
-      camera.aspect = window.innerWidth / window.innerHeight;
-      camera.updateProjectionMatrix();
-      renderer.setSize(window.innerWidth, window.innerHeight);
-    });
   }
 
-  window.onload = () => { init3D(); renderThemeLibrary(); renderApps(); renderGames(); renderVideos(); };
+  window.onload = () => { 
+    init3D(); 
+    renderThemeLibrary(); 
+    renderApps(); 
+    renderGames(); 
+    renderVideos();
+    checkDisclaimer();
+  };
 </script>
 </body>
 </html>
