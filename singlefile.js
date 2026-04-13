@@ -363,6 +363,7 @@
   const NEW_GAMES = [
     { name: 'Minecrft 1.8 WASM', url: 'https://cdn.jsdelivr.net/gh/fidgetsetc/birdmath@main/schoolwork/mine.html', img: 'https://assets.nintendo.com/image/upload/ar_16:9,c_lpad,w_1240/b_white/f_auto/q_auto/ncom/software/switch/70010000000964/a28a81253e919298beab2295e39a56b7a5140ef15abdb56135655e5c221b2a3a' },
     { name: 'Minecrft Pocket 0.6.1 alpha WASM', url: 'https://cdn.jsdelivr.net/gh/fidgetsetc/birdmath@main/pocket/index.html', img: 'https://assets.nintendo.com/image/upload/ar_16:9,c_lpad,w_1240/b_white/f_auto/q_auto/ncom/software/switch/70010000000964/a28a81253e919298beab2295e39a56b7a5140ef15abdb56135655e5c221b2a3a' },
+    { name: 'Ro blox CLOUD', url: 'https://york.cadou.ro.cdn.cloudflare.net/db2/2001/cloud/index.html', img: 'https://store-images.s-microsoft.com/image/apps.34317.14294982842551334.b7187202-d3a5-4d28-b184-10f299fc8103.88603b8f-680b-4e15-970b-6232d52e3468' },
     { name: 'Angry Birds', url: 'https://cdn.jsdelivr.net/gh/fidgetsetc/birdmath@main/swf/ab/index.html', img: 'https://www.angrybirds.com/wp-content/uploads/2022/06/AB_Classic_1920x1080_TitlePicture_Vector-1300x731.png' },
     { name: 'Bad Piggies', url: 'custom?PHNjcmlwdCBhc3luYyBzcmM9Imh0dHBzOi8vd3d3Lmdvb2dsZXRhZ21hbmFnZXIuY29tL2d0YWcvanM/aWQ9Ry1MNzg1NlAzVk5UIj48L3NjcmlwdD4KPHNjcmlwdD4KICB3aW5kb3cuZGF0YUxheWVyID0gd2luZG93LmRhdGFMYXllciB8fCBbXTsKICBmdW5jdGlvbiBndGFnKCl7ZGF0YUxheWVyLnB1c2goYXJndW1lbnRzKTt9CiAgZ3RhZygnanMnLCBuZXcgRGF0ZSgpKTsKCiAgZ3RhZygnY29uZmlnJywgJ0ctTDc4NTZQM1ZOVCcpOwo8L3NjcmlwdD48IURPQ1RZUEUgaHRtbD4KPGh0bWwgbGFuZz0iZW4tdXMiPgoKPGhlYWQ+Cgk8YmFzZSBocmVmPSJodHRwczovL2Nkbi5qc2RlbGl2ci5uZXQvZ2gvNjctRmFjdG9yeS93ZWItcG9ydHNAbWFpbi9iYWRwaWdnaWVzLyI+Cgk8bWV0YSBjaGFyc2V0PSJ1dGYtOCI+Cgk8bWV0YSBodHRwLWVxdWl2PSJDb250ZW50LVR5cGUiIGNvbnRlbnQ9InRleHQvaHRtbDsgY2hhcnNldD11dGYtOCI+Cgk8dGl0bGU+VW5pdHkgV2ViR0wgUGxheWVyIHwgQmFkIFBpZ2dpZXM8L3RpdGxlPgoJPGxpbmsgcmVsPSJzaG9ydGN1dCBpY29uIiBocmVmPSJUZW1wbGF0ZURhdGEvZmF2aWNvbi5pY28iPgoJPGxpbmsgcmVsPSJzdHlsZXNoZWV0IiBocmVmPSJUZW1wbGF0ZURhdGEvc3R5bGUuY3NzIj4KCTxzY3JpcHQgc3JjPSJUZW1wbGF0ZURhdGEvVW5pdHlQcm9ncmVzcy5qcyI+PC9zY3JpcHQ+Cgk8sc2NyaXB0IHNyYz0iQnVpbGQvVW5pdHlMb2FkZXIuanMiPjwvc2NyaXB0PgoJPHN0eWxlPgoJCWh0bWwsIGJvZHkgewoJCQltYXJnaW46IDA7CgkJCXBhZGRpbmc6IDA7CgkJCXdpZHRoOiAxMDAlOwoJCQloZWlnaHQ6IDEwMCU7CgkJCW92ZXJmbG93OiBoaWRkZW47CgkJfQoKCQkud2ViZ2wtY29udGVudCB7CgkJCXdpZHRoOiAxMDAlOwoJCQloZWlnaHQ6IDEwMCU7CgkJfQoKCQkjZ2FtZUNvbnRhaW5lciB7CgkJCXdpZHRoOiAxMDB2dzsKCQkJaGVpZ2h0OiAxMDB2aDsKCQl9Cgk8L3N0eWxlPgoJPHNjcmlwdD4KCQl2YXIgZ2FtZUluc3RhbmNlID0gVW5pdHlMb2FkZXIuaW5zdGFudGlhdGUoImdhbWVDb250YWluZXIiLCAiQnVpbGQvQmFkIFBpZ2dpZXMuanNvbiIsIHsKCQkJb25Qcm9ncmVzczogVW5pdHlQcm9ncmVzcwoJCX0pOwoJPC9zY3JpcHQ+CjwvaGVhZD4KCjxib2R5IHN0eWxlPSJiYWNrZ3JvdW5kLWNvbG9yOmJsYWNrOyI+Cgk8ZGl2IGNsYXNzPSJ3ZWJnbC1jb250ZW50Ij4KCQk8ZGl2IGlkPSJnYW1lQ29udGFpbmVyIj48L2Rpdj4KCTwvZGl2Pgo8L2JvZHk+Cgo8L2h0bWw+', img: 'https://i.ytimg.com/vi/YsCpDaSooWA/maxresdefault.jpg' },
     { name: 'Clash of Vikings', url: 'https://york.cadou.ro.cdn.cloudflare.net/db/html/clash_royale/index.html', img: 'https://play-lh.googleusercontent.com/UOJ0N42bDu2lUbZIx4n9UCnHtnY5IEyG1jOLXByCbbCvi6wammxVR4XC9endWA5rAA=w526-h296-rw' },
@@ -390,6 +391,7 @@
 
   const NEW_VIDEOS = [
     { name: 'Regular Show S1', url: 'vid?https://archive.org/download/regular-show-complete-isos/Regular%20Show/REGULAR%20SHOW%20SEASON%201%20DISC%201.mp4', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT7DA8Mt70HVzxLFcWVoQtJ21xgIqH6PRicZA&s' },
+    { name: 'Regular Show Movie', url: 'vid?https://archive.org/download/regular-show-complete-isos/REGULAR%20SHOW%20THE%20MOVIE.mp4', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT7DA8Mt70HVzxLFcWVoQtJ21xgIqH6PRicZA&s' },
     { name: 'The Angry Birds Movie 1', url: 'vid?https://archive.org/download/the-angry-birds-movie-us-dvd-2016/The%20Angry%20Birds%20Movie%20%28US%20DVD%29%20%5B2016%5D.mp4', img: 'https://miro.medium.com/1*iV4Wd1598MxZcuxeu0rC-g.png' },
     { name: 'The Angry Birds Movie 2', url: 'vid?https://archive.org/download/the-angry-birds-movie-2-us-dvd-2019/The%20Angry%20Birds%20Movie%202%20%28US%20DVD%29%20%5B2019%5D.mp4', img: 'https://thecollision.org/wp-content/uploads/2019/08/abmoovie-1.jpg' },
     { name: 'A Minecraft Movie', url: 'vid?https://archive.org/download/a-minecraft-movie_202510/A%20Minecraft%20Movie.ia.mp4', img: 'https://www.minecraft-movie.com/assets/images/mobilebanner.jpg' },
@@ -591,4 +593,6 @@
   };
 </script>
 </body>
+</html>
+
 </html>
