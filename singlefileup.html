@@ -1,0 +1,97 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fullscreen Code Injector</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+            background-color: #000;
+        }
+        iframe {
+            border: none;
+            width: 100%;
+            height: 100%;
+        }
+        /* Hidden refresh button that shows on hover for that clean aesthetic */
+        .controls {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            z-index: 100;
+        }
+        .controls:hover {
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Subtle controls for debugging/reloading -->
+    <div class="controls">
+        <button onclick="loadContent()" class="bg-black/50 hover:bg-black text-white p-2 rounded-full backdrop-blur-md border border-white/20">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"></path><path d="M21 3v5h-5"></path><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"></path><path d="M3 21v-5h5"></path></svg>
+        </button>
+    </div>
+
+    <!-- Error UI if fetch catches an L -->
+    <div id="error-screen" class="hidden fixed inset-0 flex flex-col items-center justify-center bg-zinc-900 text-white p-6 z-50">
+        <div class="text-6xl mb-4">🚫</div>
+        <h1 class="text-2xl font-bold mb-2">CORS Blocked / Fetch Failed</h1>
+        <p id="error-desc" class="text-zinc-400 text-center max-w-md mb-6">The URL provided might be blocking cross-origin requests. Standard browser security things, fr.</p>
+        <button onclick="loadContent()" class="bg-blue-600 hover:bg-blue-500 px-6 py-2 rounded-lg font-bold transition-all">Try Again</button>
+    </div>
+
+    <iframe id="main-view" title="Remote Content"></iframe>
+
+    <script>
+        /**
+         * 🎯 HARDCODED URL GOES HERE
+         * Note: The target server must allow CORS for this to work.
+         * GitHub Raw or Pastebin Raw are usually chill.
+         */
+        const TARGET_URL = "https://raw.githubusercontent.com/mdn/learning-area/master/html/introduction-to-html/getting-started/index.html";
+
+        const frame = document.getElementById('main-view');
+        const errorScreen = document.getElementById('error-screen');
+        const errorDesc = document.getElementById('error-desc');
+
+        async function loadContent() {
+            try {
+                errorScreen.classList.add('hidden');
+                
+                // Fetch the raw code
+                const response = await fetch(TARGET_URL);
+                
+                if (!response.ok) {
+                    throw new Error(`Status: ${response.status}`);
+                }
+
+                const htmlContent = await response.text();
+                
+                // Inject via srcdoc for maximum control
+                frame.srcdoc = htmlContent;
+                
+            } catch (err) {
+                console.error("Fetch failed:", err);
+                errorDesc.textContent = `Target: ${TARGET_URL} | Error: ${err.message}`;
+                errorScreen.classList.remove('hidden');
+            }
+        }
+
+        // Start the process
+        window.onload = loadContent;
+    </script>
+</body>
+</html>
+
+```
