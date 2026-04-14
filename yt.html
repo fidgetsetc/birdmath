@@ -11,108 +11,120 @@
         
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #0f172a;
+            background-color: #0b0f1a;
             color: #f8fafc;
         }
 
         .glass-card {
-            background: rgba(30, 41, 59, 0.7);
-            backdrop-filter: blur(12px);
+            background: rgba(30, 41, 59, 0.6);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
             border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
-        .btn-primary {
-            background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
-            transition: transform 0.2s, box-shadow 0.2s;
+        .btn-install {
+            background: linear-gradient(135deg, #ef4444 0%, #991b1b 100%);
+            box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
+            transition: all 0.2s ease;
         }
 
-        .btn-primary:active {
-            transform: scale(0.95);
+        .btn-install:active {
+            transform: scale(0.96);
+            filter: brightness(1.1);
         }
 
-        .btn-secondary {
+        .btn-profile {
             background: rgba(255, 255, 255, 0.05);
             border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: background 0.2s;
+        }
+        
+        .btn-profile:active {
+            background: rgba(255, 255, 255, 0.15);
         }
     </style>
 </head>
-<body class="min-h-screen flex flex-col items-center justify-center p-6">
+<body class="min-h-screen flex flex-col items-center justify-center p-6 bg-[radial-gradient(circle_at_top,_var(--tw-gradient-stops))] from-slate-900 via-slate-950 to-black">
 
-    <div class="max-w-md w-full glass-card rounded-3xl p-8 shadow-2xl text-center">
-        <!-- Icon/Header -->
-        <div class="mb-6">
-            <div class="w-20 h-20 bg-gradient-to-tr from-red-500 to-pink-500 rounded-2xl mx-auto flex items-center justify-center shadow-lg mb-4">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-12 h-12 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    <div class="max-w-md w-full glass-card rounded-[2.5rem] p-8 shadow-2xl text-center border border-white/10">
+        <!-- App Icon -->
+        <div class="relative inline-block mb-6">
+            <div class="w-24 h-24 bg-gradient-to-br from-red-500 to-red-800 rounded-[2rem] mx-auto flex items-center justify-center shadow-2xl transform -rotate-3">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-14 h-14 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                 </svg>
             </div>
-            <h1 class="text-3xl font-800 tracking-tight">Lock Screen</h1>
-            <p class="text-slate-400 mt-2 font-medium">v21.02.3 • YouTube "Secret" Edition</p>
+            <div class="absolute -bottom-1 -right-1 bg-green-500 w-6 h-6 rounded-full border-4 border-slate-900"></div>
         </div>
 
+        <h1 class="text-3xl font-800 tracking-tight mb-2">Lock Screen</h1>
+        <p class="text-slate-400 font-medium mb-8">YouTube Secret Edition • v21.02.3</p>
+
         <div class="space-y-4">
-            <!-- Install App Button -->
-            <!-- Note: Direct IPA links often require a manifest.plist for itms-services. 
-                 This button attempts to trigger a standard install helper if available, or direct download. -->
-            <button onclick="installApp()" class="w-full btn-primary py-4 rounded-2xl font-semibold text-lg flex items-center justify-center gap-2">
+            <!-- Install via Plist -->
+            <button onclick="triggerInstall()" class="w-full btn-install py-5 rounded-2xl font-bold text-lg flex items-center justify-center gap-3">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
                 Install App
             </button>
 
-            <div class="py-2">
-                <hr class="border-slate-700">
+            <div class="flex items-center gap-4 py-2">
+                <div class="h-px flex-1 bg-white/10"></div>
+                <span class="text-xs font-bold text-slate-500 uppercase tracking-widest">Recommended</span>
+                <div class="h-px flex-1 bg-white/10"></div>
             </div>
 
-            <!-- Anti-Revoke Section -->
-            <div class="text-left bg-blue-500/10 border border-blue-500/20 p-4 rounded-2xl mb-2">
-                <p class="text-sm font-semibold text-blue-400 flex items-center gap-2 mb-1">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-                      <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
-                    </svg>
-                    Highly Recommended
-                </p>
-                <p class="text-xs text-slate-300">Install the DNS profile to prevent Apple from revoking the app certificate. This is literally life-saving.</p>
-            </div>
-
+            <!-- Anti-Revoke Profile -->
             <a href="https://raw.githubusercontent.com/cloudydvn/dns-khoindvn/refs/heads/main/dns/khoindvn.mobileconfig" 
-               class="w-full btn-secondary py-3 rounded-2xl font-medium text-slate-200 block">
-                Install Anti-Revoke Profile
+               class="w-full btn-profile py-4 rounded-2xl font-semibold text-slate-200 block text-center">
+                Get Anti-Revoke DNS
             </a>
         </div>
 
-        <!-- Warning/Info -->
-        <p class="mt-8 text-xs text-slate-500 leading-relaxed">
-            If "Lock Screen" doesn't open after install, remember to go to <b>Settings > General > VPN & Device Management</b> and trust the enterprise certificate.
-        </p>
+        <!-- Instructions -->
+        <div class="mt-8 text-left space-y-3">
+            <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider ml-1">Quick Steps</h3>
+            <div class="bg-black/20 rounded-2xl p-4 border border-white/5 space-y-2">
+                <div class="flex items-start gap-3 text-xs text-slate-300">
+                    <span class="w-5 h-5 bg-slate-800 rounded-full flex-shrink-0 flex items-center justify-center text-white font-bold">1</span>
+                    <p>Tap <b>Install App</b> and confirm the iOS popup.</p>
+                </div>
+                <div class="flex items-start gap-3 text-xs text-slate-300">
+                    <span class="w-5 h-5 bg-slate-800 rounded-full flex-shrink-0 flex items-center justify-center text-white font-bold">2</span>
+                    <p>Install the <b>DNS Profile</b> to stop revokes.</p>
+                </div>
+                <div class="flex items-start gap-3 text-xs text-slate-300">
+                    <span class="w-5 h-5 bg-slate-800 rounded-full flex-shrink-0 flex items-center justify-center text-white font-bold">3</span>
+                    <p>Go to <b>Settings > General > VPN & Device Management</b> to trust the profile/app.</p>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <!-- Toast UI for messages -->
-    <div id="toast" class="fixed bottom-10 bg-white text-black px-6 py-3 rounded-full font-bold shadow-xl hidden animate-bounce">
-        Starting install...
+    <!-- Feedback Message -->
+    <div id="status-msg" class="fixed bottom-10 bg-white text-black px-8 py-3 rounded-full font-bold shadow-2xl opacity-0 transition-opacity duration-300 pointer-events-none">
+        Install prompt sent!
     </div>
 
     <script>
-        function showToast(msg) {
-            const toast = document.getElementById('toast');
-            toast.innerText = msg;
-            toast.classList.remove('hidden');
-            setTimeout(() => {
-                toast.classList.add('hidden');
-            }, 3000);
-        }
-
-        function installApp() {
-            showToast("Redirecting to install...");
-            // Standard itms-services format for direct install via plist (assuming the source has one)
-            // Since we only have a direct IPA link, we provide the direct link as fallback
-            const ipaUrl = "https://archive.org/download/lock-screen-21.02.3-1776084414/Lock%20Screen_21.02.3_1776084414.ipa";
+        function triggerInstall() {
+            const status = document.getElementById('status-msg');
             
-            // To install directly on iOS without a computer, it usually needs an itms-services plist wrapper.
-            // If the user is on a custom signer, they would upload this link there.
-            // Here we provide the direct download link.
-            window.location.href = ipaUrl;
+            // Get current directory for the plist
+            const currentPath = window.location.href.substring(0, window.location.href.lastIndexOf('/'));
+            const plistUrl = currentPath + "/yt.plist";
+            
+            // Construct the manifest URL
+            const manifestUrl = "itms-services://?action=download-manifest&url=" + encodeURIComponent(plistUrl);
+            
+            status.style.opacity = '1';
+            
+            // Small delay to let user see status before redirect
+            setTimeout(() => {
+                window.location.href = manifestUrl;
+                setTimeout(() => { status.style.opacity = '0'; }, 3000);
+            }, 500);
         }
     </script>
 </body>
