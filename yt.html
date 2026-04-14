@@ -1,0 +1,121 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YT Lockscreen Installer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0f172a;
+            color: #f8fafc;
+        }
+
+        .glass-card {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .btn-primary:active {
+            transform: scale(0.95);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col items-center justify-center p-6">
+
+    <div class="max-w-md w-full glass-card rounded-3xl p-8 shadow-2xl text-center">
+        <!-- Icon/Header -->
+        <div class="mb-6">
+            <div class="w-20 h-20 bg-gradient-to-tr from-red-500 to-pink-500 rounded-2xl mx-auto flex items-center justify-center shadow-lg mb-4">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-12 h-12 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                </svg>
+            </div>
+            <h1 class="text-3xl font-800 tracking-tight">Lock Screen</h1>
+            <p class="text-slate-400 mt-2 font-medium">v21.02.3 • YouTube "Secret" Edition</p>
+        </div>
+
+        <div class="space-y-4">
+            <!-- Install App Button -->
+            <!-- Note: Direct IPA links often require a manifest.plist for itms-services. 
+                 This button attempts to trigger a standard install helper if available, or direct download. -->
+            <button onclick="installApp()" class="w-full btn-primary py-4 rounded-2xl font-semibold text-lg flex items-center justify-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                </svg>
+                Install App
+            </button>
+
+            <div class="py-2">
+                <hr class="border-slate-700">
+            </div>
+
+            <!-- Anti-Revoke Section -->
+            <div class="text-left bg-blue-500/10 border border-blue-500/20 p-4 rounded-2xl mb-2">
+                <p class="text-sm font-semibold text-blue-400 flex items-center gap-2 mb-1">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                      <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+                    </svg>
+                    Highly Recommended
+                </p>
+                <p class="text-xs text-slate-300">Install the DNS profile to prevent Apple from revoking the app certificate. This is literally life-saving.</p>
+            </div>
+
+            <a href="https://raw.githubusercontent.com/cloudydvn/dns-khoindvn/refs/heads/main/dns/khoindvn.mobileconfig" 
+               class="w-full btn-secondary py-3 rounded-2xl font-medium text-slate-200 block">
+                Install Anti-Revoke Profile
+            </a>
+        </div>
+
+        <!-- Warning/Info -->
+        <p class="mt-8 text-xs text-slate-500 leading-relaxed">
+            If "Lock Screen" doesn't open after install, remember to go to <b>Settings > General > VPN & Device Management</b> and trust the enterprise certificate.
+        </p>
+    </div>
+
+    <!-- Toast UI for messages -->
+    <div id="toast" class="fixed bottom-10 bg-white text-black px-6 py-3 rounded-full font-bold shadow-xl hidden animate-bounce">
+        Starting install...
+    </div>
+
+    <script>
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            toast.innerText = msg;
+            toast.classList.remove('hidden');
+            setTimeout(() => {
+                toast.classList.add('hidden');
+            }, 3000);
+        }
+
+        function installApp() {
+            showToast("Redirecting to install...");
+            // Standard itms-services format for direct install via plist (assuming the source has one)
+            // Since we only have a direct IPA link, we provide the direct link as fallback
+            const ipaUrl = "https://archive.org/download/lock-screen-21.02.3-1776084414/Lock%20Screen_21.02.3_1776084414.ipa";
+            
+            // To install directly on iOS without a computer, it usually needs an itms-services plist wrapper.
+            // If the user is on a custom signer, they would upload this link there.
+            // Here we provide the direct download link.
+            window.location.href = ipaUrl;
+        }
+    </script>
+</body>
+</html>
+
+```
