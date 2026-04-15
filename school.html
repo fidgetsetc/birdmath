@@ -1,0 +1,668 @@
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EPIX at School</title>
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <style>
+    :root {
+      --bg-color: #1a1a1a;
+      --primary-color: #4287f5;
+      --secondary-color: #61dafb;
+      --text-color: #ffffff;
+      --card-bg: rgba(45, 49, 56, 0.9);
+      --button-bg: #61dafb;
+      --button-hover-bg: #21a1f1;
+      --danger-color: #ff4757;
+      --success-color: #2ed573;
+    }
+
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      font-family: 'Roboto', sans-serif;
+      margin: 0;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+      box-sizing: border-box;
+      overflow-x: hidden;
+      transition: background 0.5s ease;
+    }
+
+    #bg-video-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -2;
+      overflow: hidden;
+      display: none;
+    }
+    #bg-video-container video {
+      min-width: 100%;
+      min-height: 100%;
+      width: auto;
+      height: auto;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      object-fit: cover;
+    }
+    #bg-image-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -3;
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
+    }
+
+    header { margin-bottom: 30px; width: 100%; max-width: 1000px; text-align: center; position: relative; }
+
+    h1 {
+      font-family: 'Press Start 2P', cursive;
+      color: var(--primary-color);
+      font-size: 2.5em;
+      margin-bottom: 15px;
+      text-shadow: -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000, 2px 2px 0 #000, 4px 4px 0 #000;
+      letter-spacing: 2px;
+    }
+
+    .abandoned-text {
+      color: #fff;
+      font-style: italic;
+      margin-bottom: 10px;
+      font-size: 0.9em;
+      background: rgba(0,0,0,0.6);
+      padding: 6px 12px;
+      border-radius: 4px;
+      display: inline-block;
+      text-shadow: 1px 1px 2px #000;
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+
+    #tabs-container {
+      display: flex;
+      justify-content: center;
+      width: 100%;
+      max-width: 900px;
+      margin-bottom: 30px;
+      background-color: var(--card-bg);
+      backdrop-filter: blur(10px);
+      border-radius: 16px;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.1);
+      position: sticky;
+      top: 10px;
+      z-index: 1000;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+    }
+
+    .tab-button {
+      flex: 1;
+      padding: 18px;
+      background-color: transparent;
+      color: var(--text-color);
+      border: none;
+      font-family: 'Press Start 2P', cursive;
+      font-size: 0.6em;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      border-bottom: 3px solid transparent;
+    }
+
+    .tab-button.active { 
+      background-color: rgba(255,255,255,0.05); 
+      color: var(--button-bg);
+      border-bottom-color: var(--button-bg);
+    }
+
+    .tab-content { display: none; width: 100%; max-width: 1400px; padding: 10px; box-sizing: border-box; }
+    .tab-content.active { display: block; }
+
+    .games-container { display: flex; flex-wrap: wrap; justify-content: center; gap: 25px; }
+
+    .game-card {
+      background-color: var(--card-bg);
+      backdrop-filter: blur(5px);
+      border-radius: 16px;
+      padding: 18px;
+      width: 200px;
+      text-align: center;
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      border: 1px solid rgba(255,255,255,0.05);
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    }
+    .game-card:hover { transform: translateY(-10px); border-color: var(--secondary-color); }
+    .game-card img { width: 100%; height: 120px; object-fit: cover; border-radius: 10px; margin-bottom: 12px; background: #000; }
+    
+    .play-btn {
+      background: var(--button-bg);
+      color: #000;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: 800;
+      width: 100%;
+      margin-top: auto;
+      text-transform: uppercase;
+    }
+    
+    .search-container { width: 100%; max-width: 600px; margin: 0 auto 25px auto; }
+    #gameSearch, #videoSearch, #appsSearch {
+        width: 100%;
+        padding: 15px 20px;
+        background: var(--card-bg);
+        border: 2px solid rgba(255, 255, 255, 0.1);
+        border-radius: 12px;
+        color: white;
+        outline: none;
+        box-sizing: border-box;
+    }
+
+    #background3DCanvas { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -1; pointer-events: none; }
+    
+    .player-overlay {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.98); z-index: 5000; display: none;
+      flex-direction: column; align-items: center; justify-content: center;
+    }
+    .player-overlay.active { display: flex; }
+    .iframe-wrapper { width: 95%; height: 85%; background: #000; border-radius: 12px; overflow: hidden; border: 2px solid var(--primary-color); }
+    #gameFrame { width: 100%; height: 100%; border: none; }
+    
+    .studio-container {
+      background: var(--card-bg);
+      padding: 30px;
+      border-radius: 20px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 30px;
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+    .theme-list { margin-top: 20px; max-height: 350px; overflow-y: auto; background: rgba(0,0,0,0.3); border-radius: 12px; padding: 10px; }
+    .theme-item { display: flex; justify-content: space-between; align-items: center; padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.05); }
+    .mini-btn { padding: 6px 12px; font-size: 10px; border-radius: 6px; border: none; cursor: pointer; font-weight: bold; }
+    
+    .theme-code-box {
+      width: 100%;
+      background: #000;
+      color: #0f0;
+      font-family: monospace;
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid #333;
+      margin-top: 10px;
+      font-size: 10px;
+      resize: none;
+    }
+
+    #content-wrapper {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .mute-toggle {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        background: rgba(0,0,0,0.3);
+        padding: 8px 15px;
+        border-radius: 20px;
+        font-size: 0.8em;
+        margin-bottom: 10px;
+        border: 1px solid rgba(255,255,255,0.1);
+        cursor: pointer;
+    }
+    .mute-toggle input { cursor: pointer; }
+  </style>
+</head>
+<body>
+  <div id="bg-image-overlay"></div>
+  <div id="bg-video-container"><video id="bg-video" loop muted playsinline></video></div>
+  <canvas id="background3DCanvas"></canvas>
+  <audio id="theme-audio" loop></audio>
+  <audio id="nav-audio"></audio>
+
+  <header>
+    <h1>EPIX at School</h1>
+    <div class="abandoned-text">School-safe only bro</div>
+  </header>
+
+  <nav id="tabs-container">
+    <button id="btn-apps" class="tab-button active" onclick="showTab('apps')">Welcome</button>
+    <button id="btn-games" class="tab-button" onclick="showTab('games')">Games</button>
+    <button id="btn-studio" class="tab-button" onclick="showTab('studio')">Themes</button>
+  </nav>
+
+  <div id="content-wrapper">
+    <!-- Apps Section -->
+    <div id="apps" class="tab-content active">
+        <p>We've changed some things around here. Enjoy!</p>
+    </div>
+    
+    <div id="games" class="tab-content">
+      <div class="search-container">
+          <input type="text" id="gameSearch" placeholder="Search library..." oninput="filterGames()">
+      </div>
+      <div class="games-container" id="new-games-container"></div>
+    </div>
+
+    <div id="videos" class="tab-content">
+      <div class="search-container">
+          <input type="text" id="videoSearch" placeholder="Search library..." oninput="filterVideos()">
+      </div>
+      <div class="games-container" id="new-videos-container"></div>
+    </div>
+
+    <div id="studio" class="tab-content">
+      <div class="studio-container">
+        <div>
+          <h3 style="font-family: 'Press Start 2P', cursive; font-size: 0.8em;">Theme Studio</h3>
+          <div style="margin-bottom: 15px;">
+            <label>Name</label>
+            <input type="text" id="studio-theme-name" style="width:100%; padding:10px; border-radius:8px; background:#000; color:white;">
+          </div>
+          <div style="margin-bottom: 15px;">
+            <label>Background URL (IMG/GIF/MP4)</label>
+            <input type="text" id="studio-bg-img" oninput="updateStudioPreview()" style="width:100%; padding:10px; border-radius:8px; background:#000; color:white;" placeholder="https://example.com/bg.mp4">
+          </div>
+          <div style="margin-bottom: 15px;">
+            <label>Background Music URL</label>
+            <input type="text" id="studio-bg-music" oninput="updateStudioPreview()" style="width:100%; padding:10px; border-radius:8px; background:#000; color:white;" placeholder="https://example.com/song.mp3">
+          </div>
+          <div style="margin-bottom: 15px;">
+            <label>Navigation Sound URL</label>
+            <input type="text" id="studio-bg-nav" oninput="updateStudioPreview()" style="width:100%; padding:10px; border-radius:8px; background:#000; color:white;" placeholder="https://example.com/click.mp3">
+          </div>
+          <div style="margin-bottom: 15px;">
+            <label>Accent</label>
+            <input type="color" id="studio-accent" value="#61dafb" oninput="updateStudioPreview()" style="width:100%;">
+          </div>
+          <button class="play-btn" onclick="saveNewTheme()">Add to Library</button>
+          
+          <div style="margin-top: 25px;">
+            <h4 style="font-family: 'Press Start 2P', cursive; font-size: 0.6em;">Import / Export Code</h4>
+            <textarea id="theme-base64-input" class="theme-code-box" rows="3" placeholder="Paste theme code here..."></textarea>
+            <button class="mini-btn" style="background:var(--success-color); color:#000; margin-top:5px; width:100%;" onclick="importTheme()">Import Theme</button>
+          </div>
+        </div>
+        <div>
+          <h3 style="font-family: 'Press Start 2P', cursive; font-size: 0.8em;">Library</h3>
+          <div class="theme-list" id="theme-library-list"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="gamePlayer" class="player-overlay">
+    <div class="iframe-wrapper" id="frameWrapper">
+      <iframe id="gameFrame" src="" allowfullscreen="true"></iframe>
+    </div>
+    <div style="margin-top:20px; display: flex; gap: 15px;">
+      <button class="mini-btn" style="background:var(--primary-color); color:black; padding:10px 20px;" onclick="toggleFullScreen()">Full Screen</button>
+      <button class="mini-btn" style="background:var(--danger-color); color:white; padding:10px 20px;" onclick="closeGame()">Close</button>
+    </div>
+  </div>
+
+<script>
+  const NEW_APPS = [
+    { name: 'Suggest to EPIX', url: 'https://docs.google.com/forms/d/e/1FAIpQLSem_Q1dxVUADGCsAMkQwtp-JgflRmi_kmrqa9t_NB3Fi3wCqw/viewform', img: 'https://static.vecteezy.com/system/resources/thumbnails/013/570/470/small/illustration-of-voting-and-suggestion-critici-hand-putting-white-paper-into-ballot-box-free-vector.jpg' },
+    { name: 'Web Browser', url: 'https://storage.googleapis.com/canvas-lms/index.html#/search', img: 'https://storage.googleapis.com/gweb-uniblog-publish-prod/images/1_-_Cover.width-1300.png' },
+    { name: 'Browser Settings', url: './schoolwork/other/bset.html', img: 'https://preview.redd.it/windows-settings-icon-v0-wwp9814f6o9e1.png?width=640&crop=smart&auto=webp&s=6d393f5cc37af740dd64399e42459343ea435c60' },
+    { name: 'Terminal', url: 'cmd', img: 'https://cdn.dribbble.com/userupload/20822754/file/original-cd50415ce6ef260ee787b52cc9d5f553.png?resize=752x&vertical=center' },
+    { name: 'Android but Gemini AI', url: 'phone', img: 'https://files.catbox.moe/sh07h7.png' },
+    { name: 'VidScroll (EPIX)', url: 'vid/scroll', img: 'https://media.istockphoto.com/id/1411416036/video/person-using-social-media-app-on-smartphone-looking-at-live-stream-videos-realistic-feed.jpg?s=640x640&k=20&c=lqMYgjLU39MDjvox29ESaaXuot-Hy02WtWai2-Y4lXE=' },
+    { name: 'YT Link Input', url: 'schoolwork/other/yt.html', img: 'https://cdn.pixabay.com/photo/2022/01/21/00/38/youtube-icon-6953527_1280.jpg' }
+  ];
+
+  const NEW_GAMES = [
+    { name: 'Angry Birds', url: '/swf/ab', img: 'https://www.angrybirds.com/wp-content/uploads/2022/06/AB_Classic_1920x1080_TitlePicture_Vector-1300x731.png' },
+    { name: 'Bad Piggies', url: '/schoolwork/Bad Piggies.html', img: 'https://i.ytimg.com/vi/YsCpDaSooWA/maxresdefault.jpg' },
+    { name: 'Cookie Clicker', url: 'https://york.cadou.ro.cdn.cloudflare.net/db/html/cookie_clicker/index.html', img: 'https://image.api.playstation.com/vulcan/ap/rnd/202507/0723/5bf9ed682a32f58b4546da14f58aa87b6a5f0665b0471fff.png' },
+    { name: 'Block Blast', url: 'https://york.cadou.ro.cdn.cloudflare.net/db/html/blocky_puzzle/index.html', img: 'https://m.media-amazon.com/images/I/A1OGHmQseNL.png' },
+    { name: 'Geometry Dash', url: './schoolwork/gd.html', img: 'https://i.redd.it/dorae3yhjqhb1.jpg' },
+    { name: 'Run 1', url: 'https://york.cadou.ro.cdn.cloudflare.net/db2/2024/flash/run-1/pre.html', img: 'https://static.wikia.nocookie.net/run1438/images/8/8b/Level_1_Run_1.png' },
+    { name: 'Run 3', url: 'https://york.cadou.ro.cdn.cloudflare.net/db/html/run3/index.html', img: 'https://static.keygames.com/7/89667/48385/672x448/run-3.webp' },
+    { name: 'Drift Boss', url: 'https://york.cadou.ro.cdn.cloudflare.net/db/html/drift_boss/index.html', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR2482zI6ELy-1JDrFwuaMJqA3SUwJQDZKhLw&s' },
+    { name: 'Stack Fire Ball', url: 'https://york.cadou.ro.cdn.cloudflare.net/db2/2021/unity/stack-fire-ball/pre.html', img: 'https://s3.amazonaws.com/kzs3files/kidzsearchgl-stack-fire-ball-ks120414-161732-img.png' },
+    { name: 'Flappy Bird', url: './schoolwork/flappybird.html', img: 'https://d112y698adiu2z.cloudfront.net/photos/production/software_photos/002/474/827/datas/original.jpg' },
+  ];
+
+  const NEW_VIDEOS = [
+    { name: 'Regular Show S1', url: 'vid?https://archive.org/download/regular-show-complete-isos/Regular%20Show/REGULAR%20SHOW%20SEASON%201%20DISC%201.mp4', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT7DA8Mt70HVzxLFcWVoQtJ21xgIqH6PRicZA&s' },
+    { name: 'Regular Show Movie', url: 'vid?https://archive.org/download/regular-show-complete-isos/REGULAR%20SHOW%20THE%20MOVIE.mp4', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT7DA8Mt70HVzxLFcWVoQtJ21xgIqH6PRicZA&s' },
+    { name: 'The Angry Birds Movie 1', url: 'vid?https://archive.org/download/the-angry-birds-movie-us-dvd-2016/The%20Angry%20Birds%20Movie%20%28US%20DVD%29%20%5B2016%5D.mp4', img: 'https://miro.medium.com/1*iV4Wd1598MxZcuxeu0rC-g.png' },
+    { name: 'The Angry Birds Movie 2', url: 'vid?https://archive.org/download/the-angry-birds-movie-2-us-dvd-2019/The%20Angry%20Birds%20Movie%202%20%28US%20DVD%29%20%5B2019%5D.mp4', img: 'https://thecollision.org/wp-content/uploads/2019/08/abmoovie-1.jpg' },
+    { name: 'A Minecraft Movie', url: 'vid?https://archive.org/download/a-minecraft-movie_202510/A%20Minecraft%20Movie.ia.mp4', img: 'https://www.minecraft-movie.com/assets/images/mobilebanner.jpg' },
+    { name: 'Bringus Studios 3 hour compilation', url: 'vid?https://archive.org/download/bringus-studios-over-3-hours-of-gaming-on-cursed-devices-to-conk-out-to/Bringus%20Studios%20-%20Over%203%20Hours%20of%20Gaming%20On%20Cursed%20Devices%20to%20Conk%20Out%20To.mp4', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ7yJaZJiIpYMSCdXyGEmev_HvW8TI-D07XzVaMV3d1Iw&s' }
+  ];
+
+  let themeLibrary = [];
+  try {
+      const saved = localStorage.getItem('epix_library');
+      themeLibrary = saved ? JSON.parse(saved) : [{ id: 'default', name: 'Standard', color: '#61dafb', img: '', music: '', navSound: '' }];
+  } catch(e) {
+      themeLibrary = [{ id: 'default', name: 'Standard', color: '#61dafb', img: '', music: '', navSound: '' }];
+  }
+
+  function filterApps() {
+    const q = document.getElementById('appsSearch').value.toLowerCase();
+    renderApps(NEW_APPS.filter(a => a.name.toLowerCase().includes(q)));
+  }
+
+  function filterGames() {
+    const q = document.getElementById('gameSearch').value.toLowerCase();
+    renderGames(NEW_GAMES.filter(g => g.name.toLowerCase().includes(q)));
+  }
+
+  function filterVideos() {
+    const q = document.getElementById('videoSearch').value.toLowerCase();
+    renderVideos(NEW_VIDEOS.filter(v => v.name.toLowerCase().includes(q)));
+  }
+
+  function renderApps(list = NEW_APPS) {
+    const container = document.getElementById('new-apps-container');
+    container.innerHTML = '';
+    list.forEach(a => {
+        const card = document.createElement('div');
+        card.className = 'game-card';
+        card.innerHTML = `<img src="${a.img}"><h3>${a.name}</h3><button class="play-btn" onclick="launch('${a.url}')">Open</button>`;
+        container.appendChild(card);
+    });
+  }
+
+  function renderGames(list = NEW_GAMES) {
+    const container = document.getElementById('new-games-container');
+    container.innerHTML = '';
+    list.forEach(g => {
+        const card = document.createElement('div');
+        card.className = 'game-card';
+        card.innerHTML = `<img src="${g.img}"><h3>${g.name}</h3><button class="play-btn" onclick="launch('${g.url}')">Play</button>`;
+        container.appendChild(card);
+    });
+  }
+
+  function renderVideos(list = NEW_VIDEOS) {
+    const container = document.getElementById('new-videos-container');
+    container.innerHTML = '';
+    list.forEach(v => {
+        const card = document.createElement('div');
+        card.className = 'game-card';
+        card.innerHTML = `<img src="${v.img}"><h3>${v.name}</h3><button class="play-btn" onclick="launch('${v.url}')">Watch</button>`;
+        container.appendChild(card);
+    });
+  }
+
+  function launch(u) {
+    const audio = document.getElementById('theme-audio');
+    audio.pause();
+    document.getElementById('gameFrame').src = u;
+    document.getElementById('gamePlayer').classList.add('active');
+  }
+
+  function closeGame() {
+    document.getElementById('gameFrame').src = '';
+    document.getElementById('gamePlayer').classList.remove('active');
+    if (document.fullscreenElement) document.exitFullscreen();
+    const audio = document.getElementById('theme-audio');
+    
+    const isMuted = document.getElementById('browser-mute-check').checked;
+    const currentTab = document.querySelector('.tab-content.active').id;
+    
+    if (audio.src) {
+        if (currentTab === 'apps' && isMuted) {
+            // Keep paused
+        } else {
+            audio.play().catch(() => {});
+        }
+    }
+  }
+
+  function toggleFullScreen() {
+    const iframe = document.getElementById('gameFrame');
+    if (iframe.requestFullscreen) iframe.requestFullscreen();
+  }
+
+  function playNavSound() {
+    const navAudio = document.getElementById('nav-audio');
+    if (navAudio.src) {
+        navAudio.currentTime = 0;
+        navAudio.play().catch(() => {});
+    }
+  }
+
+  function handleBrowserMute() {
+      const isMuted = document.getElementById('browser-mute-check').checked;
+      const audio = document.getElementById('theme-audio');
+      const currentTab = document.querySelector('.tab-content.active').id;
+      
+      if (currentTab === 'apps' && isMuted) {
+          audio.pause();
+      } else if (audio.src && !document.getElementById('gamePlayer').classList.contains('active')) {
+          audio.play().catch(() => {});
+      }
+  }
+
+  function showTab(t) {
+    playNavSound();
+    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+    document.querySelectorAll('.tab-button').forEach(b => b.classList.remove('active'));
+    document.getElementById(t).classList.add('active');
+    document.getElementById('btn-' + t).classList.add('active');
+    
+    if(t === 'apps') renderApps();
+    if(t === 'games') renderGames();
+    if(t === 'videos') renderVideos();
+    
+    const audio = document.getElementById('theme-audio');
+    const isMuted = document.getElementById('browser-mute-check').checked;
+    
+    if (audio.src && !document.getElementById('gamePlayer').classList.contains('active')) {
+        if (t === 'apps' && isMuted) {
+            audio.pause();
+        } else {
+            audio.play().catch(() => {});
+        }
+    }
+  }
+
+  function saveNewTheme() {
+    const name = document.getElementById('studio-theme-name').value || "New Theme";
+    const img = document.getElementById('studio-bg-img').value;
+    const music = document.getElementById('studio-bg-music').value;
+    const navSound = document.getElementById('studio-bg-nav').value;
+    const color = document.getElementById('studio-accent').value;
+    
+    const newTheme = { id: Date.now().toString(), name, img, music, navSound, color };
+    themeLibrary.push(newTheme);
+    localStorage.setItem('epix_library', JSON.stringify(themeLibrary));
+    renderThemeLibrary();
+    document.getElementById('theme-base64-input').value = btoa(JSON.stringify(newTheme));
+  }
+
+  function importTheme() {
+    const code = document.getElementById('theme-base64-input').value.trim();
+    if(!code) return;
+    try {
+      const decoded = JSON.parse(atob(code));
+      if(decoded.name && decoded.color) {
+        decoded.id = Date.now().toString(); 
+        themeLibrary.push(decoded);
+        localStorage.setItem('epix_library', JSON.stringify(themeLibrary));
+        renderThemeLibrary();
+        applyThemeById(decoded.id);
+      }
+    } catch(e) {
+        console.error("Theme import failed", e);
+    }
+  }
+
+  function renderThemeLibrary() {
+    const list = document.getElementById('theme-library-list');
+    list.innerHTML = '';
+    themeLibrary.forEach(t => {
+        const item = document.createElement('div');
+        item.className = 'theme-item';
+        item.innerHTML = `<span>${t.name}</span><div>
+            <button class="mini-btn" style="background:#444; color:white; margin-right:5px;" onclick="copyThemeCode('${t.id}')">Code</button>
+            <button class="mini-btn" style="background:${t.color}; color:black;" onclick="applyThemeById('${t.id}')">Apply</button>
+          </div>`;
+        list.appendChild(item);
+    });
+  }
+
+  function copyThemeCode(id) {
+    const t = themeLibrary.find(x => x.id === id);
+    if(t) {
+      const code = btoa(JSON.stringify(t));
+      document.getElementById('theme-base64-input').value = code;
+    }
+  }
+
+  function isVideo(url) {
+    return url && (url.match(/\.(mp4|webm|ogg|mov)$/i) || url.includes('video'));
+  }
+
+  function applyThemeById(id) {
+    const t = themeLibrary.find(x => x.id === id);
+    if(t) {
+        const vContainer = document.getElementById('bg-video-container');
+        const vEl = document.getElementById('bg-video');
+        const imgOverlay = document.getElementById('bg-image-overlay');
+        const audioEl = document.getElementById('theme-audio');
+        const navEl = document.getElementById('nav-audio');
+
+        if (isVideo(t.img)) {
+            vContainer.style.display = 'block';
+            vEl.src = t.img;
+            vEl.play().catch(() => {});
+            imgOverlay.style.backgroundImage = 'none';
+        } else {
+            vContainer.style.display = 'none';
+            vEl.src = '';
+            imgOverlay.style.backgroundImage = t.img ? `url('${t.img}')` : 'none';
+        }
+
+        audioEl.src = t.music || '';
+        const currentTab = document.querySelector('.tab-content.active')?.id;
+        const isMuted = document.getElementById('browser-mute-check').checked;
+        
+        if (t.music && !(currentTab === 'apps' && isMuted)) audioEl.play().catch(() => {});
+        
+        navEl.src = t.navSound || '';
+
+        document.documentElement.style.setProperty('--primary-color', t.color);
+        document.documentElement.style.setProperty('--button-bg', t.color);
+        document.getElementById('studio-theme-name').value = t.name;
+        document.getElementById('studio-bg-img').value = t.img;
+        document.getElementById('studio-bg-music').value = t.music || '';
+        document.getElementById('studio-bg-nav').value = t.navSound || '';
+        document.getElementById('studio-accent').value = t.color;
+    }
+  }
+
+  function updateStudioPreview() {
+     const img = document.getElementById('studio-bg-img').value;
+     const music = document.getElementById('studio-bg-music').value;
+     const navS = document.getElementById('studio-bg-nav').value;
+     const color = document.getElementById('studio-accent').value;
+     const vContainer = document.getElementById('bg-video-container');
+     const vEl = document.getElementById('bg-video');
+     const imgOverlay = document.getElementById('bg-image-overlay');
+     const audioEl = document.getElementById('theme-audio');
+     const navEl = document.getElementById('nav-audio');
+
+     if (isVideo(img)) {
+         vContainer.style.display = 'block';
+         if (vEl.src !== img) { vEl.src = img; vEl.play().catch(() => {}); }
+         imgOverlay.style.backgroundImage = 'none';
+     } else {
+         vContainer.style.display = 'none';
+         vEl.src = '';
+         imgOverlay.style.backgroundImage = img ? `url('${img}')` : 'none';
+     }
+
+     if (music && audioEl.src !== music) { 
+         audioEl.src = music; 
+         const currentTab = document.querySelector('.tab-content.active')?.id;
+         const isMuted = document.getElementById('browser-mute-check').checked;
+         if (!(currentTab === 'apps' && isMuted)) audioEl.play().catch(() => {});
+     }
+     navEl.src = navS || '';
+     document.documentElement.style.setProperty('--primary-color', color);
+     document.documentElement.style.setProperty('--button-bg', color);
+  }
+
+  function init3D() {
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('background3DCanvas'), alpha: true, antialias: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    
+    const cubes = [];
+    const cubeCount = 20;
+    const geometry = new THREE.BoxGeometry(1, 1, 1);
+    const material = new THREE.MeshBasicMaterial({ color: 0x61dafb, wireframe: true, transparent: true, opacity: 0.15 });
+
+    for(let i = 0; i < cubeCount; i++) {
+        const cube = new THREE.Mesh(geometry, material);
+        cube.position.set(
+            (Math.random() - 0.5) * 15,
+            (Math.random() - 0.5) * 15,
+            (Math.random() - 0.5) * 10
+        );
+        cube.rotation.set(Math.random() * Math.PI, Math.random() * Math.PI, 0);
+        cube.userData.rotationSpeed = {
+            x: (Math.random() - 0.5) * 0.01,
+            y: (Math.random() - 0.5) * 0.01
+        };
+        scene.add(cube);
+        cubes.push(cube);
+    }
+
+    camera.position.z = 8;
+
+    function anim() {
+        requestAnimationFrame(anim);
+        cubes.forEach(cube => {
+            cube.rotation.x += cube.userData.rotationSpeed.x;
+            cube.rotation.y += cube.userData.rotationSpeed.y;
+            cube.position.y += 0.002;
+            if(cube.position.y > 8) cube.position.y = -8;
+        });
+        renderer.render(scene, camera);
+    }
+    
+    window.onload = function() {
+        anim();
+    };
+
+    window.addEventListener('resize', () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+  }
+
+  window.onload = () => { init3D(); renderThemeLibrary(); renderApps(); renderGames(); renderVideos(); };
+</script>
+</body>
+</html>
+
