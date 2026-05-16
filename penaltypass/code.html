@@ -280,7 +280,7 @@
             document.querySelectorAll('.content-panel').forEach(panel => panel.classList.remove('active'));
             
             event.currentTarget.classList.add('active');
-            document.getElementById(`${tabName}-panel`).classList.add('active');
+            document.getElementById(tabName + '-panel').classList.add('active');
         }
 
         // Handle External URL Iframe Injection
@@ -325,11 +325,11 @@
 		var gameInstance = UnityLoader.instantiate("gameContainer", "Build/Bad Piggies.json", {
 			onProgress: UnityProgress
 		});
-	</script>
+	<\/script>
 </head>
 <body style="background-color:black;">
 	<div class="webgl-content">
-		<div id="gameContainer"></div>
+		<div id="gameContainer"><\/div>
 	</div>
 </body>
 </html>`;
@@ -347,7 +347,6 @@
             const viewport = document.getElementById('app-viewport');
             const frame = document.getElementById('app-frame');
             
-            // Cleanup frame context memory allocations safely
             if(frame.src.startsWith('blob:')) {
                 URL.revokeObjectURL(frame.src);
             }
@@ -366,7 +365,6 @@
         renderer.setSize(window.innerWidth, window.innerHeight);
         renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
-        // Generate matrix array of multiple random structural RGB-Glow items
         const cubesCount = 45;
         const cubesArray = [];
         const group = new THREE.Group();
@@ -377,7 +375,6 @@
             const size = Math.random() * 1.5 + 0.5;
             const geometry = new THREE.BoxGeometry(size, size, size);
             
-            // Dynamic wireframe structural overlay pairing
             const randomColor = colors[Math.floor(Math.random() * colors.length)];
             const material = new THREE.MeshBasicMaterial({
                 color: randomColor,
@@ -388,12 +385,10 @@
 
             const cube = new THREE.Mesh(geometry, material);
             
-            // Random scatter initialization mechanics
             cube.position.x = (Math.random() - 0.5) * 35;
             cube.position.y = (Math.random() - 0.5) * 25;
             cube.position.z = (Math.random() - 0.5) * 20 - 10;
 
-            // Individual custom vector rotational coefficients
             cube.userData = {
                 rotX: (Math.random() - 0.5) * 0.015,
                 rotY: (Math.random() - 0.5) * 0.015,
@@ -407,7 +402,6 @@
 
         camera.position.z = 15;
 
-        // Interactive mouse alignment positioning parameters
         let mouseX = 0;
         let mouseY = 0;
         window.addEventListener('mousemove', (e) => {
@@ -415,19 +409,14 @@
             mouseY = (e.clientY / window.innerHeight) - 0.5;
         });
 
-        // Frame rendering tick sequence loop
         function animate() {
             requestAnimationFrame(animate);
 
-            // Vector rotation tracking across space array instances
             cubesArray.forEach(cube => {
                 cube.rotation.x += cube.userData.rotX;
                 cube.rotation.y += cube.userData.rotY;
-                
-                // Drift cubes slowly forward
                 cube.position.z += cube.userData.speedZ;
                 
-                // Reset depth calculation if past threshold point
                 if(cube.position.z > 10) {
                     cube.position.z = -25;
                     cube.position.x = (Math.random() - 0.5) * 35;
@@ -435,14 +424,12 @@
                 }
             });
 
-            // Parallax shift tracking mapped seamlessly via interface
             group.rotation.y += (mouseX * 0.3 - group.rotation.y) * 0.05;
             group.rotation.x += (mouseY * 0.2 - group.rotation.x) * 0.05;
 
             renderer.render(scene, camera);
         }
 
-        // View Rescaling event bindings
         window.addEventListener('resize', () => {
             camera.aspect = window.innerWidth / window.innerHeight;
             camera.updateProjectionMatrix();
