@@ -1,0 +1,107 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" width="100%" height="100%" id="svg-root" style="background: #222; font-family: system-ui, sans-serif;">
+  <!-- UI Container for HTML Content (Hidden by default, shown in fullscreen) -->
+  <foreignObject id="content-display" x="0" y="0" width="100%" height="100%" style="display: none;">
+    <xhtml:div xmlns:xhtml="http://www.w3.org/1999/xhtml" style="width: 100%; height: 100%; margin: 0; padding: 0;">
+      <xhtml:iframe id="app-iframe" style="width: 100%; height: 100%; border: none; background: white;"></xhtml:iframe>
+    </xhtml:div>
+  </foreignObject>
+
+  <!-- Main Menu / Launch Button Area -->
+  <g id="main-menu">
+    <!-- Background Design Elements -->
+    <circle cx="400" cy="300" r="250" fill="#333" opacity="0.5" />
+    <circle cx="400" cy="300" r="180" fill="#444" opacity="0.3" />
+
+    <!-- Interactive Button -->
+    <g id="launch-btn" cursor="pointer" transform="translate(0,0)">
+      <!-- Button Shadow -->
+      <rect x="295" y="270" width="210" height="65" rx="15" fill="#111" opacity="0.4" />
+      <!-- Button Base -->
+      <rect x="290" y="265" width="210" height="65" rx="15" fill="#ff4757" id="btn-bg" />
+      <!-- Button Text -->
+      <text x="400" y="304" fill="white" font-size="18" font-weight="bold" text-anchor="middle" dominant-baseline="middle" letter-spacing="1">
+        LAUNCH FULLSCREEN
+      </text>
+    </g>
+    
+    <!-- Status/Loading Text -->
+    <text id="status-text" x="400" y="370" fill="#aaa" font-size="14" text-anchor="middle">
+      Ready to fetch BirdMath assets
+    </text>
+  </g>
+
+  <script type="text/javascript">
+    <![CDATA[
+    const svgRoot = document.getElementById('svg-root');
+    const launchBtn = document.getElementById('launch-btn');
+    const mainMenu = document.getElementById('main-menu');
+    const contentDisplay = document.getElementById('content-display');
+    const appIframe = document.getElementById('app-iframe');
+    const statusText = document.getElementById('status-text');
+    const btnBg = document.getElementById('btn-bg');
+
+    // Hover effects for the button
+    launchBtn.addEventListener('mouseenter', () => btnBg.setAttribute('fill', '#ff6b81'));
+    launchBtn.addEventListener('mouseleave', () => btnBg.setAttribute('fill', '#ff4757'));
+
+    // Main action trigger
+    launchBtn.addEventListener('click', async () => {
+      statusText.textContent = "Fetching raw source from jsDelivr...";
+      statusText.setAttribute('fill', '#ffa502');
+
+      try {
+        // Request the source code via jsDelivr CDN
+        const targetUrl = 'https://cdn.jsdelivr.net/gh/fidgetsetc/birdmath/penaltybypass/code.html';
+        const response = await fetch(targetUrl);
+        
+        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+        
+        const htmlCode = await response.text();
+        statusText.textContent = "Code received! Initializing blob...";
+
+        // Create a Blob containing the HTML data
+        const blob = new Blob([htmlCode], { type: 'text/html' });
+        const blobUrl = URL.createObjectURL(blob);
+
+        // Attempt to trigger Fullscreen mode
+        if (svgRoot.requestFullscreen) {
+          await svgRoot.requestFullscreen();
+        } else if (svgRoot.mozRequestFullScreen) { /* Firefox */
+          await svgRoot.mozRequestFullScreen();
+        } else if (svgRoot.webkitRequestFullscreen) { /* Chrome, Safari and Opera */
+          await svgRoot.webkitRequestFullscreen();
+        } else if (svgRoot.msRequestFullscreen) { /* IE/Edge */
+          await svgRoot.msRequestFullscreen();
+        }
+
+        // Mount the blob URL into the iframe and toggle visibility layers
+        appIframe.src = blobUrl;
+        mainMenu.style.display = 'none';
+        contentDisplay.style.display = 'block';
+
+      } catch (error) {
+        console.error("Failed to load source application:", error);
+        statusText.textContent = "Error loading source. Check console.";
+        statusText.setAttribute('fill', '#ff4757');
+      }
+    });
+
+    // Reset UI if user exits fullscreen manually
+    const handleFullscreenChange = () => {
+      const isFullscreen = document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullscreenElement;
+      if (!isFullscreen) {
+        contentDisplay.style.display = 'none';
+        mainMenu.style.display = 'block';
+        statusText.textContent = "Returned from session.";
+        statusText.setAttribute('fill', '#aaa');
+        appIframe.src = 'about:blank'; // Clear iframe memory
+      }
+    };
+
+    document.addEventListener('fullscreenchange', handleFullscreenChange);
+    document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
+    document.addEventListener('mozfullscreenchange', handleFullscreenChange);
+    document.addEventListener('MSFullscreenChange', handleFullscreenChange);
+    ]]>
+  </script>
+</svg>
