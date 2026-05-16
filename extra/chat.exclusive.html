@@ -1,0 +1,195 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Park Portal</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            background-color: #0f172a;
+            color: #f8fafc;
+            font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            margin: 0;
+            overflow: hidden;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .login-card {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 2.5rem;
+            border-radius: 1.5rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+            z-index: 10;
+        }
+
+        input {
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid #334155;
+            color: white;
+            padding: 0.75rem 1rem;
+            border-radius: 0.75rem;
+            width: 100%;
+            margin-bottom: 1.5rem;
+            outline: none;
+            transition: all 0.2s;
+        }
+
+        input:focus { border-color: #38bdf8; }
+
+        #chat-frame {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            border: none;
+            z-index: 1;
+            background: black;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #38bdf8 0%, #1d4ed8 100%);
+            color: white;
+            font-weight: 700;
+            padding: 0.75rem;
+            border-radius: 0.75rem;
+            width: 100%;
+            transition: transform 0.1s;
+        }
+
+        .btn-primary:active { transform: scale(0.95); }
+
+        #sign-out-btn {
+            display: none;
+            position: fixed;
+            bottom: 1rem;
+            right: 1rem;
+            z-index: 100;
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid #334155;
+            color: #94a3b8;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        #modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.9);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="login-view" class="login-card">
+        <h1 class="text-3xl font-black mb-2 italic tracking-tighter text-white uppercase">Access Denied</h1>
+        <p class="text-slate-400 mb-6 text-sm">Don't be a slack-off. Enter the code or you're FIRED!</p>
+        
+        <input type="password" id="pass-input" placeholder="Password" autocomplete="off">
+        <button onclick="handleLogin()" class="btn-primary">Step Into The Void</button>
+        
+        <div id="error-msg" class="hidden mt-4 text-rose-500 font-bold animate-bounce text-sm">
+            "You know who ELSE enters the wrong password??" 💀
+        </div>
+    </div>
+
+    <iframe id="chat-frame" src="about:blank" allow="geolocation; microphone; camera; display-capture; fullscreen; autoplay" loading="lazy"></iframe>
+    
+    <button id="sign-out-btn" onclick="openModal()">Sign Out</button>
+
+    <div id="modal-overlay">
+        <div class="bg-slate-900 border border-slate-700 p-8 rounded-3xl max-w-xs w-full text-center">
+            <div class="text-4xl mb-4">🚪</div>
+            <h2 class="text-xl font-bold text-white mb-2">Leaving so soon?</h2>
+            <p class="text-slate-400 mb-6 text-sm">Benson's gonna be mad if he catches you signing out.</p>
+            <div class="flex gap-3">
+                <button onclick="closeModal()" class="flex-1 bg-slate-800 py-3 rounded-xl text-sm font-semibold">Stay</button>
+                <button onclick="confirmSignOut()" class="flex-1 bg-rose-600 py-3 rounded-xl text-sm font-bold text-white">Sign Out</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Encoded once for: https://organizations.minnit.chat/860162156450643/c/Main?embed
+        const SECRET_URL_B64 = "aHR0cHM6Ly9vcmdhbml6YXRpb25zLm1pbm5pdC5jaGF0Lzg2MDE2MjE1NjQ1MDY0My9jL01haW4/ZW1iZWQ=";
+        const CORRECT_PASS = "stu-21281";
+        const SESSION_KEY = "portal_auth_status";
+
+        function decodeLayers(encoded) {
+            try {
+                return atob(encoded);
+            } catch (err) {
+                return "about:blank";
+            }
+        }
+
+        function launchApp() {
+            const iframe = document.getElementById('chat-frame');
+            const loginView = document.getElementById('login-view');
+            const url = decodeLayers(SECRET_URL_B64);
+            
+            loginView.style.display = 'none';
+            iframe.src = url;
+            iframe.style.display = 'block';
+            document.getElementById('sign-out-btn').style.display = 'block';
+            document.body.style.backgroundColor = 'black';
+        }
+
+        function handleLogin() {
+            const input = document.getElementById('pass-input').value;
+            const error = document.getElementById('error-msg');
+            
+            if (input === CORRECT_PASS) {
+                sessionStorage.setItem(SESSION_KEY, "authenticated");
+                launchApp();
+            } else {
+                error.classList.remove('hidden');
+            }
+        }
+
+        function openModal() {
+            document.getElementById('modal-overlay').style.display = 'flex';
+        }
+
+        function closeModal() {
+            document.getElementById('modal-overlay').style.display = 'none';
+        }
+
+        function confirmSignOut() {
+            sessionStorage.removeItem(SESSION_KEY);
+            window.location.reload();
+        }
+
+        window.onload = () => {
+            if (sessionStorage.getItem(SESSION_KEY) === "authenticated") {
+                launchApp();
+            }
+        };
+
+        document.getElementById('pass-input').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') handleLogin();
+        });
+    </script>
+</body>
+</html>
+
+```
