@@ -1,0 +1,247 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SimplJS | Enterprise JavaScript Deployment</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --brand-primary: #0066FF;
+            --bg-base: #050505;
+        }
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            overflow: hidden;
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-base);
+            color: #ffffff;
+        }
+        .page-layer {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding-top: 64px;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease-in-out;
+        }
+        .page-layer.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(12px);
+        }
+        .btn-primary {
+            background-color: var(--brand-primary);
+            transition: all 0.2s ease;
+        }
+        .btn-primary:hover {
+            background-color: #0052cc;
+            transform: translateY(-1px);
+        }
+        .code-font { font-family: 'JetBrains Mono', monospace; }
+        
+        /* Subtle Grid Background */
+        .bg-grid {
+            background-image: linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+                              linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+            background-size: 40px 40px;
+        }
+    </style>
+</head>
+<body class="bg-grid">
+
+    <!-- Global Navigation -->
+    <nav class="fixed top-0 left-0 right-0 h-16 border-b border-white/10 glass-panel z-50 flex items-center justify-between px-8">
+        <div class="flex items-center space-x-3 cursor-pointer" onclick="router.navigate('landing')">
+            <svg width="28" height="28" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect width="100" height="100" rx="20" fill="#0066FF"/>
+                <path d="M30 70L50 30L70 70" stroke="white" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <span class="text-xl font-semibold tracking-tight">SimplJS</span>
+        </div>
+        <div id="nav-dynamic-links" class="flex items-center space-x-6">
+            <!-- Populated by JS -->
+        </div>
+    </nav>
+
+    <!-- App Viewport -->
+    <div id="app-container" class="relative h-full w-full">
+        
+        <!-- Page: Landing -->
+        <section id="view-landing" class="page-layer">
+            <div class="max-w-4xl px-8 text-center">
+                <div class="inline-block px-3 py-1 mb-6 text-xs font-medium tracking-wider text-blue-400 uppercase border border-blue-400/30 rounded-full bg-blue-400/5">
+                    Platform v4.0.0 Stable
+                </div>
+                <h1 class="mb-6 text-6xl font-bold tracking-tight text-white lg:text-8xl">
+                    Deploy Logic <br/><span class="text-gray-500">at the Edge.</span>
+                </h1>
+                <p class="max-w-2xl mx-auto mb-10 text-lg text-gray-400 leading-relaxed">
+                    SimplJS provides high-performance runtime environments for JavaScript developers. 
+                    Upload individual files and distribute them globally in milliseconds.
+                </p>
+                <div class="flex items-center justify-center space-x-4">
+                    <button onclick="router.navigate('deploy')" class="btn-primary px-8 py-3.5 rounded-lg font-semibold text-white shadow-lg shadow-blue-600/20">
+                        Get Started
+                    </button>
+                    <button class="px-8 py-3.5 rounded-lg font-semibold text-white border border-white/10 hover:bg-white/5 transition-colors">
+                        Documentation
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Page: Sign Up -->
+        <section id="view-signup" class="page-layer">
+            <div class="w-full max-w-md p-10 glass-panel rounded-2xl">
+                <h2 class="text-2xl font-bold mb-1">Create Account</h2>
+                <p class="text-gray-400 text-sm mb-8">Professional tier access for individual developers.</p>
+                <form id="signup-form" class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-500 uppercase mb-1.5">Business Email</label>
+                        <input type="email" required class="w-full bg-white/5 border border-white/10 rounded-md px-4 py-3 outline-none focus:border-blue-500 transition-colors" placeholder="name@company.com">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-500 uppercase mb-1.5">Password</label>
+                        <input type="password" required class="w-full bg-white/5 border border-white/10 rounded-md px-4 py-3 outline-none focus:border-blue-500 transition-colors">
+                    </div>
+                    <button type="submit" class="w-full btn-primary py-3.5 rounded-md font-bold mt-4">
+                        Initialize Account
+                    </button>
+                </form>
+            </div>
+        </section>
+
+        <!-- Page: Confirmation -->
+        <section id="view-confirmation" class="page-layer">
+            <div class="max-w-md text-center p-12 glass-panel rounded-2xl border-blue-500/20">
+                <div class="w-16 h-16 bg-blue-600/10 text-blue-500 rounded-xl flex items-center justify-center mx-auto mb-6 border border-blue-500/20">
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" stroke-width="2"></path></svg>
+                </div>
+                <h2 class="text-2xl font-bold mb-3 text-white">Verification Sent</h2>
+                <p class="text-gray-400 mb-8 leading-relaxed">A secure confirmation link has been dispatched to your provided email address. Please verify to proceed.</p>
+                <button onclick="router.navigate('landing')" class="text-sm font-semibold text-blue-500 hover:text-blue-400">Return to Dashboard</button>
+            </div>
+        </section>
+
+        <!-- Page: Deploy -->
+        <section id="view-deploy" class="page-layer">
+            <div id="drop-zone" class="w-full max-w-3xl glass-panel p-16 rounded-3xl border-2 border-dashed border-white/10 text-center transition-all">
+                <div id="deploy-idle">
+                    <div class="mb-6 inline-block p-4 rounded-full bg-white/5">
+                        <svg class="w-10 h-10 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5"><path d="M12 16.5V9.75m0 0l3 3m-3-3l-3 3M6.75 19.5a4.5 4.5 0 01-1.41-8.775 5.25 5.25 0 0110.233-2.33 3 3 0 013.758 3.848A3.752 3.752 0 0118 19.5H6.75z"></path></svg>
+                    </div>
+                    <h3 class="text-xl font-bold mb-2">Deploy Production Asset</h3>
+                    <p class="text-gray-400 mb-8 text-sm">Upload .js or .ts source files for edge distribution.</p>
+                    <input type="file" id="file-input" class="hidden" onchange="runDeployment()">
+                    <button onclick="document.getElementById('file-input').click()" class="btn-primary px-8 py-3 rounded-lg font-bold">Select Script</button>
+                </div>
+
+                <div id="deploy-active" class="hidden">
+                    <h3 id="deploy-label" class="text-xl font-bold mb-6 text-white">Initializing...</h3>
+                    <div class="w-full bg-white/5 rounded-full h-2 mb-6 overflow-hidden">
+                        <div id="deploy-bar" class="h-full bg-blue-600 transition-all duration-500 ease-out" style="width: 0%"></div>
+                    </div>
+                    <div class="flex items-center justify-center space-x-3 text-xs font-medium text-gray-500 uppercase tracking-widest">
+                        <span class="relative flex h-2 w-2">
+                            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+                            <span class="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
+                        </span>
+                        <span id="deploy-status">Processing source map</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </div>
+
+    <script>
+        const router = {
+            current: 'landing',
+            navigate(view) {
+                // Hide all
+                document.querySelectorAll('.page-layer').forEach(p => p.classList.remove('active'));
+                
+                // Show requested
+                const target = document.getElementById(`view-${view}`);
+                if(target) target.classList.add('active');
+                
+                this.updateNav(view);
+                this.current = view;
+            },
+            updateNav(view) {
+                const nav = document.getElementById('nav-dynamic-links');
+                if (view === 'landing') {
+                    nav.innerHTML = `
+                        <a href="#" class="text-sm font-medium text-gray-400 hover:text-white transition-colors">Enterprise</a>
+                        <button onclick="router.navigate('signup')" class="bg-white text-black px-4 py-2 rounded font-bold text-xs hover:bg-gray-200 transition-colors uppercase tracking-tight">Sign Up</button>
+                    `;
+                } else {
+                    nav.innerHTML = `<button onclick="router.navigate('landing')" class="text-xs font-bold text-gray-400 hover:text-white uppercase tracking-widest transition-colors">Exit</button>`;
+                }
+            }
+        };
+
+        // Deployment Logic
+        function runDeployment() {
+            document.getElementById('deploy-idle').classList.add('hidden');
+            document.getElementById('deploy-active').classList.remove('hidden');
+            document.getElementById('drop-zone').classList.remove('border-dashed');
+
+            const bar = document.getElementById('deploy-bar');
+            const label = document.getElementById('deploy-label');
+            const status = document.getElementById('deploy-status');
+            let progress = 0;
+
+            const steps = [
+                { limit: 30, text: "Compiling bundle...", status: "Validating syntax" },
+                { limit: 70, text: "Distributing to edge...", status: "Synchronizing global nodes" },
+                { limit: 99, text: "Finalizing production URL...", status: "Verifying SSL health" }
+            ];
+
+            let currentStep = 0;
+
+            const timer = setInterval(() => {
+                if (progress < steps[currentStep].limit) {
+                    progress += Math.random() * 8;
+                    label.innerText = steps[currentStep].text;
+                    status.innerText = steps[currentStep].status;
+                } else if (currentStep < steps.length - 1) {
+                    currentStep++;
+                } else {
+                    // Infinite Loop
+                    progress = 99.2 + (Math.random() * 0.5);
+                    label.innerText = "Deployment stalled at final validation";
+                    status.innerText = "Retrying edge handshake (attempt 412...)";
+                }
+                bar.style.width = progress + '%';
+            }, 400);
+        }
+
+        // Form Handling
+        document.getElementById('signup-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            router.navigate('confirmation');
+        });
+
+        // Initialize
+        window.onload = () => router.navigate('landing');
+    </script>
+</body>
+</html>
+
+```
