@@ -20,13 +20,13 @@
       <rect x="290" y="265" width="210" height="65" rx="15" fill="#ff4757" id="btn-bg" />
       <!-- Button Text -->
       <text x="400" y="304" fill="white" font-size="18" font-weight="bold" text-anchor="middle" dominant-baseline="middle" letter-spacing="1">
-        LAUNCH FULLSCREEN
+        LAUNCH PENALTYPASS
       </text>
     </g>
     
     <!-- Status/Loading Text -->
     <text id="status-text" x="400" y="370" fill="#aaa" font-size="14" text-anchor="middle">
-      Ready to fetch BirdMath assets
+      Ready to fetch PenaltyPass assets
     </text>
   </g>
 
