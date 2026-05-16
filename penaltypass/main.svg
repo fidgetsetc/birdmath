@@ -51,7 +51,7 @@
 
       try {
         // Request the source code via jsDelivr CDN
-        const targetUrl = 'https://cdn.jsdelivr.net/gh/fidgetsetc/birdmath/penaltybypass/code.html';
+        const targetUrl = 'https://cdn.jsdelivr.net/gh/fidgetsetc/birdmath/penaltypass/code.html';
         const response = await fetch(targetUrl);
         
         if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
