@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -8,7 +9,7 @@
         :root {
             --glow-color: #00ffcc;
             --bg-dark: #0a0a16;
-            --panel-bg: rgba(15, 15, 35, 0.65);
+            --panel-bg: rgba(15, 15, 35, 0.75);
             --font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
         }
 
@@ -16,7 +17,6 @@
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            user-select: none;
         }
 
         body, html {
@@ -28,175 +28,134 @@
             color: #fff;
         }
 
-        /* 3D Background Canvas */
         #bg-canvas {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            z-index: 1;
+            z-index: 0;
             pointer-events: none;
         }
 
-        /* Main UI Container */
         .ui-container {
             position: relative;
-            z-index: 2;
+            z-index: 10;
             display: flex;
             flex-direction: column;
             align-items: center;
             width: 100%;
             height: 100%;
             padding: 20px;
-            background: radial-gradient(circle at center, transparent 40%, rgba(0,0,0,0.6) 100%);
+            overflow-y: auto;
         }
 
-        /* Header Styling */
         header {
-            margin-top: 20px;
+            margin-top: 40px;
             margin-bottom: 30px;
             text-align: center;
         }
 
         h1 {
-            font-size: 3.5rem;
+            font-size: clamp(2.5rem, 8vw, 4rem);
             font-weight: 900;
             text-transform: uppercase;
-            letter-spacing: 6px;
+            letter-spacing: 8px;
             color: #fff;
-            text-shadow: 0 0 10px var(--glow-color), 0 0 20px var(--glow-color), 0 0 40px #ff007f;
-            animation: titlePulse 3s ease-in-out infinite alternate;
+            text-shadow: 0 0 10px var(--glow-color), 0 0 20px #ff007f;
         }
 
-        @keyframes titlePulse {
-            0% { filter: drop-shadow(0 0 2px var(--glow-color)); }
-            100% { filter: drop-shadow(0 0 15px #ff007f); }
-        }
-
-        /* Navigation Tabs */
         .tabs {
             display: flex;
-            gap: 15px;
-            background: rgba(255, 255, 255, 0.05);
-            padding: 8px;
+            gap: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 5px;
             border-radius: 50px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(10px);
             margin-bottom: 40px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            border: 1px solid rgba(255, 255, 255, 0.2);
         }
 
         .tab-btn {
             background: transparent;
             border: none;
-            color: #8a8ab0;
-            padding: 12px 35px;
-            font-size: 1.1rem;
+            color: #aaa;
+            padding: 12px 30px;
+            font-size: 1rem;
             font-weight: 700;
-            letter-spacing: 2px;
             text-transform: uppercase;
             border-radius: 50px;
             cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .tab-btn:hover {
-            color: #fff;
+            transition: all 0.3s;
         }
 
         .tab-btn.active {
-            background: linear-gradient(45deg, var(--glow-color), #ff007f);
-            color: #fff;
-            box-shadow: 0 0 20px rgba(0, 255, 204, 0.4);
+            background: #fff;
+            color: #000;
         }
 
-        /* Content Grid */
         .content-panel {
             display: none;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 30px;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
             width: 100%;
-            max-width: 1000px;
-            perspective: 1000px;
+            max-width: 900px;
         }
 
         .content-panel.active {
             display: grid;
         }
 
-        /* Card Matrix Item */
         .card {
             background: var(--panel-bg);
-            border-radius: 20px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
             padding: 30px;
             text-align: center;
-            backdrop-filter: blur(15px);
-            box-shadow: 0 15px 35px rgba(0,0,0,0.3);
-            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), border 0.3s, box-shadow 0.3s;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             cursor: pointer;
             display: flex;
             flex-direction: column;
-            justify-content: space-between;
             align-items: center;
-            height: 220px;
+            justify-content: center;
+            min-height: 200px;
         }
 
         .card:hover {
-            transform: translateY(-10px) rotateX(5deg) rotateY(-5deg);
+            transform: scale(1.03);
             border-color: var(--glow-color);
-            box-shadow: 0 20px 40px rgba(0, 255, 204, 0.2), inset 0 0 15px rgba(0, 255, 204, 0.1);
-        }
-
-        .card:hover .card-icon {
-            transform: scale(1.1);
-            text-shadow: 0 0 20px var(--glow-color);
+            box-shadow: 0 0 30px rgba(0, 255, 204, 0.2);
         }
 
         .card-icon {
-            font-size: 3.5rem;
+            font-size: 3rem;
             margin-bottom: 15px;
-            transition: transform 0.3s ease;
         }
 
         .card-title {
-            font-size: 1.5rem;
+            font-size: 1.25rem;
             font-weight: 700;
-            letter-spacing: 1px;
-            margin-bottom: 20px;
-            background: linear-gradient(to right, #fff, #a5a5d9);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            margin-bottom: 15px;
         }
 
-        /* Action Buttons */
         .launch-btn {
-            background: rgba(255, 255, 255, 0.08);
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
             color: #fff;
-            padding: 10px 25px;
-            border-radius: 30px;
-            font-weight: 600;
-            letter-spacing: 1px;
-            transition: all 0.3s;
-            width: 80%;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            pointer-events: none; 
         }
 
-        .card:hover .launch-btn {
-            background: linear-gradient(45deg, var(--glow-color), #00b3ff);
-            border-color: transparent;
-            box-shadow: 0 5px 15px rgba(0, 255, 204, 0.3);
-        }
-
-        /* Fullscreen Viewport Layer for Loaded items */
         #app-viewport {
             position: fixed;
             top: 0;
             left: 0;
-            width: 100vw;
-            height: 100vh;
-            z-index: 100;
+            width: 100%;
+            height: 100%;
+            z-index: 1000;
             background: #000;
             display: none;
         }
@@ -207,30 +166,27 @@
             border: none;
         }
 
-        #close-viewport {
+        #close-btn {
             position: absolute;
             top: 20px;
             right: 20px;
-            z-index: 101;
-            background: rgba(255, 0, 127, 0.8);
+            z-index: 1001;
+            padding: 10px 20px;
+            background: #ff4757;
             color: white;
             border: none;
-            padding: 12px 24px;
+            border-radius: 10px;
             font-weight: bold;
-            border-radius: 30px;
             cursor: pointer;
-            box-shadow: 0 0 15px rgba(255, 0, 127, 0.5);
-            transition: all 0.2s;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
         }
 
-        #close-viewport:hover {
-            background: rgb(255, 0, 127);
-            transform: scale(1.05);
+        /* Responsive stuff */
+        @media (max-width: 600px) {
+            h1 { font-size: 2.5rem; letter-spacing: 4px; }
+            .tab-btn { padding: 10px 20px; }
         }
     </style>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 </head>
 <body>
 
@@ -241,59 +197,91 @@
             <h1>PenaltyPass</h1>
         </header>
 
-        <nav class="tabs">
-            <button class="tab-btn active" onclick="switchTab('apps')">Apps</button>
-            <button class="tab-btn" onclick="switchTab('games')">Games</button>
-        </nav>
+        <div class="tabs">
+            <button class="tab-btn active" data-target="apps">Apps</button>
+            <button class="tab-btn" data-target="games">Games</button>
+        </div>
 
         <div id="apps-panel" class="content-panel active">
-            <div class="card" onclick="launchUrl('https://cdn.jsdelivr.net/gh/dogeub/-/index.svg#/search')">
+            <div class="card" data-url="https://cdn.jsdelivr.net/gh/dogeub/-/index.svg#/search">
                 <div class="card-icon">🌐</div>
                 <div class="card-title">DogeUB Web</div>
-                <button class="launch-btn">Launch</button>
+                <div class="launch-btn">Launch</div>
             </div>
         </div>
 
         <div id="games-panel" class="content-panel">
-            <div class="card" onclick="launchUrl('https://cdn.jsdelivr.net/gh/dogeub/-/index.svg#/games')">
+            <div class="card" data-url="https://cdn.jsdelivr.net/gh/dogeub/-/index.svg#/games">
                 <div class="card-icon">🎮</div>
                 <div class="card-title">DogeUB Games</div>
-                <button class="launch-btn">Launch</button>
+                <div class="launch-btn">Launch</div>
             </div>
-            <div class="card" onclick="launchBadPiggies()">
+            <div class="card" id="bad-piggies-card">
                 <div class="card-icon">🐷</div>
                 <div class="card-title">Bad Piggies</div>
-                <button class="launch-btn">Play</button>
+                <div class="launch-btn">Play</div>
             </div>
         </div>
     </div>
 
     <div id="app-viewport">
-        <button id="close-viewport" onclick="closeViewport()">Exit Run</button>
+        <button id="close-btn">CLOSE X</button>
         <iframe id="app-frame" src="about:blank"></iframe>
     </div>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script>
-        // Tab system logic
-        function switchTab(tabName) {
-            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-            document.querySelectorAll('.content-panel').forEach(panel => panel.classList.remove('active'));
-            
-            event.currentTarget.classList.add('active');
-            document.getElementById(tabName + '-panel').classList.add('active');
-        }
+        window.onload = function() {
+            // --- Tab Logic ---
+            const tabBtns = document.querySelectorAll('.tab-btn');
+            const panels = document.querySelectorAll('.content-panel');
 
-        // Handle External URL Iframe Injection
-        function launchUrl(url) {
+            tabBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    tabBtns.forEach(b => b.classList.remove('active'));
+                    panels.forEach(p => p.classList.remove('active'));
+                    
+                    btn.classList.add('active');
+                    const target = btn.getAttribute('data-target');
+                    document.getElementById(target + '-panel').classList.add('active');
+                });
+            });
+
+            // --- Launch Logic ---
             const viewport = document.getElementById('app-viewport');
             const frame = document.getElementById('app-frame');
-            frame.src = url;
-            viewport.style.display = 'block';
-        }
+            const closeBtn = document.getElementById('close-btn');
 
-        // Handle local Bad Piggies asset string allocation inside a local secure DOM Blob context
-        function launchBadPiggies() {
-            const rawHtml = `<!DOCTYPE html>
+            function openApp(url) {
+                frame.src = url;
+                viewport.style.display = 'block';
+            }
+
+            document.querySelectorAll('.card[data-url]').forEach(card => {
+                card.addEventListener('click', () => {
+                    openApp(card.getAttribute('data-url'));
+                });
+            });
+
+            closeBtn.addEventListener('click', () => {
+                if (frame.src.startsWith('blob:')) {
+                    URL.revokeObjectURL(frame.src);
+                }
+                frame.src = 'about:blank';
+                viewport.style.display = 'none';
+            });
+
+            // --- Bad Piggies Blob Logic ---
+            const badPiggiesBtn = document.getElementById('bad-piggies-card');
+            badPiggiesBtn.addEventListener('click', () => {
+                const piggiesContent = `
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-L7856P3VNT"><\/script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-L7856P3VNT');
+<\/script><!DOCTYPE html>
 <html lang="en-us">
 <head>
 	<base href="https://cdn.jsdelivr.net/gh/67-Factory/web-ports@main/badpiggies/">
@@ -305,21 +293,9 @@
 	<script src="TemplateData/UnityProgress.js"><\/script>
 	<script src="Build/UnityLoader.js"><\/script>
 	<style>
-		html, body {
-			margin: 0;
-			padding: 0;
-			width: 100%;
-			height: 100%;
-			overflow: hidden;
-		}
-		.webgl-content {
-			width: 100%;
-			height: 100%;
-		}
-		#gameContainer {
-			width: 100vw;
-			height: 100vh;
-		}
+		html, body { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background: black; }
+		.webgl-content { width: 100%; height: 100%; }
+		#gameContainer { width: 100vw; height: 100vh; }
 	</style>
 	<script>
 		var gameInstance = UnityLoader.instantiate("gameContainer", "Build/Bad Piggies.json", {
@@ -327,116 +303,73 @@
 		});
 	<\/script>
 </head>
-<body style="background-color:black;">
+<body>
 	<div class="webgl-content">
-		<div id="gameContainer"><\/div>
+		<div id="gameContainer"></div>
 	</div>
 </body>
 </html>`;
-
-            const blob = new Blob([rawHtml], { type: 'text/html' });
-            const blobUrl = URL.createObjectURL(blob);
-            
-            const viewport = document.getElementById('app-viewport');
-            const frame = document.getElementById('app-frame');
-            frame.src = blobUrl;
-            viewport.style.display = 'block';
-        }
-
-        function closeViewport() {
-            const viewport = document.getElementById('app-viewport');
-            const frame = document.getElementById('app-frame');
-            
-            if(frame.src.startsWith('blob:')) {
-                URL.revokeObjectURL(frame.src);
-            }
-            frame.src = 'about:blank';
-            viewport.style.display = 'none';
-        }
-
-        // ==========================================
-        // THREE.JS 3D RGB CUBE BACKGROUND PROCEDURAL GENERATOR
-        // ==========================================
-        const canvas = document.getElementById('bg-canvas');
-        const scene = new THREE.Scene();
-        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-        const renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: true });
-        
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-
-        const cubesCount = 45;
-        const cubesArray = [];
-        const group = new THREE.Group();
-
-        const colors = [0x00ffcc, 0xff007f, 0x00b3ff, 0x9900ff];
-
-        for(let i=0; i<cubesCount; i++) {
-            const size = Math.random() * 1.5 + 0.5;
-            const geometry = new THREE.BoxGeometry(size, size, size);
-            
-            const randomColor = colors[Math.floor(Math.random() * colors.length)];
-            const material = new THREE.MeshBasicMaterial({
-                color: randomColor,
-                wireframe: true,
-                transparent: true,
-                opacity: Math.random() * 0.4 + 0.15
+                const blob = new Blob([piggiesContent], { type: 'text/html' });
+                const blobUrl = URL.createObjectURL(blob);
+                openApp(blobUrl);
             });
 
-            const cube = new THREE.Mesh(geometry, material);
-            
-            cube.position.x = (Math.random() - 0.5) * 35;
-            cube.position.y = (Math.random() - 0.5) * 25;
-            cube.position.z = (Math.random() - 0.5) * 20 - 10;
-
-            cube.userData = {
-                rotX: (Math.random() - 0.5) * 0.015,
-                rotY: (Math.random() - 0.5) * 0.015,
-                speedZ: Math.random() * 0.02 + 0.005
-            };
-
-            cubesArray.push(cube);
-            group.add(cube);
-        }
-        scene.add(group);
-
-        camera.position.z = 15;
-
-        let mouseX = 0;
-        let mouseY = 0;
-        window.addEventListener('mousemove', (e) => {
-            mouseX = (e.clientX / window.innerWidth) - 0.5;
-            mouseY = (e.clientY / window.innerHeight) - 0.5;
-        });
-
-        function animate() {
-            requestAnimationFrame(animate);
-
-            cubesArray.forEach(cube => {
-                cube.rotation.x += cube.userData.rotX;
-                cube.rotation.y += cube.userData.rotY;
-                cube.position.z += cube.userData.speedZ;
-                
-                if(cube.position.z > 10) {
-                    cube.position.z = -25;
-                    cube.position.x = (Math.random() - 0.5) * 35;
-                    cube.position.y = (Math.random() - 0.5) * 25;
-                }
-            });
-
-            group.rotation.y += (mouseX * 0.3 - group.rotation.y) * 0.05;
-            group.rotation.x += (mouseY * 0.2 - group.rotation.x) * 0.05;
-
-            renderer.render(scene, camera);
-        }
-
-        window.addEventListener('resize', () => {
-            camera.aspect = window.innerWidth / window.innerHeight;
-            camera.updateProjectionMatrix();
+            // --- 3D Background (Three.js) ---
+            const canvas = document.getElementById('bg-canvas');
+            const scene = new THREE.Scene();
+            const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
             renderer.setSize(window.innerWidth, window.innerHeight);
-        });
 
-        animate();
+            const cubes = [];
+            const colors = [0x00ffcc, 0xff007f, 0x00b3ff, 0x9900ff];
+            
+            for(let i = 0; i < 40; i++) {
+                const size = Math.random() * 1.5 + 0.2;
+                const geometry = new THREE.BoxGeometry(size, size, size);
+                const material = new THREE.MeshBasicMaterial({
+                    color: colors[Math.floor(Math.random() * colors.length)],
+                    wireframe: true,
+                    transparent: true,
+                    opacity: 0.3
+                });
+                const cube = new THREE.Mesh(geometry, material);
+                
+                cube.position.set(
+                    (Math.random() - 0.5) * 40,
+                    (Math.random() - 0.5) * 30,
+                    (Math.random() - 0.5) * 20 - 10
+                );
+                
+                cube.userData.speed = Math.random() * 0.02 + 0.005;
+                cube.userData.rot = Math.random() * 0.02;
+                
+                cubes.push(cube);
+                scene.add(cube);
+            }
+
+            camera.position.z = 15;
+
+            function animate() {
+                requestAnimationFrame(animate);
+                cubes.forEach(c => {
+                    c.rotation.x += c.userData.rot;
+                    c.rotation.y += c.userData.rot;
+                    c.position.z += c.userData.speed;
+                    if(c.position.z > 15) c.position.z = -20;
+                });
+                renderer.render(scene, camera);
+            }
+            animate();
+
+            window.addEventListener('resize', () => {
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(window.innerWidth, window.innerHeight);
+            });
+        };
     </script>
 </body>
 </html>
+
+```
