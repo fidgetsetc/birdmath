@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PenaltyPass</title>
+    <style>
+        :root {
+            --glow-color: #00ffcc;
+            --bg-dark: #0a0a16;
+            --panel-bg: rgba(15, 15, 35, 0.65);
+            --font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            user-select: none;
+        }
+
+        body, html {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background-color: var(--bg-dark);
+            font-family: var(--font-family);
+            color: #fff;
+        }
+
+        /* 3D Background Canvas */
+        #bg-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        /* Main UI Container */
+        .ui-container {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            height: 100%;
+            padding: 20px;
+            background: radial-gradient(circle at center, transparent 40%, rgba(0,0,0,0.6) 100%);
+        }
+
+        /* Header Styling */
+        header {
+            margin-top: 20px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 3.5rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 6px;
+            color: #fff;
+            text-shadow: 0 0 10px var(--glow-color), 0 0 20px var(--glow-color), 0 0 40px #ff007f;
+            animation: titlePulse 3s ease-in-out infinite alternate;
+        }
+
+        @keyframes titlePulse {
+            0% { filter: drop-shadow(0 0 2px var(--glow-color)); }
+            100% { filter: drop-shadow(0 0 15px #ff007f); }
+        }
+
+        /* Navigation Tabs */
+        .tabs {
+            display: flex;
+            gap: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 8px;
+            border-radius: 50px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            margin-bottom: 40px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        .tab-btn {
+            background: transparent;
+            border: none;
+            color: #8a8ab0;
+            padding: 12px 35px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .tab-btn:hover {
+            color: #fff;
+        }
+
+        .tab-btn.active {
+            background: linear-gradient(45deg, var(--glow-color), #ff007f);
+            color: #fff;
+            box-shadow: 0 0 20px rgba(0, 255, 204, 0.4);
+        }
+
+        /* Content Grid */
+        .content-panel {
+            display: none;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            width: 100%;
+            max-width: 1000px;
+            perspective: 1000px;
+        }
+
+        .content-panel.active {
+            display: grid;
+        }
+
+        /* Card Matrix Item */
+        .card {
+            background: var(--panel-bg);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            text-align: center;
+            backdrop-filter: blur(15px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), border 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            height: 220px;
+        }
+
+        .card:hover {
+            transform: translateY(-10px) rotateX(5deg) rotateY(-5deg);
+            border-color: var(--glow-color);
+            box-shadow: 0 20px 40px rgba(0, 255, 204, 0.2), inset 0 0 15px rgba(0, 255, 204, 0.1);
+        }
+
+        .card:hover .card-icon {
+            transform: scale(1.1);
+            text-shadow: 0 0 20px var(--glow-color);
+        }
+
+        .card-icon {
+            font-size: 3.5rem;
+            margin-bottom: 15px;
+            transition: transform 0.3s ease;
+        }
+
+        .card-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            margin-bottom: 20px;
+            background: linear-gradient(to right, #fff, #a5a5d9);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Action Buttons */
+        .launch-btn {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #fff;
+            padding: 10px 25px;
+            border-radius: 30px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            transition: all 0.3s;
+            width: 80%;
+        }
+
+        .card:hover .launch-btn {
+            background: linear-gradient(45deg, var(--glow-color), #00b3ff);
+            border-color: transparent;
+            box-shadow: 0 5px 15px rgba(0, 255, 204, 0.3);
+        }
+
+        /* Fullscreen Viewport Layer for Loaded items */
+        #app-viewport {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 100;
+            background: #000;
+            display: none;
+        }
+
+        #app-frame {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        #close-viewport {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            z-index: 101;
+            background: rgba(255, 0, 127, 0.8);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            font-weight: bold;
+            border-radius: 30px;
+            cursor: pointer;
+            box-shadow: 0 0 15px rgba(255, 0, 127, 0.5);
+            transition: all 0.2s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        #close-viewport:hover {
+            background: rgb(255, 0, 127);
+            transform: scale(1.05);
+        }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+</head>
+<body>
+
+    <canvas id="bg-canvas"></canvas>
+
+    <div class="ui-container">
+        <header>
+            <h1>PenaltyPass</h1>
+        </header>
+
+        <nav class="tabs">
+            <button class="tab-btn active" onclick="switchTab('apps')">Apps</button>
+            <button class="tab-btn" onclick="switchTab('games')">Games</button>
+        </nav>
+
+        <div id="apps-panel" class="content-panel active">
+            <div class="card" onclick="launchUrl('https://cdn.jsdelivr.net/gh/dogeub/-/index.svg#/search')">
+                <div class="card-icon">🌐</div>
+                <div class="card-title">DogeUB Web</div>
+                <button class="launch-btn">Launch</button>
+            </div>
+        </div>
+
+        <div id="games-panel" class="content-panel">
+            <div class="card" onclick="launchUrl('https://cdn.jsdelivr.net/gh/dogeub/-/index.svg#/games')">
+                <div class="card-icon">🎮</div>
+                <div class="card-title">DogeUB Games</div>
+                <button class="launch-btn">Launch</button>
+            </div>
+            <div class="card" onclick="launchBadPiggies()">
+                <div class="card-icon">🐷</div>
+                <div class="card-title">Bad Piggies</div>
+                <button class="launch-btn">Play</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="app-viewport">
+        <button id="close-viewport" onclick="closeViewport()">Exit Run</button>
+        <iframe id="app-frame" src="about:blank"></iframe>
+    </div>
+
+    <script>
+        // Tab system logic
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.content-panel').forEach(panel => panel.classList.remove('active'));
+            
+            event.currentTarget.classList.add('active');
+            document.getElementById(`${tabName}-panel`).classList.add('active');
+        }
+
+        // Handle External URL Iframe Injection
+        function launchUrl(url) {
+            const viewport = document.getElementById('app-viewport');
+            const frame = document.getElementById('app-frame');
+            frame.src = url;
+            viewport.style.display = 'block';
+        }
+
+        // Handle local Bad Piggies asset string allocation inside a local secure DOM Blob context
+        function launchBadPiggies() {
+            const rawHtml = `<!DOCTYPE html>
+<html lang="en-us">
+<head>
+	<base href="https://cdn.jsdelivr.net/gh/67-Factory/web-ports@main/badpiggies/">
+	<meta charset="utf-8">
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>Unity WebGL Player | Bad Piggies</title>
+	<link rel="shortcut icon" href="TemplateData/favicon.ico">
+	<link rel="stylesheet" href="TemplateData/style.css">
+	<script src="TemplateData/UnityProgress.js"><\/script>
+	<script src="Build/UnityLoader.js"><\/script>
+	<style>
+		html, body {
+			margin: 0;
+			padding: 0;
+			width: 100%;
+			height: 100%;
+			overflow: hidden;
+		}
+		.webgl-content {
+			width: 100%;
+			height: 100%;
+		}
+		#gameContainer {
+			width: 100vw;
+			height: 100vh;
+		}
+	</style>
+	<script>
+		var gameInstance = UnityLoader.instantiate("gameContainer", "Build/Bad Piggies.json", {
+			onProgress: UnityProgress
+		});
+	</script>
+</head>
+<body style="background-color:black;">
+	<div class="webgl-content">
+		<div id="gameContainer"></div>
+	</div>
+</body>
+</html>`;
+
+            const blob = new Blob([rawHtml], { type: 'text/html' });
+            const blobUrl = URL.createObjectURL(blob);
+            
+            const viewport = document.getElementById('app-viewport');
+            const frame = document.getElementById('app-frame');
+            frame.src = blobUrl;
+            viewport.style.display = 'block';
+        }
+
+        function closeViewport() {
+            const viewport = document.getElementById('app-viewport');
+            const frame = document.getElementById('app-frame');
+            
+            // Cleanup frame context memory allocations safely
+            if(frame.src.startsWith('blob:')) {
+                URL.revokeObjectURL(frame.src);
+            }
+            frame.src = 'about:blank';
+            viewport.style.display = 'none';
+        }
+
+        // ==========================================
+        // THREE.JS 3D RGB CUBE BACKGROUND PROCEDURAL GENERATOR
+        // ==========================================
+        const canvas = document.getElementById('bg-canvas');
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: true });
+        
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+        // Generate matrix array of multiple random structural RGB-Glow items
+        const cubesCount = 45;
+        const cubesArray = [];
+        const group = new THREE.Group();
+
+        const colors = [0x00ffcc, 0xff007f, 0x00b3ff, 0x9900ff];
+
+        for(let i=0; i<cubesCount; i++) {
+            const size = Math.random() * 1.5 + 0.5;
+            const geometry = new THREE.BoxGeometry(size, size, size);
+            
+            // Dynamic wireframe structural overlay pairing
+            const randomColor = colors[Math.floor(Math.random() * colors.length)];
+            const material = new THREE.MeshBasicMaterial({
+                color: randomColor,
+                wireframe: true,
+                transparent: true,
+                opacity: Math.random() * 0.4 + 0.15
+            });
+
+            const cube = new THREE.Mesh(geometry, material);
+            
+            // Random scatter initialization mechanics
+            cube.position.x = (Math.random() - 0.5) * 35;
+            cube.position.y = (Math.random() - 0.5) * 25;
+            cube.position.z = (Math.random() - 0.5) * 20 - 10;
+
+            // Individual custom vector rotational coefficients
+            cube.userData = {
+                rotX: (Math.random() - 0.5) * 0.015,
+                rotY: (Math.random() - 0.5) * 0.015,
+                speedZ: Math.random() * 0.02 + 0.005
+            };
+
+            cubesArray.push(cube);
+            group.add(cube);
+        }
+        scene.add(group);
+
+        camera.position.z = 15;
+
+        // Interactive mouse alignment positioning parameters
+        let mouseX = 0;
+        let mouseY = 0;
+        window.addEventListener('mousemove', (e) => {
+            mouseX = (e.clientX / window.innerWidth) - 0.5;
+            mouseY = (e.clientY / window.innerHeight) - 0.5;
+        });
+
+        // Frame rendering tick sequence loop
+        function animate() {
+            requestAnimationFrame(animate);
+
+            // Vector rotation tracking across space array instances
+            cubesArray.forEach(cube => {
+                cube.rotation.x += cube.userData.rotX;
+                cube.rotation.y += cube.userData.rotY;
+                
+                // Drift cubes slowly forward
+                cube.position.z += cube.userData.speedZ;
+                
+                // Reset depth calculation if past threshold point
+                if(cube.position.z > 10) {
+                    cube.position.z = -25;
+                    cube.position.x = (Math.random() - 0.5) * 35;
+                    cube.position.y = (Math.random() - 0.5) * 25;
+                }
+            });
+
+            // Parallax shift tracking mapped seamlessly via interface
+            group.rotation.y += (mouseX * 0.3 - group.rotation.y) * 0.05;
+            group.rotation.x += (mouseY * 0.2 - group.rotation.x) * 0.05;
+
+            renderer.render(scene, camera);
+        }
+
+        // View Rescaling event bindings
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        animate();
+    </script>
+</body>
+</html>
