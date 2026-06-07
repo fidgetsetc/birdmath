@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>HTMLDuo - Material Portal</title>
+   <!-- Tailwind CSS CDN -->
+   <script src="https://cdn.tailwindcss.com"></script>
+   <!-- Google Fonts: Roboto & Material Icons -->
+   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+   
+   <script>
+       tailwind.config = {
+           theme: {
+               extend: {
+                   fontFamily: {
+                       sans: ['Roboto', 'sans-serif'],
+                   },
+                   colors: {
+                       material: {
+                           primary: '#6200EE',
+                           primaryVariant: '#3700B3',
+                           secondary: '#03DAC6',
+                           secondaryVariant: '#018786',
+                           background: '#121212',
+                           surface: '#1E1E1E',
+                           surfaceElevated: '#242424',
+                           onPrimary: '#FFFFFF',
+                           onSecondary: '#000000',
+                           onBackground: '#E1E1E1',
+                           onSurface: '#E1E1E1',
+                           border: '#2C2C2C',
+                       }
+                   }
+               }
+           }
+       }
+   </script>
+   <style>
+       /* Exact MD2 Elevation Shadows */
+       .elevation-1 {
+           box-shadow: 0 1px 1px 0 rgba(0,0,0,0.14), 0 2px 1px -1px rgba(0,0,0,0.12), 0 1px 3px 0 rgba(0,0,0,0.20);
+       }
+       .elevation-2 {
+           box-shadow: 0 2px 2px 0 rgba(0,0,0,0.14), 0 3px 1px -2px rgba(0,0,0,0.12), 0 1px 5px 0 rgba(0,0,0,0.20);
+       }
+       .elevation-4 {
+           box-shadow: 0 4px 5px 0 rgba(0,0,0,0.14), 0 1px 10px 0 rgba(0,0,0,0.12), 0 2px 4px -1px rgba(0,0,0,0.30);
+       }
+       .elevation-8 {
+           box-shadow: 0 8px 10px 1px rgba(0,0,0,0.14), 0 3px 14px 2px rgba(0,0,0,0.12), 0 5px 5px -3px rgba(0,0,0,0.20);
+       }
+       .elevation-16 {
+           box-shadow: 0 16px 24px 2px rgba(0,0,0,0.14), 0 6px 30px 5px rgba(0,0,0,0.12), 0 8px 10px -7px rgba(0,0,0,0.30);
+       }
+
+       /* Material Ripple Simulation */
+       .ripple {
+           position: relative;
+           overflow: hidden;
+           transition: background 0.2s ease, box-shadow 0.2s ease;
+       }
+       .ripple::after {
+           content: "";
+           display: block;
+           position: absolute;
+           width: 100%;
+           height: 100%;
+           top: 0;
+           left: 0;
+           pointer-events: none;
+           background-image: radial-gradient(circle, #fff 10%, transparent 10.01%);
+           background-repeat: no-repeat;
+           background-position: center;
+           transform: scale(10, 10);
+           opacity: 0;
+           transition: transform .5s, opacity 1s;
+       }
+       .ripple:active::after {
+           transform: scale(0, 0);
+           opacity: .3;
+           transition: 0s;
+       }
+   </style>
+</head>
+<body class="bg-material-background text-material-onBackground h-full flex flex-col justify-between select-none">
+
+   <!-- MD2 Top App Bar -->
+   <header class="bg-material-surface elevation-4 z-30">
+       <div class="max-w-7xl mx-auto px-4 h-14 flex items-center justify-between">
+           <div class="flex items-center space-x-4">
+               <button class="text-material-onSurface hover:bg-white/5 p-2 rounded-full transition-colors duration-150">
+                   <span class="material-icons block">menu</span>
+               </button>
+               <span class="text-xl font-medium tracking-wide text-white">HTMLDuo</span>
+           </div>
+           <div class="flex items-center space-x-1">
+               <button onclick="openIframeModal()" class="text-material-secondary hover:bg-white/5 px-3 h-9 rounded text-sm font-medium tracking-wider uppercase transition-colors duration-150">
+                   Try Now
+               </button>
+           </div>
+       </div>
+   </header>
+
+   <!-- Main Container -->
+   <main class="flex-grow flex items-center justify-center px-4 py-8">
+       <div class="max-w-4xl w-full space-y-8">
+           
+           <!-- Hero Title Segment -->
+           <div class="text-center space-y-3">
+               <h1 class="text-4xl sm:text-5xl font-light tracking-normal text-white">
+                   HTML<span class="text-material-primary font-medium">Duo</span>
+               </h1>
+               <p class="max-w-md mx-auto text-sm sm:text-base text-material-onBackground/60 tracking-normal leading-relaxed">
+                   Build and compile web interfaces directly on your device. Choose your setup configuration below.
+               </p>
+           </div>
+
+           <!-- MD2 Cards Grid -->
+           <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-3xl mx-auto">
+               
+               <!-- Android Download Card -->
+               <div class="bg-material-surface border border-material-border rounded elevation-2 flex flex-col justify-between overflow-hidden">
+                   <div class="p-6 space-y-4">
+                       <div class="flex items-center space-x-3">
+                           <span class="material-icons text-green-400 text-3xl">android</span>
+                           <div>
+                               <h3 class="text-lg font-medium text-white leading-tight">Android Native</h3>
+                               <span class="text-xs text-material-onBackground/50 uppercase tracking-wider">Application Package</span>
+                           </div>
+                       </div>
+                       <p class="text-sm text-material-onBackground/70 leading-relaxed min-h-[48px]">
+                           Download and run the optimized native Android app environment directly on your tablet or smartphone.
+                       </p>
+                   </div>
+                   <div class="bg-material-surfaceElevated px-4 py-3 flex justify-end border-t border-material-border">
+                       <a href="unavailable.apk" download class="ripple inline-flex items-center justify-center px-4 py-2 bg-material-primary hover:bg-material-primaryVariant text-white text-xs font-semibold uppercase tracking-wider rounded elevation-2 hover:elevation-4 transition-all duration-150">
+                           <span class="material-icons text-sm mr-2">download</span>
+                           Coming soon...
+                       </a>
+                   </div>
+               </div>
+            
+            <div class="bg-material-surface border border-material-border rounded elevation-2 flex flex-col justify-between overflow-hidden">
+                   <div class="p-6 space-y-4">
+                       <div class="flex items-center space-x-3">
+                           <span class="material-icons text-green-400 text-3xl">android</span>
+                           <div>
+                               <h3 class="text-lg font-medium text-white leading-tight">Android Web</h3>
+                               <span class="text-xs text-material-onBackground/50 uppercase tracking-wider">Application Package</span>
+                           </div>
+                       </div>
+                       <p class="text-sm text-material-onBackground/70 leading-relaxed min-h-[48px]">
+                           Download and run the web app on your tablet or smartphone.
+                       </p>
+                   </div>
+                   <div class="bg-material-surfaceElevated px-4 py-3 flex justify-end border-t border-material-border">
+                       <a href="HTMLDuo.apk" download class="ripple inline-flex items-center justify-center px-4 py-2 bg-material-primary hover:bg-material-primaryVariant text-white text-xs font-semibold uppercase tracking-wider rounded elevation-2 hover:elevation-4 transition-all duration-150">
+                           <span class="material-icons text-sm mr-2">download</span>
+                           Download APK
+                       </a>
+                   </div>
+               </div>
+
+               <!-- iOS Profile Card -->
+               <div class="bg-material-surface border border-material-border rounded elevation-2 flex flex-col justify-between overflow-hidden">
+                   <div class="p-6 space-y-4">
+                       <div class="flex items-center space-x-3">
+                           <span class="material-icons text-indigo-400 text-3xl">apple</span>
+                           <div>
+                               <h3 class="text-lg font-medium text-white leading-tight">iOS Web Clip</h3>
+                               <span class="text-xs text-material-onBackground/50 uppercase tracking-wider">Device Profile</span>
+                           </div>
+                       </div>
+                       <p class="text-sm text-material-onBackground/70 leading-relaxed min-h-[48px]">
+                           Install the provisioning mobile configuration clip to create a standalone full-screen Web App shortcut.
+                       </p>
+                   </div>
+                   <div class="bg-material-surfaceElevated px-4 py-3 flex justify-end border-t border-material-border">
+                       <a href="main.mobileconfig" download class="ripple inline-flex items-center justify-center px-4 py-2 bg-material-primary hover:bg-material-primaryVariant text-white text-xs font-semibold uppercase tracking-wider rounded elevation-2 hover:elevation-4 transition-all duration-150">
+                           <span class="material-icons text-sm mr-2">app_shortcut</span>
+                           Install Profile
+                       </a>
+                   </div>
+               </div>
+
+           </div>
+
+           <!-- Try It Now MD2 Prominent Banner -->
+           <div class="max-w-3xl mx-auto">
+               <div class="bg-material-surface border border-material-border rounded elevation-1 p-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+                   <div class="text-center sm:text-left">
+                       <h4 class="text-base font-medium text-white">Want to experience HTMLDuo immediately?</h4>
+                       <p class="text-xs text-material-onBackground/60">Launch the live sandbox instance in your browser instantly.</p>
+                   </div>
+                   <button onclick="openIframeModal()" class="ripple shrink-0 inline-flex items-center justify-center px-6 py-3 bg-material-secondary hover:bg-material-secondaryVariant text-material-onSecondary text-xs font-bold uppercase tracking-wider rounded elevation-2 hover:elevation-4 transition-all duration-150">
+                       <span class="material-icons text-sm mr-2">play_arrow</span>
+                       Try It Now
+                   </button>
+               </div>
+           </div>
+
+       </div>
+   </main>
+
+   <!-- Footer -->
+   <footer class="py-6 text-center border-t border-material-border bg-material-surface">
+       <p class="text-xs text-material-onBackground/40 font-light tracking-wide">© 2026 HTMLDuo. Built following MD2 guidelines.</p>
+   </footer>
+
+   <!-- MD2 Full-Screen Simulation Modal -->
+   <div id="iframeModal" class="fixed inset-0 z-50 hidden opacity-0 flex flex-col bg-material-background transition-opacity duration-200 ease-out">
+       
+       <!-- MD2 Dialog/Modal Top Header -->
+       <div class="bg-material-surface border-b border-material-border px-4 h-14 flex items-center justify-between elevation-4 z-10">
+           <div class="flex items-center space-x-3">
+               <button onclick="closeIframeModal()" class="text-material-onSurface hover:bg-white/5 p-2 rounded-full transition-colors duration-150" title="Close">
+                   <span class="material-icons block">close</span>
+               </button>
+               <div class="flex flex-col">
+                   <span class="text-base font-medium text-white leading-tight">HTMLDuo Live Sandbox</span>
+                   <span class="text-[10px] text-material-onBackground/50 tracking-wider font-mono">green-grass-c260.sw73-real.workers.dev</span>
+               </div>
+           </div>
+           
+           <div class="flex items-center space-x-2">
+               <button onclick="reloadIframe()" class="text-material-onSurface hover:bg-white/5 p-2 rounded-full transition-colors duration-150" title="Refresh Sandbox">
+                   <span class="material-icons block">refresh</span>
+               </button>
+               <button onclick="closeIframeModal()" class="text-material-secondary hover:bg-white/5 px-3 h-9 rounded text-xs font-semibold tracking-wider uppercase transition-colors duration-150">
+                   Close
+               </button>
+           </div>
+       </div>
+       
+       <!-- Frame Container -->
+       <div class="flex-grow bg-[#121212] relative">
+           <!-- Loading Indicator (MD2 Linear/Circular fallback) -->
+           <div id="iframeLoader" class="absolute inset-0 bg-material-background flex flex-col items-center justify-center space-y-4 z-20 transition-opacity duration-300">
+               <div class="w-12 h-12 border-4 border-material-primary border-t-transparent rounded-full animate-spin"></div>
+               <span class="text-xs text-material-onBackground/60 uppercase tracking-widest font-medium">Loading Workspace...</span>
+           </div>
+           <!-- The App Frame -->
+           <iframe id="appIframe" class="w-full h-full border-none opacity-0 transition-opacity duration-300" src="" allow="geolocation; microphone; camera; midi; encrypted-media;"></iframe>
+       </div>
+   </div>
+
+   <!-- Interface Logic -->
+   <script>
+       const modal = document.getElementById('iframeModal');
+       const iframe = document.getElementById('appIframe');
+       const loader = document.getElementById('iframeLoader');
+       const targetUrl = 'https://green-grass-c260.sw73-real.workers.dev/htmlduo';
+
+       function openIframeModal() {
+           modal.classList.remove('hidden');
+           setTimeout(() => {
+               modal.classList.remove('opacity-0');
+           }, 10);
+           
+           if (!iframe.src || iframe.src !== targetUrl) {
+               loader.classList.remove('opacity-0');
+               loader.style.pointerEvents = 'all';
+               iframe.classList.add('opacity-0');
+               iframe.src = targetUrl;
+           }
+       }
+
+       function closeIframeModal() {
+           modal.classList.add('opacity-0');
+           setTimeout(() => {
+               modal.classList.add('hidden');
+           }, 200);
+       }
+
+       function reloadIframe() {
+           loader.classList.remove('opacity-0');
+           loader.style.pointerEvents = 'all';
+           iframe.classList.add('opacity-0');
+           iframe.src = targetUrl;
+       }
+
+       iframe.addEventListener('load', () => {
+           loader.classList.add('opacity-0');
+           loader.style.pointerEvents = 'none';
+           iframe.classList.remove('opacity-0');
+       });
+
+       window.addEventListener('keydown', (e) => {
+           if (e.key === 'Escape' && !modal.classList.contains('hidden')) {
+               closeIframeModal();
+           }
+       });
+   </script>
+</body>
+</html>
