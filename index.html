@@ -1,79 +1,358 @@
-<!DOCTYPE html>
+<!DOCTYPE HTML>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EPIX Portal</title>
-    <style>
-        body {
-            font-family: sans-serif;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-            background-color: #f0f0f0;
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>esSITE</title>
+
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+<!-- Tailwind CSS for robust, modern styling -->
+<script src="https://cdn.tailwindcss.com"></script>
+
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        fontFamily: {
+          sans: ['Roboto', 'sans-serif'],
+        },
+        colors: {
+          base: '#0f0f14',
+          panel: '#1b1b24',
+          card: '#232333',
+          cardHover: '#2c2c3f',
+          accent: '#61dafb'
         }
-        .container {
-            text-align: center;
-            background: white;
-            padding: 2rem;
-            border-radius: 12px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        }
-        button {
-            display: block;
-            width: 250px;
-            margin: 10px auto;
-            padding: 12px;
-            font-size: 16px;
-            cursor: pointer;
-            border: none;
-            border-radius: 8px;
-            background-color: #007bff;
-            color: white;
-            transition: background 0.3s;
-        }
-        button:hover {
-            background-color: #0056b3;
-        }
-        .admin-note {
-            margin-top: 20px;
-            font-size: 0.9rem;
-            color: #555;
-            font-style: italic;
-        }
-        .hidden {
-            margin-top: 0px;
-            font-size: 0.9rem;
-            color: white;
-            font-style: italic;
-        }
-    </style>
+      }
+    }
+  }
+</script>
+
+<style>
+  /* Custom scrollbar for a polished look */
+  ::-webkit-scrollbar {
+    width: 8px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #3f3f4e;
+    border-radius: 4px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #4f4f6e;
+  }
+</style>
 </head>
-<body>
 
-<div class="container">
-    <h1>Welcome to EPIX</h1>
+<body class="bg-base text-white font-sans flex h-screen overflow-hidden selection:bg-accent selection:text-black">
+
+  <!-- LEFT SIDEBAR -->
+  <aside class="w-64 bg-panel flex flex-col border-r border-gray-800 shrink-0 shadow-xl z-20">
+    <div class="p-5 border-b border-gray-800">
+      <h3 class="text-2xl font-bold tracking-wider text-accent">esSITE</h3>
+    </div>
     
-    <button onclick="window.open('school.html', '_blank', 'width=800,height=600')">
-        EPIX at School
-    </button>
-    <p>Safe for school, just school-safe games.</p>
-<button onclick="window.open('https://docs.google.com/forms/d/e/1FAIpQLSdhhKjqIWNxnukqbqpgRINSKtgi24hxDgdaLdsFVqpej1MhmA/viewform?usp=header', '_blank', 'width=800,height=600')">
-        Game Removal Form
-    </button>
-    <p>Suggest removal of a game from EPIX at School.</p>
-<hr>
-    <button onclick="window.open('epixathome.html', '_blank', 'width=800,height=600')">
-        EPIX at Home
-    </button>
-    <p>Just for home use, has more games.</p>
+    <div class="p-4 flex flex-col gap-4 flex-1 overflow-y-auto">
+      <!-- Search -->
+      <div class="relative">
+        <input 
+          id="search" 
+          type="text" 
+          placeholder="Search..." 
+          oninput="render()"
+          class="w-full bg-card text-sm text-white px-4 py-2.5 rounded-lg border border-transparent focus:border-accent focus:outline-none transition-colors"
+        >
+      </div>
 
-    <p class="admin-note">If you are an IT admin, please only block EPIX at Home.</p>
-        <p class="hidden">main.html</p>
-<p class="admin-note">2026 EPIX. We do not unrestrict anything anymore.</p>
-</div>
+      <!-- Filters -->
+      <div class="flex flex-col gap-2 mt-2" id="filter-buttons">
+        <button onclick="setType('all')" class="nav-btn w-full text-left px-4 py-2.5 rounded-lg bg-cardHover text-accent font-medium transition-colors" data-type="all">All Items</button>
+        <button onclick="setType('games')" class="nav-btn w-full text-left px-4 py-2.5 rounded-lg bg-card hover:bg-cardHover transition-colors" data-type="games">Games</button>
+        <button onclick="setType('videos')" class="nav-btn w-full text-left px-4 py-2.5 rounded-lg bg-card hover:bg-cardHover transition-colors" data-type="videos">Videos</button>
+        <button onclick="setType('books')" class="nav-btn w-full text-left px-4 py-2.5 rounded-lg bg-card hover:bg-cardHover transition-colors" data-type="books">Books</button>
+      </div>
 
+      <div class="mt-auto flex flex-col gap-2 pt-4 border-t border-gray-800">
+        <button onclick="randomItem()" class="w-full px-4 py-2 rounded-lg bg-gray-700 hover:bg-gray-600 transition-colors flex items-center justify-center gap-2">
+          🎲 Random
+        </button>
+        <button onclick="openSuggest()" class="w-full px-4 py-2 rounded-lg bg-accent text-black font-medium hover:bg-[#4ac3e5] transition-colors">
+          Suggest Addition
+        </button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- CENTER AREA -->
+  <main class="flex-1 flex flex-col min-w-0 relative">
+    
+    <!-- TOP BAR -->
+    <header class="h-16 bg-panel/95 backdrop-blur-sm border-b border-gray-800 flex items-center px-6 justify-between z-10 shrink-0">
+      <div class="flex items-center gap-4">
+        <h2 id="feed-title" class="text-lg font-medium capitalize">All Items</h2>
+        <span id="feed-count" class="text-xs font-bold bg-gray-700 px-2 py-1 rounded-full text-gray-300">0</span>
+      </div>
+    </header>
+
+    <!-- FEED -->
+    <div id="feed" class="flex-1 overflow-y-auto p-6 grid grid-cols-[repeat(auto-fill,minmax(180px,1fr))] auto-rows-max gap-6 content-start">
+      <!-- Cards injected here via JS -->
+    </div>
+
+  </main>
+
+  <!-- RIGHT PLAYER -->
+  <aside id="player" class="relative w-[420px] bg-panel flex flex-col border-l border-gray-800 shrink-0 z-20">
+    
+    <!-- Drag Resizer Handle -->
+    <div id="resizer" class="absolute top-0 bottom-0 left-0 w-2 -ml-1 cursor-col-resize hover:bg-accent transition-colors z-30"></div>
+
+    <!-- Iframe Container -->
+    <div class="aspect-video bg-black relative shadow-lg shrink-0 border-b border-gray-800 group">
+      <div id="iframe-placeholder" class="absolute inset-0 flex flex-col items-center justify-center text-gray-500 gap-3">
+        <svg class="w-12 h-12 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+        <span>Select an item to view</span>
+      </div>
+      <iframe id="iframe" class="w-full h-full border-none hidden" allow="autoplay; encrypted-media; fullscreen" allowfullscreen></iframe>
+      
+      <!-- Fullscreen Button -->
+      <button onclick="toggleFullscreen()" id="fullscreen-btn" class="absolute bottom-3 right-3 bg-black/70 hover:bg-black/90 text-white p-2 rounded opacity-0 group-hover:opacity-100 transition-opacity z-10 hidden" title="Fullscreen">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"></path></svg>
+      </button>
+    </div>
+
+    <!-- Details & Related -->
+    <div class="flex-1 overflow-y-auto flex flex-col">
+      <div class="p-5 border-b border-gray-800">
+        <h3 id="current-title" class="text-xl font-bold truncate">Nothing playing</h3>
+        <p id="current-type" class="text-sm text-gray-400 capitalize mt-1">--</p>
+      </div>
+
+      <div class="p-5 flex-1">
+        <h4 class="text-sm font-bold text-gray-400 mb-4 uppercase tracking-wider">Related Items</h4>
+        <div id="related" class="flex flex-col gap-3">
+          <!-- Related buttons injected here -->
+          <p class="text-sm text-gray-600 italic">Play an item to see related content.</p>
+        </div>
+      </div>
+    </div>
+
+  </aside>
+
+<script>
+// Replaced YouTube and strict block URLs with functional equivalents for iframe viewing
+const DATA = [
+  {id:"run3",type:"games",name:"Run 3",img:"https://static.keygames.com/7/89667/48385/672x448/run-3.webp",url:"https://york.cadou.ro.cdn.cloudflare.net/db/html/run3/index.html"},
+  {id:"cookie",type:"games",name:"Cookie Clicker",img:"https://image.api.playstation.com/vulcan/ap/rnd/202507/0723/5bf9ed682a32f58b4546da14f58aa87b6a5f0665b0471fff.png",url:"https://york.cadou.ro.cdn.cloudflare.net/db/html/cookie_clicker/index.html"},
+  {id:"gd",type:"games",name:"Geometry Dash",img:"https://i.redd.it/dorae3yhjqhb1.jpg",url:"./html/gd.html"},
+  {id:"flappy",type:"games",name:"Flappy Bird",img:"https://d112y698adiu2z.cloudfront.net/photos/production/software_photos/002/474/827/datas/original.jpg",url:"./html/flappybird.html"},
+  {id:"angry",type:"games",name:"Angry Birds Showdown",img:"https://www1.minijuegosgratis.com/v3/games/thumbnails/256194_1.jpg",url:"./html/ab.html"},
+  {id:"vid1",type:"videos",name:"Big Buck Bunny",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Big_buck_bunny_poster_big.jpg/640px-Big_buck_bunny_poster_big.jpg",url:"https://upload.wikimedia.org/wikipedia/commons/transcoded/c/c0/Big_Buck_Bunny_4K.webm/Big_Buck_Bunny_4K.webm.480p.vp9.webm"},
+  {id:"book1",type:"books",name:"Wikipedia: Books",img:"https://static.vecteezy.com/system/resources/thumbnails/013/570/470/small/illustration-of-voting-and-suggestion-critici-hand-putting-white-paper-into-ballot-box-free-vector.jpg",url:"https://en.wikipedia.org/wiki/Book"}
+];
+
+let currentType = "all";
+let currentItem = null;
+
+function render() {
+  const q = document.getElementById("search").value.toLowerCase();
+  const feed = document.getElementById("feed");
+  
+  // Filter Data
+  const filteredData = DATA
+    .filter(i => currentType === "all" ? true : i.type === currentType)
+    .filter(i => i.name.toLowerCase().includes(q));
+
+  // Update Top Bar UI
+  document.getElementById("feed-title").innerText = currentType === "all" ? "All Items" : currentType;
+  document.getElementById("feed-count").innerText = filteredData.length;
+
+  feed.innerHTML = "";
+
+  if(filteredData.length === 0) {
+    feed.innerHTML = `<div class="col-span-full text-center py-10 text-gray-500">No items found.</div>`;
+    return;
+  }
+
+  // Render Cards
+  filteredData.forEach(i => {
+    const isPlaying = currentItem && currentItem.id === i.id;
+    
+    const div = document.createElement("div");
+    div.className = `bg-card rounded-xl overflow-hidden cursor-pointer transition-all duration-200 border-2 ${isPlaying ? 'border-accent scale-105 shadow-lg shadow-accent/20' : 'border-transparent hover:scale-105 hover:border-gray-600'}`;
+    div.onclick = () => openItem(i);
+
+    div.innerHTML = `
+      <div class="h-32 w-full bg-black relative">
+        <img src="${i.img}" class="w-full h-full object-cover opacity-90 hover:opacity-100 transition-opacity" alt="${i.name}">
+        ${i.type === 'videos' ? '<div class="absolute inset-0 flex items-center justify-center bg-black/30"><div class="w-10 h-10 bg-accent rounded-full flex items-center justify-center text-black pl-1">▶</div></div>' : ''}
+      </div>
+      <div class="p-3">
+        <div class="font-medium text-sm truncate">${i.name}</div>
+        <div class="text-xs text-gray-400 capitalize mt-1">${i.type}</div>
+      </div>
+    `;
+    feed.appendChild(div);
+  });
+}
+
+function setType(t) {
+  currentType = t;
+  
+  // Update sidebar button styles
+  document.querySelectorAll('.nav-btn').forEach(btn => {
+    if(btn.dataset.type === t) {
+      btn.classList.add('bg-cardHover', 'text-accent', 'font-medium');
+      btn.classList.remove('bg-card', 'hover:bg-cardHover');
+    } else {
+      btn.classList.remove('bg-cardHover', 'text-accent', 'font-medium');
+      btn.classList.add('bg-card', 'hover:bg-cardHover');
+    }
+  });
+
+  render();
+}
+
+function openItem(i) {
+  currentItem = i;
+  
+  // Handle Iframe Display
+  const iframe = document.getElementById("iframe");
+  const placeholder = document.getElementById("iframe-placeholder");
+  const fullscreenBtn = document.getElementById("fullscreen-btn");
+  
+  iframe.src = i.url;
+  iframe.classList.remove("hidden");
+  placeholder.classList.add("hidden");
+  fullscreenBtn.classList.remove("hidden");
+
+  // Update Player Details
+  document.getElementById("current-title").innerText = i.name;
+  document.getElementById("current-type").innerText = i.type;
+
+  updateRelated(i);
+  updateURL(i);
+  render(); // Re-render to show active state on cards
+}
+
+function updateRelated(i) {
+  const rel = document.getElementById("related");
+  rel.innerHTML = "";
+
+  const relatedItems = DATA.filter(x => x.type === i.type && x.id !== i.id);
+
+  if(relatedItems.length === 0) {
+    rel.innerHTML = `<p class="text-sm text-gray-600 italic">No other related items.</p>`;
+    return;
+  }
+
+  relatedItems.forEach(x => {
+    const btn = document.createElement("button");
+    btn.className = "flex items-center gap-3 w-full p-2 rounded-lg bg-card hover:bg-cardHover transition-colors border border-gray-800 hover:border-gray-600 text-left";
+    btn.onclick = () => openItem(x);
+    
+    btn.innerHTML = `
+      <img src="${x.img}" class="w-12 h-12 object-cover rounded-md shrink-0">
+      <div class="flex-1 min-w-0">
+        <div class="text-sm font-medium truncate text-white">${x.name}</div>
+        <div class="text-xs text-gray-400 capitalize">${x.type}</div>
+      </div>
+    `;
+    rel.appendChild(btn);
+  });
+}
+
+function randomItem() {
+  if (DATA.length === 0) return;
+  const i = DATA[Math.floor(Math.random() * DATA.length)];
+  openItem(i);
+}
+
+function openSuggest() {
+  window.open("https://forms.gle/h8rCrsV6LrJP5t6s9","_blank");
+}
+
+/* URL PARAM SUPPORT */
+function updateURL(i) {
+  const url = new URL(window.location);
+  url.searchParams.set("type", i.type);
+  url.searchParams.set("id", i.id);
+  history.replaceState({}, '', url);
+}
+
+function loadFromURL() {
+  const p = new URLSearchParams(window.location.search);
+  const id = p.get("id");
+  const type = p.get("type");
+
+  if(type && ["all", "games", "videos", "books"].includes(type)) {
+    setType(type);
+  }
+
+  const item = DATA.find(x => x.id === id);
+  if(item) openItem(item);
+}
+
+// --- Panel Resizing Logic ---
+const playerPanel = document.getElementById('player');
+const resizer = document.getElementById('resizer');
+let isResizing = false;
+
+resizer.addEventListener('mousedown', (e) => {
+  isResizing = true;
+  document.body.style.cursor = 'col-resize';
+  document.body.style.userSelect = 'none'; // Prevent highlighting text during drag
+});
+
+window.addEventListener('mousemove', (e) => {
+  if (!isResizing) return;
+  
+  // Calculate new width: window width - mouse X position
+  const newWidth = window.innerWidth - e.clientX;
+  
+  // Constrain width between 280px and max screen width minus sidebars
+  if (newWidth > 280 && newWidth < window.innerWidth - 300) {
+    playerPanel.style.width = `${newWidth}px`;
+  }
+});
+
+window.addEventListener('mouseup', () => {
+  if (isResizing) {
+    isResizing = false;
+    document.body.style.cursor = '';
+    document.body.style.userSelect = '';
+  }
+});
+
+// --- Fullscreen Logic ---
+function toggleFullscreen() {
+  const iframe = document.getElementById("iframe");
+  if (!document.fullscreenElement) {
+    if (iframe.requestFullscreen) {
+      iframe.requestFullscreen();
+    } else if (iframe.webkitRequestFullscreen) { /* Safari */
+      iframe.webkitRequestFullscreen();
+    } else if (iframe.msRequestFullscreen) { /* IE11 */
+      iframe.msRequestFullscreen();
+    }
+  } else {
+    if (document.exitFullscreen) {
+      document.exitFullscreen();
+    } else if (document.webkitExitFullscreen) { /* Safari */
+      document.webkitExitFullscreen();
+    } else if (document.msExitFullscreen) { /* IE11 */
+      document.msExitFullscreen();
+    }
+  }
+}
+
+// Init
+render();
+loadFromURL();
+
+</script>
 </body>
 </html>
