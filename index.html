@@ -132,10 +132,10 @@
       </div>
 
       <div class="p-5 flex-1">
-        <h4 class="text-sm font-bold text-gray-400 mb-4 uppercase tracking-wider">Related Items</h4>
+        <h4 class="text-sm font-bold text-gray-400 mb-4 uppercase tracking-wider">Other in this category</h4>
         <div id="related" class="flex flex-col gap-3">
           <!-- Related buttons injected here -->
-          <p class="text-sm text-gray-600 italic">Play an item to see related content.</p>
+          <p class="text-sm text-gray-600 italic">Play an item to see other content.</p>
         </div>
       </div>
     </div>
@@ -153,7 +153,7 @@ const DATA = [
   {id:"drift",type:"games",name:"Drift Boss",img:"https://www.culinaryschools.org/screenshots/drift-boss.png",url:"./html/drift.html"},
   {id:"win",type:"games",name:"WINDESTROY",img:"./html/thumb/win.png",url:"./html/pmp/win/index.html"},
   {id:"vid1",type:"videos",name:"Big Buck Bunny",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Big_buck_bunny_poster_big.jpg/640px-Big_buck_bunny_poster_big.jpg",url:"https://upload.wikimedia.org/wikipedia/commons/transcoded/c/c0/Big_Buck_Bunny_4K.webm/Big_Buck_Bunny_4K.webm.480p.vp9.webm"},
-  {id:"book1",type:"books",name:"Wikipedia: Books",img:"https://static.vecteezy.com/system/resources/thumbnails/013/570/470/small/illustration-of-voting-and-suggestion-critici-hand-putting-white-paper-into-ballot-box-free-vector.jpg",url:"https://en.wikipedia.org/wiki/Book"}
+  {id:"what",type:"books",name:"What is esSITE?",img:"./html/thumb/what.png",url:"./html/pdf/what.pdf"}
 ];
 
 let currentType = "all";
@@ -247,7 +247,7 @@ function updateRelated(i) {
   const relatedItems = DATA.filter(x => x.type === i.type && x.id !== i.id);
 
   if(relatedItems.length === 0) {
-    rel.innerHTML = `<p class="text-sm text-gray-600 italic">No other related items.</p>`;
+    rel.innerHTML = `<p class="text-sm text-gray-600 italic">No other items in this category..</p>`;
     return;
   }
 
